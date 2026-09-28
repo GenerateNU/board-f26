@@ -6,7 +6,7 @@ public class LilyPadNode : MonoBehaviour
     [SerializeField] private List<LilyPadNode> neighbors = new();
     
     //needs to be public so frogs/fish can read it
-    public List<LilyPadNode> Neighbors => neighbors;
+    public IReadOnlyList<LilyPadNode> Neighbors => neighbors;
 
     public bool IsOccupied { get; set; }
 }
