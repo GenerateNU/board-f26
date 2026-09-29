@@ -151,7 +151,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c66500ab00148204ea4975df1a8b3476, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LilyPadNode
-  nodeID: 0
+  nodeID: 2
   neighbors:
   - {fileID: 79191475}
 --- !u!65 &62696509
@@ -408,7 +408,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c66500ab00148204ea4975df1a8b3476, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LilyPadNode
-  nodeID: 0
+  nodeID: 1
   neighbors:
   - {fileID: 79191475}
 --- !u!65 &700786964
@@ -631,8 +631,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6b46f7cca4098e478d5a62824fcb3bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FrogMove
-  _startingLilyPad: {fileID: 0}
-  _hopSpeed: 0
+  _startingLilyPad: {fileID: 79191475}
+  _hopSpeed: 0.5
+  _moveTimeStep: 0.05
   _preventInputMidHop: 0
 --- !u!1 &1385778352
 GameObject:
