@@ -9,4 +9,13 @@ public class LilyPadNode : MonoBehaviour
     public IReadOnlyList<LilyPadNode> Neighbors => neighbors;
 
     public bool IsOccupied { get; set; }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.black;
+        foreach (LilyPadNode node in Neighbors)
+        {
+            Gizmos.DrawLine(gameObject.transform.position, node.transform.position);
+        }
+    }
 }
