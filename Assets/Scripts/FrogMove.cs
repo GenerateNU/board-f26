@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 public class FrogMove : MonoBehaviour
 {
     [SerializeField]
-    private LilyPadNode _startingLilyPad; // can probably be condensed into one field with currentLilyPad but I don't want currentLilyPad to be serializeable so they're separate
+    private LilyPadNode _startingLilyPad;
     [Tooltip("Smaller numbers are faster speeds. 0.5 would make it 2x faster 2 would make it 1/2 slower.")]
     [SerializeField]
     private float _hopSpeed;
@@ -15,9 +15,7 @@ public class FrogMove : MonoBehaviour
     private float _moveTimeStep;
     private LilyPadNode _currentLilyPad;
 
-    // TODO: Move all below fields in an inputHandler/GameController script so we can have multiple frogs and it will be easier to prevent clicks from all of them.
-    // This can likely be brought together more smoothly if we have all of the beginning parts as we may want to not allow inputs during other animations (enemyAI)
-    // and having this in a separate script will allow PlayerChecking to be smoother. Alongside that I recommend giving each Frog an Identifier script.
+    // These should probably be moved to a input handler/game controller script in the future as it should effect all frogs
     [SerializeField]
     private bool _preventInputMidHop;
     private bool _inAnimation;
@@ -79,11 +77,12 @@ public class FrogMove : MonoBehaviour
     // Updates the current lilypad to the given one and moves the frog toward the given transform
     private void ChangeFrogLilyPad(Transform lilyPad, LilyPadNode newLilyPad)
     {
-        // Update current lilypad
-        _currentLilyPad = newLilyPad;
         _inAnimation = true;
 
         _ = MoveFrog(lilyPad.position);
+
+        // Update current lilypad
+        _currentLilyPad = newLilyPad;
     }
 
     // Actual piece movement logic
@@ -105,9 +104,6 @@ public class FrogMove : MonoBehaviour
     // Checks if the given lilypad is a neighbor of the clicked lilypad
     private bool CheckIfLilyPadIsNeighbor(LilyPadNode clickedLilyPad)
     {
-        // It may be sufficient enough to check in the clickedLilyPad is our current lilyPad is there
-        // however if we ever want to implement one way lilyPads/in general for code readability I think it's better
-        // to just give lilyPads ids.
         int lilyPadID = clickedLilyPad.NodeID;
         IReadOnlyList<LilyPadNode> neighbors = _currentLilyPad.Neighbors;
 
