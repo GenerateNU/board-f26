@@ -21,6 +21,10 @@ public class FishEnemy : MonoBehaviour
     {
         Path = CalculatePath(currentFishNode, testTargetNode);
         progress = 0;
+        for (int i = 0; i < Path.Count; i++)
+        {
+            Debug.Log($"path step {i}: {Path[i].gameObject.name}", Path[i].gameObject);
+        }
     }
 
     void Update()
@@ -28,13 +32,14 @@ public class FishEnemy : MonoBehaviour
         if (Keyboard.current.fKey.wasPressedThisFrame)
         {
             MoveTowards();
+            Debug.Log("Move to platform " + progress);
         }
     }
 
     [ContextMenu("Move Towards")]
     public void MoveTowards()
     {
-        lastPos = currentFishNode.transform.position;
+        lastPos = transform.position;
         progress++;
         UpdateCurrentNode(Path, progress);
         StartCoroutine(GlideToCurrentFishNode());
@@ -43,7 +48,7 @@ public class FishEnemy : MonoBehaviour
     public void MoveTowards(LilyPadNode target)
     {
         Path = CalculatePath(currentFishNode, target);
-        lastPos = currentFishNode.transform.position;
+        lastPos = transform.position;
         progress = 0;
         UpdateCurrentNode(Path, progress);
         StartCoroutine(GlideToCurrentFishNode());
@@ -54,7 +59,7 @@ public class FishEnemy : MonoBehaviour
         if(progress < path.Count)
             currentFishNode = path[progress];
         else
-            Debug.Log("reached end of path");
+            Debug.Log("progress: " + progress + " reached end of path");
     }
 
     IEnumerator GlideToCurrentFishNode()
@@ -109,9 +114,12 @@ public class FishEnemy : MonoBehaviour
             }
             LilyPadNode current = frontier[toPop];
             frontier.RemoveAt(toPop);
-            visited.Add(current);
             if (!visited.Add(current)) continue; // already finalized (duplicate entry)
-            if (current == target) break;        // shortest path to target found
+            if (current == target) //path reached
+            {
+
+                break;
+            }
 
             foreach (LilyPadNode neighbor in current.Neighbors)
             {
@@ -119,7 +127,7 @@ public class FishEnemy : MonoBehaviour
                 float edge = Vector3.Distance(current.transform.position, neighbor.transform.position);
                 float newDist = distances[current] + edge;
 
-                if(!distances.TryGetValue(current, out float dist) || newDist < dist)
+                if(!distances.TryGetValue(neighbor, out float dist) || newDist < dist)
                 {
                     distances[neighbor] = newDist;
                     parents[neighbor] = current;
@@ -130,28 +138,29 @@ public class FishEnemy : MonoBehaviour
 
         List<LilyPadNode> result = new List<LilyPadNode>();
         LilyPadNode trace = target;
-        while(trace != start)
+        result.Insert(0, trace);
+        LilyPadNode next = null;
+        int step = 0;
+        while(true)
         {
-            result.Insert(0, trace);
-            float min = float.MaxValue;
-            LilyPadNode next = null;
-            foreach(LilyPadNode neighbor in trace.Neighbors)
+            
+            if(parents.TryGetValue(trace, out next))
             {
-                if(!distances.TryGetValue(neighbor, out float dist)) continue; 
-                if(dist < min)
-                {
-                    min = distances[neighbor];
-                    next = neighbor;
-                }
+                result.Insert(0, next);
+                trace = next;
             }
-            trace = next;
-            if(trace == null)
+            else
+            {
+                Debug.Log("error in back tracing in step: " + step);
+                return null;
+            }
+            if(next == start)
             {
                 return result;
             }
+            step++;
+            
         }
-        result.Insert(0, trace);
-        return result;
 
     }
         
