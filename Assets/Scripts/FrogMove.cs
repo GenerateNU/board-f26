@@ -15,6 +15,9 @@ public class FrogMove : MonoBehaviour
     private float _moveTimeStep;
     private LilyPadNode _currentLilyPad;
 
+    // for sprint 2
+    public bool HasMovedThisTurn { get; set; } = false;
+
     // These should probably be moved to a input handler/game controller script in the future as it should effect all frogs
     [SerializeField]
     private bool _preventInputMidHop;

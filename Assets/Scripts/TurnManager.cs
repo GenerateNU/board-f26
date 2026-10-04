@@ -6,8 +6,8 @@ using UnityEngine.InputSystem;
 public class TurnManager : MonoBehaviour
 {
 
-
-    public enum TurnState { Player1, Player2, Enemy }
+    //to-do: update code to handle player 3 (and 4? if needed)
+    public enum TurnState { Player1, Player2, Player3, Enemy }
 
 
    // Easy global access for other scripts (e.g. TurnManager.Instance.CurrentTurn).
