@@ -6,14 +6,14 @@ using UnityEngine.InputSystem;
 public class FrogMove : MonoBehaviour
 {
     [SerializeField]
-    private LilyPadNode _startingLilyPad;
+    private BasicNode _startingLilyPad;
     [Tooltip("Smaller numbers are faster speeds. 0.5 would make it 2x faster 2 would make it 1/2 slower.")]
     [SerializeField]
     private float _hopSpeed;
     [Tooltip("Lower numbers allow for movement to be smoother but may be more performance intensive.")]
     [SerializeField]
     private float _moveTimeStep;
-    private LilyPadNode _currentLilyPad;
+    private BasicNode _currentLilyPad;
 
     // for sprint 2
     public bool HasMovedThisTurn { get; set; } = false;
@@ -36,7 +36,7 @@ public class FrogMove : MonoBehaviour
         }
     }
 
-    public LilyPadNode GetLilyPadFrogOn()
+    public BasicNode GetLilyPadFrogOn()
     {
         return _currentLilyPad;
     }
@@ -68,7 +68,7 @@ public class FrogMove : MonoBehaviour
     // Checks if a raycast has hit a lilypad if it has move the frog to the lilypad
     private void CheckIfRayCastHitsLilyPad(RaycastHit hit)
     {
-        LilyPadNode clickedLilypad = hit.transform.GetComponent<LilyPadNode>();
+        BasicNode clickedLilypad = hit.transform.GetComponent<BasicNode>();
 
         // Exit if a lilypad is not clicked/if lilypad is not a neighbor
         if (!clickedLilypad) { return; }
@@ -78,11 +78,15 @@ public class FrogMove : MonoBehaviour
     }
 
     // Updates the current lilypad to the given one and moves the frog toward the given transform
-    private void ChangeFrogLilyPad(Transform lilyPad, LilyPadNode newLilyPad)
+    private void ChangeFrogLilyPad(Transform lilyPad, BasicNode newLilyPad)
     {
+        if (!newLilyPad.IsTraversable) { return; }
+
         _inAnimation = true;
 
         _ = MoveFrog(lilyPad.position);
+        _currentLilyPad.IsOccupied = false;
+        newLilyPad.IsOccupied = true;
 
         // Update current lilypad
         _currentLilyPad = newLilyPad;
@@ -105,10 +109,10 @@ public class FrogMove : MonoBehaviour
     }
 
     // Checks if the given lilypad is a neighbor of the clicked lilypad
-    private bool CheckIfLilyPadIsNeighbor(LilyPadNode clickedLilyPad)
+    private bool CheckIfLilyPadIsNeighbor(BasicNode clickedLilyPad)
     {
         int lilyPadID = clickedLilyPad.NodeID;
-        IReadOnlyList<LilyPadNode> neighbors = _currentLilyPad.Neighbors;
+        IReadOnlyList<BasicNode> neighbors = _currentLilyPad.Neighbors;
 
         for (int i = 0; i < neighbors.Count; i++)
         {
