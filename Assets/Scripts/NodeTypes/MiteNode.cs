@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class MiteNode : BasicNode
+public class MiteNode : LilyPadNode
 {
     [SerializeField]
     private Material _lilyPadMat;
