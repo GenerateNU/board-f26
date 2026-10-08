@@ -27,11 +27,14 @@ public abstract class BasicNode : MonoBehaviour
         lilypadGlow.SetActive(enable);
     }
 
-    public void HighlightAllNeighbors(bool enable)
+    public void HighlightAllNeighbors()
     {
         for (int i = 0; i < Neighbors.Count; i++)
         {
-            Neighbors[i].Highlight(enable);
+            if (Neighbors[i].IsTraversable)
+            {
+                Neighbors[i].Highlight(true);
+            }
         }
     }
 
