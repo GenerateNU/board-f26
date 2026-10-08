@@ -37,4 +37,10 @@ public class LilyPadNode : MonoBehaviour
             Gizmos.DrawLine(gameObject.transform.position, node.transform.position);
         }
     }
+
+    public void SpawnObjectOnPad(GameObject obj)
+    {
+        GameObject worldObj = Instantiate(obj, transform.position, Quaternion.identity);
+        worldObj.transform.SetParent(gameObject.transform, true);
+    }
 }
