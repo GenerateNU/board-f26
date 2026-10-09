@@ -5,11 +5,14 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.InputSystem;
+using Unity.VisualScripting;
 
 public class FishEnemy : MonoBehaviour
 {
-    [SerializeField] private LilyPadNode currentFishNode; //current node standing on
-    [SerializeField] private LilyPadNode testTargetNode; //for testing
+    [SerializeField] private LilyPadNode currentFishNode;
+    private FrogMove frogMove; 
+    private FrogActions frogActions;
+    [SerializeField] private GameObject frog; 
     [SerializeField] private float swimSpeed = 1;
 
     private int progress = 0;
@@ -17,23 +20,55 @@ public class FishEnemy : MonoBehaviour
 
     List<LilyPadNode> Path;
 
+    public LilyPadNode CurrentFishNode => currentFishNode;
+
+    void Awake()
+    {
+       reassignFrogComponents();
+    }
+
+    void changeTurn()
+    {
+        if(TurnManager.Instance.CurrentPhase == TurnManager.TurnPhase.Enemy)
+        {
+            MoveTowards();
+            TurnManager.Instance.AdvanceTurn();
+        }
+    }
+
+    //for future, only one frog in the scene so not needed.
+    GameObject FindClosestFrog(GameObject[] frogs)
+    {
+        float minDist = float.MaxValue;
+        GameObject closestFrog = null;
+        foreach(GameObject frog in frogs)
+        {
+            float dist = Vector3.Distance(frog.transform.position, transform.position);
+            if(dist < minDist)
+            {
+                minDist = dist;
+                closestFrog = frog;
+            }
+        } 
+        return frog;
+    }
+
+    void reassignFrogComponents()
+    {
+        frogMove = frog.GetComponent<FrogMove>();
+        frogActions = frog.GetComponent<FrogActions>();
+    }
+
     void Start()
     {
-        Path = CalculatePath(currentFishNode, testTargetNode);
+        Path = CalculatePath(currentFishNode, frogMove.GetLilyPadFrogOn());
         progress = 0;
         for (int i = 0; i < Path.Count; i++)
         {
             Debug.Log($"path step {i}: {Path[i].gameObject.name}", Path[i].gameObject);
         }
-    }
 
-    void Update()
-    {
-        if (Keyboard.current.fKey.wasPressedThisFrame)
-        {
-            MoveTowards();
-            Debug.Log("Move to platform " + progress);
-        }
+        TurnManager.Instance.OnTurnChanged += changeTurn;
     }
 
     [ContextMenu("Move Towards")]
@@ -57,9 +92,29 @@ public class FishEnemy : MonoBehaviour
     void UpdateCurrentNode(List<LilyPadNode> path, int progress)
     {
         if(progress < path.Count)
+        {
             currentFishNode = path[progress];
+            CheckKillFrog();
+        }  
         else
             Debug.Log("progress: " + progress + " reached end of path");
+    }
+
+    void CheckKillFrog()
+    {
+        if(currentFishNode == frogMove.GetLilyPadFrogOn()) //frog caught
+        {
+            LilyPadNode respawn = frogActions.respawnNode;
+            if(respawn) // if a respawn node exists => frog has layed an egg
+            {
+                frog.transform.position = respawn.transform.position; //teleport frog to respawn
+            }
+            else //frog did not lay egg
+            {
+                Destroy(frog);
+                Debug.Log("Frog Eaten");
+            }
+        }
     }
 
     IEnumerator GlideToCurrentFishNode()
@@ -76,21 +131,21 @@ public class FishEnemy : MonoBehaviour
     }
 
     //deprecated
-    LilyPadNode CalculateClosestNeighbor(LilyPadNode target) //has the issue of not being able to travel backwards
-    {
-        LilyPadNode result = currentFishNode;
-        float minDistance = Vector3.Distance(currentFishNode.transform.position, testTargetNode.transform.position);
-        foreach(LilyPadNode neighbor in currentFishNode.Neighbors)
-        {
-            float distance = Vector3.Distance(neighbor.transform.position, target.transform.position);
-            if(distance < minDistance)
-            {
-                minDistance = distance;
-                result = neighbor;
-            }
-        }
-        return result;
-    }
+    // LilyPadNode CalculateClosestNeighbor(LilyPadNode target) //has the issue of not being able to travel backwards
+    // {
+    //     LilyPadNode result = currentFishNode;
+    //     float minDistance = Vector3.Distance(currentFishNode.transform.position, testTargetNode.transform.position);
+    //     foreach(LilyPadNode neighbor in currentFishNode.Neighbors)
+    //     {
+    //         float distance = Vector3.Distance(neighbor.transform.position, target.transform.position);
+    //         if(distance < minDistance)
+    //         {
+    //             minDistance = distance;
+    //             result = neighbor;
+    //         }
+    //     }
+    //     return result;
+    // }
 
     List<LilyPadNode> CalculatePath(LilyPadNode start, LilyPadNode target) //uses djisktra
     {
@@ -115,11 +170,7 @@ public class FishEnemy : MonoBehaviour
             LilyPadNode current = frontier[toPop];
             frontier.RemoveAt(toPop);
             if (!visited.Add(current)) continue; // already finalized (duplicate entry)
-            if (current == target) //path reached
-            {
-
-                break;
-            }
+            if (current == target) break; //path reached
 
             foreach (LilyPadNode neighbor in current.Neighbors)
             {
@@ -135,7 +186,7 @@ public class FishEnemy : MonoBehaviour
                 }
             } 
         }
-
+        // back track
         List<LilyPadNode> result = new List<LilyPadNode>();
         LilyPadNode trace = target;
         result.Insert(0, trace);
@@ -163,48 +214,5 @@ public class FishEnemy : MonoBehaviour
         }
 
     }
-        
-
-
-        // Dictionary<float, LilyPadNode> map = new Dictionary<float, LilyPadNode>(); //<distance, reference to node>
-        // //distances[current] = 0;
-        // int trace = 0; //always start at 0
-        // map.Add(0, currentFishNode);
-        // //in a while loop
-        // while(true)
-        // {
-        //     LilyPadNode current = map.ElementAt(trace).Value;
-        //     float offsetDistance = map.ElementAt(trace).Key;
-        //     foreach(LilyPadNode neighbor in current.Neighbors)
-        //     {
-        //         float distance = Vector3.Distance(neighbor.transform.position, current.transform.position) + offsetDistance;
-        //         map.Add(distance, neighbor);
-        //     }
-        // }
-
-        // List<int> distances = new List<int>();
-        // List<LilyPadNode> parents = new List<LilyPadNode>();
-        // Dictionary<int, LilyPadNode> map = new Dictionary<int, LilyPadNode>(); //<Distance parent pair index, node>
-        //int[] distances = new int[nodes.Length];
-        //LilyPadNode[] parents = new LilyPadNode[nodes.Length];
-        // for(int i = 0; i < nodes.Length; i++)
-        // {
-        //     distances[i] = int.MaxValue;
-        //     parents[i] = null;
-        // }
-
-        // distances.Add(0);
-        // parents.Add(null);
-        // map.Add(0, currentFishNode);
-        // LilyPadNode current = currentFishNode; //=get current node
-        // float distanceOfffset = 
-        // foreach(LilyPadNode neighbor in current.Neighbors)
-        // {
-        //     float distance = Vector3.Distance(neighbor.transform.position, current.transform.position) + offsetDistance;
-        //     map.Add(distance, neighbor);
-        // }
-        // List<LilyPadNode> result = new List<LilyPadNode>();
-        // return result;
-
 
 }
