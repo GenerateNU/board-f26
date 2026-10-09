@@ -20,22 +20,33 @@ public abstract class BasicNode : MonoBehaviour
     public abstract NodeHazard NodeType { get; }
 
 
-    // if node is walkable by current frog, highlight/vfx/etc.
+    // if node is walkable by current frog, highlight/vfx/etc. glows only for this node
     // Can make overrides for this if we want different vfx for different node types
     public void Highlight(bool enable)
     {
         lilypadGlow.SetActive(enable);
     }
 
-    public void HighlightAllNeighbors()
+    // Called by FrogMove: true at the start of its turn, false when it hops or its turn ends.
+    public void HighlightNeighbors(bool enable)
     {
         for (int i = 0; i < Neighbors.Count; i++)
         {
-            if (Neighbors[i].IsTraversable)
+            if (neighbors[i] == null) { continue; }
+
+            // Only light up pads the frog can actually move to,
+            // but always turn them all off so nothing gets stuck glowing.
+            if (!enable || Neighbors[i].IsTraversable)
             {
                 Neighbors[i].Highlight(true);
             }
         }
+    }
+
+    public void SpawnObjectOnPad(GameObject obj)
+    {
+        GameObject worldObj = Instantiate(obj, transform.position, Quaternion.identity);
+        worldObj.transform.SetParent(gameObject.transform, true);
     }
 
     void OnDrawGizmos()

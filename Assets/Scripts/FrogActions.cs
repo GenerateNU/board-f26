@@ -15,7 +15,7 @@ public class FrogActions : MonoBehaviour
 {
     // sprint 2 skel
     // needs to be public to check for respawn
-    public LilyPadNode respawnNode; 
+    public BasicNode respawnNode;
 
     [SerializeField]
     private GameObject eggPrefab;
@@ -63,20 +63,30 @@ public class FrogActions : MonoBehaviour
     // croak, lay egg, hop again etc.
     private void Croak()
     {
-        foreach(LilyPadNode node in gameObject.GetComponent<FrogMove>().GetLilyPadFrogOn().Neighbors)
+        foreach (BasicNode node in gameObject.GetComponent<FrogMove>().GetLilyPadFrogOn().Neighbors)
         {
-            node.SetHazard(NodeHazard.None);
-            foreach(LilyPadNode childNode in node.Neighbors)
+            UseCroakOnMiteNode(node);
+
+            foreach (BasicNode childNode in node.Neighbors)
             {
-                childNode.SetHazard(NodeHazard.None);
+                UseCroakOnMiteNode(childNode);
             }
         }
         HasActedThisTurn = true;
     }
 
+    private void UseCroakOnMiteNode(BasicNode node)
+    {
+        if (node.NodeType == NodeHazard.Mites)
+        {
+            MiteNode tempNode = (MiteNode)node;
+            tempNode.CroakUsedOnPad();
+        }
+    }
+
     private void LayEgg()
     {
-        LilyPadNode currentPad = gameObject.GetComponent<FrogMove>().GetLilyPadFrogOn();
+        BasicNode currentPad = gameObject.GetComponent<FrogMove>().GetLilyPadFrogOn();
         currentPad.SpawnObjectOnPad(eggPrefab);
         respawnNode = currentPad;
         HasActedThisTurn = true;

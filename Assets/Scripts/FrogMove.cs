@@ -66,7 +66,7 @@ public class FrogMove : MonoBehaviour
         if (_currentLilyPad != null) _currentLilyPad.HighlightNeighbors(on);
     }
 
-    public bool TryHopTo(LilyPadNode clickedLilyPad)
+    public bool TryHopTo(BasicNode clickedLilyPad)
     {
         var turnManager = TurnManager.Instance;
         if (turnManager == null || turnManager.CurrentPlayerNumber != _assignedPlayer) return false; // not our turn
@@ -79,7 +79,7 @@ public class FrogMove : MonoBehaviour
         return true;
     }
 
-    public bool IsValidMove(LilyPadNode clickedLilyPad)
+    public bool IsValidMove(BasicNode clickedLilyPad)
     {
         if (clickedLilyPad == null || _currentLilyPad == null) return false;
         if (clickedLilyPad == _currentLilyPad) return false;
@@ -88,12 +88,16 @@ public class FrogMove : MonoBehaviour
     }
 
     // Updates the current lilypad to the given one and moves the frog toward it
-    private void ChangeFrogLilyPad(LilyPadNode newLilyPad)
+    private void ChangeFrogLilyPad(BasicNode newLilyPad)
     {
+        if (!newLilyPad.IsTraversable) { return; }
+
         _isHopping = true;
         InputHandler.Instance?.BeginAnimation();
 
         _ = MoveFrog(newLilyPad.transform.position);
+        _currentLilyPad.IsOccupied = false;
+        newLilyPad.IsOccupied = true;
 
         // Update current lilypad
         _currentLilyPad = newLilyPad;
