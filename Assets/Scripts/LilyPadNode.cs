@@ -19,14 +19,31 @@ public class LilyPadNode : MonoBehaviour
     public NodeHazard Hazard { get; set; } = NodeHazard.None;
     public bool IsTraversable => Hazard != NodeHazard.Mites && !IsOccupied;
 
-    public void Highlight(bool enable) 
-    { 
+    // Glow for THIS pad only.
+    public void Highlight(bool enable)
+    {
         // if node is walkable by current frog, highlight/vfx/etc.
     }
 
-    public void SetHazard(NodeHazard hazard) 
-    { 
-        Hazard = hazard; 
+    // Called by FrogMove: true at the start of its turn, false when it hops or its turn ends.
+    public void HighlightNeighbors(bool enable)
+    {
+        foreach (LilyPadNode neighbor in neighbors)
+        {
+            if (neighbor == null) continue;
+
+            // Only light up pads the frog can actually move to,
+            // but always turn them all off so nothing gets stuck glowing.
+            if (!enable || neighbor.IsTraversable)
+            {
+                neighbor.Highlight(enable);
+            }
+        }
+    }
+
+    public void SetHazard(NodeHazard hazard)
+    {
+        Hazard = hazard;
     }
 
     void OnDrawGizmos()

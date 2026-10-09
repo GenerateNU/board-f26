@@ -1,10 +1,18 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class FrogMove : MonoBehaviour
 {
+    [Header("Turn")]
+    [Tooltip("Which player (1-3) controls this frog.")]
+    [SerializeField, Range(1, TurnManager.MaxPlayers)]
+    private int _assignedPlayer = 1;
+
+    // One hop per turn. Reset in StartTurn().
+    public bool HasMovedThisTurn { get; private set; }
+
+    [Header("Movement")]
     [SerializeField]
     private LilyPadNode _startingLilyPad;
     [Tooltip("Smaller numbers are faster speeds. 0.5 would make it 2x faster 2 would make it 1/2 slower.")]
@@ -14,26 +22,26 @@ public class FrogMove : MonoBehaviour
     [SerializeField]
     private float _moveTimeStep;
     private LilyPadNode _currentLilyPad;
+    private bool _isHopping;
 
-    // for sprint 2
-    public bool HasMovedThisTurn { get; set; } = false;
+    public int AssignedPlayer => _assignedPlayer;
 
-    // These should probably be moved to a input handler/game controller script in the future as it should effect all frogs
-    [SerializeField]
-    private bool _preventInputMidHop;
-    private bool _inAnimation;
-    private InputAction _mouseClickAction;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         _currentLilyPad = _startingLilyPad;
-        _mouseClickAction = InputSystem.actions.FindAction("Attack");
+        if (_currentLilyPad == null) Debug.LogWarning($"{name} has no starting lily pad assigned.");
 
-        if (_mouseClickAction != null)
-        {
-            _mouseClickAction.performed += _ => MouseClicked();
-        }
+        if (TurnManager.Instance != null)
+            TurnManager.Instance.RegisterFrog(this, _assignedPlayer);
+        else
+            Debug.LogWarning($"{name}: no TurnManager in the scene, so this frog can't take turns.");
+    }
+
+    private void OnDestroy()
+    {
+        // Don't leave input locked if the frog is destroyed mid-hop.
+        if (_isHopping) InputHandler.Instance?.EndAnimation();
+        TurnManager.Instance?.UnregisterFrog(this, _assignedPlayer);
     }
 
     public LilyPadNode GetLilyPadFrogOn()
@@ -41,48 +49,51 @@ public class FrogMove : MonoBehaviour
         return _currentLilyPad;
     }
 
-    private void MouseClicked()
-    {
-        if (_inAnimation && _preventInputMidHop) { return; }
-        RaycastHit? hit = MakeRaycastFromMouse(Input.mousePosition);
 
-        // This should only be done if the frog is not currently moving (we can't move a moving frog)
-        if (!_inAnimation && hit != null) { CheckIfRayCastHitsLilyPad(hit.Value); }
+    public void StartTurn()
+    {
+        HasMovedThisTurn = false;
+        SetNeighborHighlights(true);
     }
 
-    // Makes a raycast from mouse and determines if any lilypads have been clicked
-    private RaycastHit? MakeRaycastFromMouse(Vector2 mouseLocation)
+    public void EndTurn()
     {
-        Ray ray = Camera.main.ScreenPointToRay(new Vector3(mouseLocation.x, mouseLocation.y, 0));
-        // Debug draw (uncomment if needed for debugging):
-        // Debug.DrawRay(ray.origin, ray.direction * 10, Color.yellow);
-
-        if (Physics.Raycast(ray.origin, ray.direction, out RaycastHit hit, 50))
-        {
-            return hit;
-        }
-
-        return null;
+        SetNeighborHighlights(false);
     }
 
-    // Checks if a raycast has hit a lilypad if it has move the frog to the lilypad
-    private void CheckIfRayCastHitsLilyPad(RaycastHit hit)
+    private void SetNeighborHighlights(bool on)
     {
-        LilyPadNode clickedLilypad = hit.transform.GetComponent<LilyPadNode>();
-
-        // Exit if a lilypad is not clicked/if lilypad is not a neighbor
-        if (!clickedLilypad) { return; }
-        if (!CheckIfLilyPadIsNeighbor(clickedLilypad)) { return; }
-
-        ChangeFrogLilyPad(hit.transform, clickedLilypad);
+        if (_currentLilyPad != null) _currentLilyPad.HighlightNeighbors(on);
     }
 
-    // Updates the current lilypad to the given one and moves the frog toward the given transform
-    private void ChangeFrogLilyPad(Transform lilyPad, LilyPadNode newLilyPad)
+    public bool TryHopTo(LilyPadNode clickedLilyPad)
     {
-        _inAnimation = true;
+        var turnManager = TurnManager.Instance;
+        if (turnManager == null || turnManager.CurrentPlayerNumber != _assignedPlayer) return false; // not our turn
+        if (HasMovedThisTurn || _isHopping) return false;                                             // already moved
+        if (!IsValidMove(clickedLilyPad)) return false;                                               // not a legal pad
 
-        _ = MoveFrog(lilyPad.position);
+        SetNeighborHighlights(false); // clear the glow before _currentLilyPad changes
+        HasMovedThisTurn = true;
+        ChangeFrogLilyPad(clickedLilyPad);
+        return true;
+    }
+
+    public bool IsValidMove(LilyPadNode clickedLilyPad)
+    {
+        if (clickedLilyPad == null || _currentLilyPad == null) return false;
+        if (clickedLilyPad == _currentLilyPad) return false;
+        if (!clickedLilyPad.IsTraversable) return false;
+        return CheckIfLilyPadIsNeighbor(clickedLilyPad);
+    }
+
+    // Updates the current lilypad to the given one and moves the frog toward it
+    private void ChangeFrogLilyPad(LilyPadNode newLilyPad)
+    {
+        _isHopping = true;
+        InputHandler.Instance?.BeginAnimation();
+
+        _ = MoveFrog(newLilyPad.transform.position);
 
         // Update current lilypad
         _currentLilyPad = newLilyPad;
@@ -91,20 +102,22 @@ public class FrogMove : MonoBehaviour
     // Actual piece movement logic
     private async Task MoveFrog(Vector3 newPosition)
     {
-        Vector3 originalPosition = this.gameObject.transform.position;
+        Vector3 originalPosition = transform.position;
         float currentTime = 0f;
 
-        while (this.gameObject.transform.position != newPosition)
+        while (transform.position != newPosition)
         {
-            this.gameObject.transform.position = Vector3.Lerp(originalPosition, newPosition, currentTime / _hopSpeed);
+            transform.position = Vector3.Lerp(originalPosition, newPosition, currentTime / _hopSpeed);
             await Awaitable.WaitForSecondsAsync(_moveTimeStep);
+            if (this == null) return; // frog was destroyed mid-hop
             currentTime += _moveTimeStep;
         }
 
-        _inAnimation = false;
+        _isHopping = false;
+        InputHandler.Instance?.EndAnimation();
     }
 
-    // Checks if the given lilypad is a neighbor of the clicked lilypad
+    // Checks if the given lilypad is a neighbor of the current lilypad
     private bool CheckIfLilyPadIsNeighbor(LilyPadNode clickedLilyPad)
     {
         int lilyPadID = clickedLilyPad.NodeID;
