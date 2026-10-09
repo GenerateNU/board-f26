@@ -38,7 +38,7 @@ public abstract class BasicNode : MonoBehaviour
             // but always turn them all off so nothing gets stuck glowing.
             if (!enable || Neighbors[i].IsTraversable)
             {
-                Neighbors[i].Highlight(true);
+                Neighbors[i].Highlight(enable);
             }
         }
     }

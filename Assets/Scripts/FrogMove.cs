@@ -61,7 +61,7 @@ public class FrogMove : MonoBehaviour
         SetNeighborHighlights(false);
     }
 
-    private void SetNeighborHighlights(bool on)
+    public void SetNeighborHighlights(bool on)
     {
         if (_currentLilyPad != null) _currentLilyPad.HighlightNeighbors(on);
     }

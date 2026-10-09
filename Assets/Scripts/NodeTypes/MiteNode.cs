@@ -31,6 +31,7 @@ public class MiteNode : LilyPadNode
     public void CroakUsedOnPad()
     {
         currentTurnsUntilMitesActive = turnsForMitesToReappear;
+        UpdateMaterial(currentTurnsUntilMitesActive == 0);
     }
 
     private void UpdateMaterial(bool mitesActive)

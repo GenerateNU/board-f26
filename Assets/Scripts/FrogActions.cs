@@ -19,8 +19,14 @@ public class FrogActions : MonoBehaviour
 
     [SerializeField]
     private GameObject eggPrefab;
+    private FrogMove frogMove;
 
     public bool HasActedThisTurn { get; set; } = false;
+
+    void Start()
+    {
+        frogMove = gameObject.GetComponent<FrogMove>();
+    }
 
     public bool IsActionAvailable(ActionType action)
     {
@@ -63,7 +69,7 @@ public class FrogActions : MonoBehaviour
     // croak, lay egg, hop again etc.
     private void Croak()
     {
-        foreach (BasicNode node in gameObject.GetComponent<FrogMove>().GetLilyPadFrogOn().Neighbors)
+        foreach (BasicNode node in frogMove.GetLilyPadFrogOn().Neighbors)
         {
             UseCroakOnMiteNode(node);
 
@@ -73,6 +79,9 @@ public class FrogActions : MonoBehaviour
             }
         }
         HasActedThisTurn = true;
+
+        // Rehighlight so mite nodes will be highlighted
+        if (!frogMove.HasMovedThisTurn) { frogMove.SetNeighborHighlights(true); }
     }
 
     private void UseCroakOnMiteNode(BasicNode node)
@@ -97,6 +106,9 @@ public class FrogActions : MonoBehaviour
         // We don't have any way of determining how many times a frog can hop / what a hop is yet.
         // Once we do, this should essentially do hops += 1.
         HasActedThisTurn = true;
+
+        // Rehighlight so new nodes will be highlighted
+        frogMove.SetNeighborHighlights(true);
     }
 
     private void EndTurn()
