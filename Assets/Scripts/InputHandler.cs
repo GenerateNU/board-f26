@@ -90,7 +90,7 @@ public class InputHandler : MonoBehaviour
         var turnManager = TurnManager.Instance;
         if (turnManager == null || turnManager.CurrentPhase != TurnManager.TurnPhase.Player) return;
 
-        LilyPadNode clickedLilyPad = GetLilyPadUnderMouse();
+        BasicNode clickedLilyPad = GetLilyPadUnderMouse();
         if (clickedLilyPad == null) return;
 
         FrogMove frog = turnManager.GetCurrentFrog();
@@ -104,7 +104,7 @@ public class InputHandler : MonoBehaviour
     }
 
     // Makes a raycast from the mouse and returns the lily pad it hit, if any
-    private LilyPadNode GetLilyPadUnderMouse()
+    private BasicNode GetLilyPadUnderMouse()
     {
         if (_camera == null || Mouse.current == null) return null;
 
@@ -114,7 +114,7 @@ public class InputHandler : MonoBehaviour
 
         if (Physics.Raycast(ray, out RaycastHit hit, _maxRayDistance))
         {
-            return hit.transform.GetComponent<LilyPadNode>();
+            return hit.transform.GetComponent<BasicNode>();
         }
         return null;
     }

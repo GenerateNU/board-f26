@@ -14,14 +14,14 @@ public class FrogMove : MonoBehaviour
 
     [Header("Movement")]
     [SerializeField]
-    private LilyPadNode _startingLilyPad;
+    private BasicNode _startingLilyPad;
     [Tooltip("Smaller numbers are faster speeds. 0.5 would make it 2x faster 2 would make it 1/2 slower.")]
     [SerializeField]
     private float _hopSpeed;
     [Tooltip("Lower numbers allow for movement to be smoother but may be more performance intensive.")]
     [SerializeField]
     private float _moveTimeStep;
-    private LilyPadNode _currentLilyPad;
+    private BasicNode _currentLilyPad;
     private bool _isHopping;
 
     public int AssignedPlayer => _assignedPlayer;
@@ -44,7 +44,7 @@ public class FrogMove : MonoBehaviour
         TurnManager.Instance?.UnregisterFrog(this, _assignedPlayer);
     }
 
-    public LilyPadNode GetLilyPadFrogOn()
+    public BasicNode GetLilyPadFrogOn()
     {
         return _currentLilyPad;
     }
@@ -61,12 +61,12 @@ public class FrogMove : MonoBehaviour
         SetNeighborHighlights(false);
     }
 
-    private void SetNeighborHighlights(bool on)
+    public void SetNeighborHighlights(bool on)
     {
         if (_currentLilyPad != null) _currentLilyPad.HighlightNeighbors(on);
     }
 
-    public bool TryHopTo(LilyPadNode clickedLilyPad)
+    public bool TryHopTo(BasicNode clickedLilyPad)
     {
         var turnManager = TurnManager.Instance;
         if (turnManager == null || turnManager.CurrentPlayerNumber != _assignedPlayer) return false; // not our turn
@@ -79,7 +79,7 @@ public class FrogMove : MonoBehaviour
         return true;
     }
 
-    public bool IsValidMove(LilyPadNode clickedLilyPad)
+    public bool IsValidMove(BasicNode clickedLilyPad)
     {
         if (clickedLilyPad == null || _currentLilyPad == null) return false;
         if (clickedLilyPad == _currentLilyPad) return false;
@@ -88,12 +88,16 @@ public class FrogMove : MonoBehaviour
     }
 
     // Updates the current lilypad to the given one and moves the frog toward it
-    private void ChangeFrogLilyPad(LilyPadNode newLilyPad)
+    private void ChangeFrogLilyPad(BasicNode newLilyPad)
     {
+        if (!newLilyPad.IsTraversable) { return; }
+
         _isHopping = true;
         InputHandler.Instance?.BeginAnimation();
 
         _ = MoveFrog(newLilyPad.transform.position);
+        _currentLilyPad.IsOccupied = false;
+        newLilyPad.IsOccupied = true;
 
         // Update current lilypad
         _currentLilyPad = newLilyPad;
@@ -118,10 +122,10 @@ public class FrogMove : MonoBehaviour
     }
 
     // Checks if the given lilypad is a neighbor of the current lilypad
-    private bool CheckIfLilyPadIsNeighbor(LilyPadNode clickedLilyPad)
+    private bool CheckIfLilyPadIsNeighbor(BasicNode clickedLilyPad)
     {
         int lilyPadID = clickedLilyPad.NodeID;
-        IReadOnlyList<LilyPadNode> neighbors = _currentLilyPad.Neighbors;
+        IReadOnlyList<BasicNode> neighbors = _currentLilyPad.Neighbors;
 
         for (int i = 0; i < neighbors.Count; i++)
         {
