@@ -44,9 +44,9 @@ Light:
   serializedVersion: 12
   m_Type: 0
   m_Color: {r: 1, g: 0.8998451, b: 0, a: 1}
-  m_Intensity: 1
+  m_Intensity: 5
   m_Range: 10
-  m_SpotAngle: 42.314507
+  m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize2D: {x: 0.5, y: 0.5}
   m_Shadows:
@@ -256,5 +256,7 @@ MonoBehaviour:
   nodeID: 0
   neighbors: []
   lilypadGlow: {fileID: 280603474138353263}
+  isGoalPad: 0
   _lilyPadMat: {fileID: 2100000, guid: 34962a03f4b06ae4ab019fd68e9394ed, type: 2}
   _miteMat: {fileID: 2100000, guid: 1f474343f5a326247a5a7b164caf8bed, type: 2}
+  turnsForMitesToReappear: 3
