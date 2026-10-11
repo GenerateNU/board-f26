@@ -24,13 +24,7 @@ public class AlligatorNode : BasicNode
     private bool makeAlligatorAwakeOnTurn = false;
     private bool alligatorAwake = false;
 
-    // Enemy manager script?
-    void Start()
-    {
-        TurnManager.Instance.OnTurnChanged += DoAlligatorTurn;
-    }
-
-    public void CroakUsedOnPad()
+    public override void CroakUsedOnPad()
     {
         alligatorAwake = true;
     }
@@ -41,16 +35,15 @@ public class AlligatorNode : BasicNode
         {
             return;
         }
+
         if (!alligatorAwake)
         {
-            Debug.Log("Alligator sleeping");
-            alligatorAwake = makeAlligatorAwakeOnTurn;
+            ChangeAlligatorAwake(makeAlligatorAwakeOnTurn);
+            makeAlligatorAwakeOnTurn = false;
             return;
         }
 
-        // Best way to kill frog on lilypad may be an action callback?
-        // Other options: have all frogmoves, check if any are on this lilypad
-        Debug.Log("Alligator awake!");
+        // Kill any frogs or eggs on the alligator
         List<FrogMove> allFrogs = TurnManager.Instance.GetAllFrogs();
         foreach (FrogMove frog in allFrogs)
         {
@@ -61,6 +54,12 @@ public class AlligatorNode : BasicNode
             }
         }
 
-        alligatorAwake = false;
+        ChangeAlligatorAwake(false);
+    }
+
+    // Will mainly be for if we want visual changes for this
+    private void ChangeAlligatorAwake(bool awake)
+    {
+        alligatorAwake = awake;
     }
 }

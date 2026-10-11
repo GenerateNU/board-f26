@@ -71,31 +71,17 @@ public class FrogActions : MonoBehaviour
     {
         foreach (BasicNode node in frogMove.GetLilyPadFrogOn().Neighbors)
         {
-            UseCroakOnNode(node);
+            node.CroakUsedOnPad();
 
             foreach (BasicNode childNode in node.Neighbors)
             {
-                UseCroakOnNode(childNode);
+                node.CroakUsedOnPad();
             }
         }
         HasActedThisTurn = true;
 
         // Rehighlight so mite nodes will be highlighted
         if (!frogMove.HasMovedThisTurn) { frogMove.SetNeighborHighlights(true); }
-    }
-
-    private void UseCroakOnNode(BasicNode node)
-    {
-        if (node.NodeType == NodeHazard.Mites)
-        {
-            MiteNode tempNode = (MiteNode)node;
-            tempNode.CroakUsedOnPad();
-        }
-        else if (node.NodeType == NodeHazard.Alligator)
-        {
-            AlligatorNode tempNode = (AlligatorNode)node;
-            tempNode.CroakUsedOnPad();
-        }
     }
 
     private void LayEgg()
@@ -108,6 +94,11 @@ public class FrogActions : MonoBehaviour
 
     private void HopAgain()
     {
+        if (frogMove.GetLilyPadFrogOn().NodeType == NodeHazard.Mites)
+        {
+            return;
+        }
+
         HasActedThisTurn = true;
         frogMove.HopAgainUsed();
 

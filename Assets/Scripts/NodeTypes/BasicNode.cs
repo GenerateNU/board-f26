@@ -38,6 +38,8 @@ public abstract class BasicNode : MonoBehaviour
         }
     }
 
+    public virtual void CroakUsedOnPad() { }
+
     public void SpawnObjectOnPad(GameObject obj)
     {
         GameObject worldObj = Instantiate(obj, transform.position, Quaternion.identity);
