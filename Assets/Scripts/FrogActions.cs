@@ -71,11 +71,11 @@ public class FrogActions : MonoBehaviour
     {
         foreach (BasicNode node in frogMove.GetLilyPadFrogOn().Neighbors)
         {
-            UseCroakOnMiteNode(node);
+            UseCroakOnNode(node);
 
             foreach (BasicNode childNode in node.Neighbors)
             {
-                UseCroakOnMiteNode(childNode);
+                UseCroakOnNode(childNode);
             }
         }
         HasActedThisTurn = true;
@@ -84,11 +84,16 @@ public class FrogActions : MonoBehaviour
         if (!frogMove.HasMovedThisTurn) { frogMove.SetNeighborHighlights(true); }
     }
 
-    private void UseCroakOnMiteNode(BasicNode node)
+    private void UseCroakOnNode(BasicNode node)
     {
         if (node.NodeType == NodeHazard.Mites)
         {
             MiteNode tempNode = (MiteNode)node;
+            tempNode.CroakUsedOnPad();
+        }
+        else if (node.NodeType == NodeHazard.Alligator)
+        {
+            AlligatorNode tempNode = (AlligatorNode)node;
             tempNode.CroakUsedOnPad();
         }
     }
@@ -103,9 +108,8 @@ public class FrogActions : MonoBehaviour
 
     private void HopAgain()
     {
-        // We don't have any way of determining how many times a frog can hop / what a hop is yet.
-        // Once we do, this should essentially do hops += 1.
         HasActedThisTurn = true;
+        frogMove.HopAgainUsed();
 
         // Rehighlight so new nodes will be highlighted
         frogMove.SetNeighborHighlights(true);

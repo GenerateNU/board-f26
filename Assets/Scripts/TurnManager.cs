@@ -125,12 +125,22 @@ public class TurnManager : MonoBehaviour
             _frogs.Remove(playerNumber);
     }
 
-    
+
     public FrogMove GetCurrentFrog()
     {
         if (CurrentPhase != TurnPhase.Player) return null;
         _frogs.TryGetValue(CurrentPlayerNumber, out var frog);
         return frog;
+    }
+
+    public List<FrogMove> GetAllFrogs()
+    {
+        List<FrogMove> allFrogs = new List<FrogMove>();
+        foreach (var kvp in _frogs)
+        {
+            allFrogs.Add(kvp.Value);
+        }
+        return allFrogs;
     }
 
     public void AdvanceTurn()

@@ -49,7 +49,6 @@ public class FrogMove : MonoBehaviour
         return _currentLilyPad;
     }
 
-
     public void StartTurn()
     {
         HasMovedThisTurn = false;
@@ -59,6 +58,17 @@ public class FrogMove : MonoBehaviour
     public void EndTurn()
     {
         SetNeighborHighlights(false);
+    }
+
+    // Let the player move again this turn
+    public void HopAgainUsed()
+    {
+        HasMovedThisTurn = false;
+    }
+
+    public void KillFrog()
+    {
+        Destroy(this.gameObject);
     }
 
     public void SetNeighborHighlights(bool on)
@@ -77,6 +87,11 @@ public class FrogMove : MonoBehaviour
         HasMovedThisTurn = true;
         ChangeFrogLilyPad(clickedLilyPad);
         return true;
+    }
+
+    public bool ShouldEndTurn(bool actionUsed)
+    {
+        return actionUsed && this.HasMovedThisTurn;
     }
 
     public bool IsValidMove(BasicNode clickedLilyPad)
@@ -124,12 +139,11 @@ public class FrogMove : MonoBehaviour
     // Checks if the given lilypad is a neighbor of the current lilypad
     private bool CheckIfLilyPadIsNeighbor(BasicNode clickedLilyPad)
     {
-        int lilyPadID = clickedLilyPad.NodeID;
         IReadOnlyList<BasicNode> neighbors = _currentLilyPad.Neighbors;
 
         for (int i = 0; i < neighbors.Count; i++)
         {
-            if (lilyPadID == neighbors[i].NodeID)
+            if (clickedLilyPad == neighbors[i])
             {
                 return true;
             }

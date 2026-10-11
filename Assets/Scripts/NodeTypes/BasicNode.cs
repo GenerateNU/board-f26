@@ -3,12 +3,7 @@ using UnityEngine;
 
 public abstract class BasicNode : MonoBehaviour
 {
-    // nodeID and future level design note: Technically this can be generated at the start of runtime 
-    // as long as it isn't the same as any other node.
-    // If we end up having really big levels we should have a nodeID creation script.
     [Tooltip("Fields which change per node.")]
-    [SerializeField] private int nodeID;
-    public int NodeID { get { return nodeID; } }
     [SerializeField] private List<BasicNode> neighbors = new();
     public IReadOnlyList<BasicNode> Neighbors => neighbors;
     [Tooltip("Should be consistent across most objects of this prefab.")]
