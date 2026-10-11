@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Board.Input;
 
 public class InputHandler : MonoBehaviour
 {
@@ -23,8 +24,12 @@ public class InputHandler : MonoBehaviour
     [Tooltip("Press Space to advance the turn (for testing).")]
     [SerializeField] private bool _enableSpaceToAdvance = true;
 
+    [SerializeField] private bool useDeviceInput = true;
+
     public bool InAnimation => _inAnimation;
     public bool IsInputBlocked => _preventInputMidAnimation && _inAnimation;
+
+    
 
     private void Awake()
     {
@@ -49,8 +54,10 @@ public class InputHandler : MonoBehaviour
 
     private void OnEnable()
     {
+        if(useDeviceInput) DeviceInputManager.FingerDown += OnFingerDown;
+
         if (_mouseClickAction == null) return;
-        _mouseClickAction.performed += OnMouseClick;
+        if(!useDeviceInput) _mouseClickAction.performed += OnMouseClick;
         _mouseClickAction.Enable();
     }
 
@@ -90,7 +97,28 @@ public class InputHandler : MonoBehaviour
         var turnManager = TurnManager.Instance;
         if (turnManager == null || turnManager.CurrentPhase != TurnManager.TurnPhase.Player) return;
 
-        BasicNode clickedLilyPad = GetLilyPadUnderMouse();
+        BasicNode clickedLilyPad = GetLilyPadUnderMouse(Mouse.current.position.ReadValue());
+        if (clickedLilyPad == null) return;
+
+        FrogMove frog = turnManager.GetCurrentFrog();
+        if (frog == null)
+        {
+            Debug.Log($"{turnManager.CurrentTurnLabel} has no frog assigned, so the click was ignored.");
+            return;
+        }
+
+        frog.TryHopTo(clickedLilyPad);
+    }
+
+    private void OnFingerDown(BoardContact contact)
+    {
+        Debug.Log("finger down");
+        if (IsInputBlocked) return;
+
+        var turnManager = TurnManager.Instance;
+        if (turnManager == null || turnManager.CurrentPhase != TurnManager.TurnPhase.Player) return;
+
+        BasicNode clickedLilyPad = GetLilyPadUnderMouse(contact.screenPosition);
         if (clickedLilyPad == null) return;
 
         FrogMove frog = turnManager.GetCurrentFrog();
@@ -104,11 +132,11 @@ public class InputHandler : MonoBehaviour
     }
 
     // Makes a raycast from the mouse and returns the lily pad it hit, if any
-    private BasicNode GetLilyPadUnderMouse()
+    private BasicNode GetLilyPadUnderMouse(Vector2 ScreenPoint)
     {
         if (_camera == null || Mouse.current == null) return null;
 
-        Ray ray = _camera.ScreenPointToRay(Mouse.current.position.ReadValue());
+        Ray ray = _camera.ScreenPointToRay(ScreenPoint);
         //Debugging
         Debug.DrawRay(ray.origin, ray.direction * _maxRayDistance, Color.yellow, 1f);
 
