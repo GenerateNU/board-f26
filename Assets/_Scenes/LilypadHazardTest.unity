@@ -404,23 +404,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 452246138}
   m_CullTransparentMesh: 1
---- !u!1 &766758939 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1776111669156554458, guid: 7b6b2ef8beced86479942b9fb816be9f, type: 3}
-  m_PrefabInstance: {fileID: 6503724225135306542}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &766758942 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8545398376676824306, guid: 7b6b2ef8beced86479942b9fb816be9f, type: 3}
-  m_PrefabInstance: {fileID: 6503724225135306542}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 766758939}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2da36f424be96c4c81c0955250a307e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FrogActions
---- !u!1001 &774196633
 --- !u!1001 &532623005
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -478,6 +461,22 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9e16eea08782fa04e840881451e97294, type: 3}
+--- !u!1 &766758939 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1776111669156554458, guid: 7b6b2ef8beced86479942b9fb816be9f, type: 3}
+  m_PrefabInstance: {fileID: 6503724225135306542}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &766758942 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8545398376676824306, guid: 7b6b2ef8beced86479942b9fb816be9f, type: 3}
+  m_PrefabInstance: {fileID: 6503724225135306542}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 766758939}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2da36f424be96c4c81c0955250a307e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FrogActions
 --- !u!1001 &771932118
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -547,17 +546,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
---- !u!114 &774196634 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6157787907189095142, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
-  m_PrefabInstance: {fileID: 774196633}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c66500ab00148204ea4975df1a8b3476, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LilyPadNode
 --- !u!114 &892656267 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3722424290851221768, guid: b9ea6b690fcd7ac458b40c396d43d2ee, type: 3}
@@ -668,9 +656,9 @@ MonoBehaviour:
   _clickActionName: Attack
   _preventInputMidAnimation: 1
   _enableSpaceToAdvance: 1
-  useDeviceInput: 1
+  useBoardInput: 1
   frogs:
-  - {fileID: 1768844332}
+  - {fileID: 0}
   GlyphActionPairs:
   - id: 0
     action: 0
@@ -680,6 +668,21 @@ MonoBehaviour:
     action: 2
   - id: 3
     action: 3
+--- !u!114 &1043019240
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1043019236}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1319cba38f4a2648b533ca948831d27, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyTurnManager
+  enemies:
+  - {fileID: 892656267}
+  - {fileID: 1304254998}
 --- !u!1 &1053912059
 GameObject:
   m_ObjectHideFlags: 0
@@ -2260,6 +2263,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c66500ab00148204ea4975df1a8b3476, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LilyPadNode
+--- !u!114 &1875419149 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6157787907189095142, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
+  m_PrefabInstance: {fileID: 771932118}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c66500ab00148204ea4975df1a8b3476, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LilyPadNode
 --- !u!1001 &2018597848
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2427,7 +2441,7 @@ PrefabInstance:
     - target: {fileID: 1325750563433140010, guid: b9ea6b690fcd7ac458b40c396d43d2ee, type: 3}
       propertyPath: 'neighbors.Array.data[1]'
       value: 
-      objectReference: {fileID: 774196634}
+      objectReference: {fileID: 1875419149}
     - target: {fileID: 1325750563433140010, guid: b9ea6b690fcd7ac458b40c396d43d2ee, type: 3}
       propertyPath: 'neighbors.Array.data[2]'
       value: 
@@ -2735,7 +2749,6 @@ SceneRoots:
   - {fileID: 6762109068066101863}
   - {fileID: 5405285353247206720}
   - {fileID: 1862527503}
-  - {fileID: 774196633}
   - {fileID: 1332431112}
   - {fileID: 1870869143}
   - {fileID: 6503724225135306542}
@@ -2745,3 +2758,4 @@ SceneRoots:
   - {fileID: 2018597848}
   - {fileID: 9215930777317776127}
   - {fileID: 532623005}
+  - {fileID: 771932118}
