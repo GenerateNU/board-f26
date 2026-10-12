@@ -101,6 +101,7 @@ public class InputHandler : MonoBehaviour
     public void OnActionButtonPressed(ActionType action)
     {
         if (useBoardInput) { return; }
+        if (TurnManager.Instance.CurrentPhase != TurnManager.TurnPhase.Player) return;
         FrogMove frog = TurnManager.Instance.GetCurrentFrog();
         frog.DoAction(action);
     }
