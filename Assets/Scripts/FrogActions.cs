@@ -74,7 +74,7 @@ public class FrogActions : MonoBehaviour
 
             foreach (BasicNode childNode in node.Neighbors)
             {
-                node.CroakUsedOnPad();
+                childNode.CroakUsedOnPad();
             }
         }
         HasActedThisTurn = true;
