@@ -194,7 +194,7 @@ public class TurnManager : MonoBehaviour
     {
         if (GetCurrentFrog() == null)
         {
-            while (GetCurrentFrog() == null && _currentPlayerIndex < _players.Count)
+            while (_currentPlayerIndex < _players.Count && GetCurrentFrog() == null)
             {
                 _currentPlayerIndex++;
             }

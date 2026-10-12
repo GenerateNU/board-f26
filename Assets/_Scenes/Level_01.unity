@@ -1479,6 +1479,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebebcccd32dd4054fbdb183218c46908, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AlligatorNode
+--- !u!114 &349437805 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3722424290851221768, guid: b9ea6b690fcd7ac458b40c396d43d2ee, type: 3}
+  m_PrefabInstance: {fileID: 349437800}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a95da768db03d364a92004fe8925d6b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AlligatorEnemy
 --- !u!1001 &362497148
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2452,7 +2463,7 @@ PrefabInstance:
     - target: {fileID: 6157787907189095142, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
       propertyPath: 'neighbors.Array.data[4]'
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 245156577}
     - target: {fileID: 6157787907189095142, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
       propertyPath: 'neighbors.Array.data[5]'
       value: 
@@ -2927,7 +2938,7 @@ PrefabInstance:
     - target: {fileID: 6157787907189095142, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
       propertyPath: 'neighbors.Array.data[5]'
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 245156577}
     - target: {fileID: 7188188502833689486, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.36
@@ -5001,7 +5012,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6617130360181876341, guid: e617e6c48146e28409fdbaaee72c516c, type: 3}
       propertyPath: enemies.Array.size
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6617130360181876341, guid: e617e6c48146e28409fdbaaee72c516c, type: 3}
       propertyPath: 'enemies.Array.data[0]'
@@ -5009,6 +5020,10 @@ PrefabInstance:
       objectReference: {fileID: 1186186387}
     - target: {fileID: 6617130360181876341, guid: e617e6c48146e28409fdbaaee72c516c, type: 3}
       propertyPath: 'enemies.Array.data[1]'
+      value: 
+      objectReference: {fileID: 349437805}
+    - target: {fileID: 6617130360181876341, guid: e617e6c48146e28409fdbaaee72c516c, type: 3}
+      propertyPath: 'enemies.Array.data[2]'
       value: 
       objectReference: {fileID: 1715136580}
     - target: {fileID: 7684887356647816096, guid: e617e6c48146e28409fdbaaee72c516c, type: 3}

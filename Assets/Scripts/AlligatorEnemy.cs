@@ -21,13 +21,22 @@ public class AlligatorEnemy : AEnemy
     public override void DoEnemyTurn()
     {
         animationFinished = false;
-        // There isn't enough logic in AlligatorNode to justify 
-        // dealing with the field sharing here.
+
         // TODO: Add art/death animation above if necessary and await on it
+        if (!alligatorAwake)
+        {
+            alligatorAwake = makeAlligatorAwakeOnTurn;
+            makeAlligatorAwakeOnTurn = false;
+            animationFinished = true;
+            return;
+        }
+
         for (int i = 0; i < alligatorNodes.Length; i++)
         {
-            alligatorNodes[i].DoAlligatorTurn(makeAlligatorAwakeOnTurn, alligatorAwake, i == alligatorNodes.Length - 1);
+            alligatorNodes[i].KillFrogsOnAlligator();
         }
+
+        alligatorAwake = false;
         animationFinished = true;
     }
 }

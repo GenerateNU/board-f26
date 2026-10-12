@@ -34,17 +34,10 @@ public class AlligatorNode : BasicNode
         alligatorEnemy.MakeAlligatorAwake(true);
     }
 
-    public void DoAlligatorTurn(bool makeAlligatorAwakeOnTurn, bool alligatorAwake, bool resetVariables)
+    public void KillFrogsOnAlligator()
     {
         if (TurnManager.Instance.CurrentPhase != TurnManager.TurnPhase.Enemy)
         {
-            return;
-        }
-
-        if (!alligatorAwake)
-        {
-            alligatorEnemy.MakeAlligatorAwake(makeAlligatorAwakeOnTurn);
-            if (resetVariables) { alligatorEnemy.MakeAlligatorAwakeOnTurn(false); }
             return;
         }
 
@@ -57,7 +50,5 @@ public class AlligatorNode : BasicNode
                 frog.KillFrog();
             }
         }
-
-        if (resetVariables) { alligatorEnemy.MakeAlligatorAwake(false); }
     }
 }

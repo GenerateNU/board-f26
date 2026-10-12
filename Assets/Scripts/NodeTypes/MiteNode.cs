@@ -11,7 +11,7 @@ public class MiteNode : LilyPadNode
     [SerializeField]
     private Material _miteMat;
     public override bool IsTraversable => !IsOccupied;
-    public override NodeHazard NodeType => NodeHazard.Mites;
+    public override NodeHazard NodeType => MitesActive ? NodeHazard.Mites : NodeHazard.None;
     private Renderer miteRenderer;
     public bool MitesActive { get; private set; }
 
