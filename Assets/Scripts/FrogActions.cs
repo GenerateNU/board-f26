@@ -82,6 +82,7 @@ public class FrogActions : MonoBehaviour
 
         // Rehighlight so mite nodes will be highlighted
         if (!frogMove.HasMovedThisTurn) { frogMove.SetNeighborHighlights(true); }
+        if (frogMove.ShouldEndTurn(HasActedThisTurn)) { EndTurn(); }
     }
 
     private void LayEgg()
@@ -90,6 +91,7 @@ public class FrogActions : MonoBehaviour
         currentPad.SpawnObjectOnPad(eggPrefab);
         respawnNode = currentPad;
         HasActedThisTurn = true;
+        if (frogMove.ShouldEndTurn(HasActedThisTurn)) { EndTurn(); }
     }
 
     private void HopAgain()
@@ -104,9 +106,10 @@ public class FrogActions : MonoBehaviour
 
         // Rehighlight so new nodes will be highlighted
         frogMove.SetNeighborHighlights(true);
+        if (frogMove.ShouldEndTurn(HasActedThisTurn)) { EndTurn(); }
     }
 
-    private void EndTurn()
+    public void EndTurn()
     {
         TurnManager.Instance.AdvanceTurn();
         HasActedThisTurn = false;

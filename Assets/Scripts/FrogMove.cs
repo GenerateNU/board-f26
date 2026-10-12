@@ -23,6 +23,8 @@ public class FrogMove : MonoBehaviour
     private float _moveTimeStep;
     private BasicNode _currentLilyPad;
     private bool _isHopping;
+    private FrogActions _frogActions;
+    private int _hopsLeft = 1;
 
     public int AssignedPlayer => _assignedPlayer;
 
@@ -32,8 +34,13 @@ public class FrogMove : MonoBehaviour
     }
     void Start()
     {
-        //_currentLilyPad = _startingLilyPad;
         if (_currentLilyPad == null) Debug.LogWarning($"{name} has no starting lily pad assigned.");
+        _frogActions = this.GetComponent<FrogActions>();
+
+        if (!_frogActions)
+        {
+            Debug.Log($"Missing frog actions for {name}, will not be able to cycle through turns.");
+        }
 
         if (TurnManager.Instance != null)
             TurnManager.Instance.RegisterFrog(this, _assignedPlayer);
@@ -58,6 +65,7 @@ public class FrogMove : MonoBehaviour
     public void StartTurn()
     {
         HasMovedThisTurn = false;
+        _hopsLeft = 1;
         SetNeighborHighlights(true);
     }
 
@@ -70,6 +78,7 @@ public class FrogMove : MonoBehaviour
     // May be best to have a Hops left variable so the player can do this in any order
     public void HopAgainUsed()
     {
+        _hopsLeft++;
         HasMovedThisTurn = false;
     }
 
@@ -91,8 +100,17 @@ public class FrogMove : MonoBehaviour
         if (!IsValidMove(clickedLilyPad)) return false;                                               // not a legal pad
 
         SetNeighborHighlights(false); // clear the glow before _currentLilyPad changes
-        HasMovedThisTurn = true;
-        ChangeFrogLilyPad(clickedLilyPad);
+        // In the case the user uses HopAgain before their first move count the first hop as their action hop
+        _hopsLeft--;
+        if (_hopsLeft < 1) { HasMovedThisTurn = true; }
+        ChangeFrogLilyPad(clickedLilyPad, _hopsLeft > 0);
+
+        // Normal move/first move, check if action is done to end game
+        if (_hopsLeft == 0 && ShouldEndTurn(_frogActions.HasActedThisTurn))
+        {
+            _frogActions.EndTurn();
+        }
+
         return true;
     }
 
@@ -110,14 +128,14 @@ public class FrogMove : MonoBehaviour
     }
 
     // Updates the current lilypad to the given one and moves the frog toward it
-    private void ChangeFrogLilyPad(BasicNode newLilyPad)
+    private void ChangeFrogLilyPad(BasicNode newLilyPad, bool updateHighlights)
     {
         if (!newLilyPad.IsTraversable) { return; }
 
         _isHopping = true;
         InputHandler.Instance?.BeginAnimation();
 
-        _ = MoveFrog(newLilyPad.transform.position);
+        _ = MoveFrog(newLilyPad.transform.position, updateHighlights);
         _currentLilyPad.IsOccupied = false;
         newLilyPad.IsOccupied = true;
 
@@ -126,7 +144,7 @@ public class FrogMove : MonoBehaviour
     }
 
     // Actual piece movement logic
-    private async Task MoveFrog(Vector3 newPosition)
+    private async Task MoveFrog(Vector3 newPosition, bool updateHighlights)
     {
         Vector3 originalPosition = transform.position;
         float currentTime = 0f;
@@ -141,6 +159,7 @@ public class FrogMove : MonoBehaviour
 
         _isHopping = false;
         InputHandler.Instance?.EndAnimation();
+        SetNeighborHighlights(updateHighlights);
     }
 
     // Checks if the given lilypad is a neighbor of the current lilypad
