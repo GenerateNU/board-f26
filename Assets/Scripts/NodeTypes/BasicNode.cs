@@ -14,7 +14,7 @@ public abstract class BasicNode : MonoBehaviour
     public virtual int MaxFrogsOnPad { get { return 1; } }
     public virtual int CurrentFrogsOnPad { get; set; }
 
-    void Start()
+    protected virtual void Start()
     {
         CurrentFrogsOnPad = 0;
     }

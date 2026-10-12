@@ -20,17 +20,21 @@ public class AlligatorNode : BasicNode
 {
     public override bool IsTraversable => !IsOccupied;
     public override NodeHazard NodeType => NodeHazard.Alligator;
-    public override int MaxFrogsOnPad { get { return 3; } }
-    public override int CurrentFrogsOnPad { get { return base.CurrentFrogsOnPad; } set { base.CurrentFrogsOnPad = value; makeAlligatorAwakeOnTurn = true; } }
-    private bool makeAlligatorAwakeOnTurn = false;
-    private bool alligatorAwake = false;
+    public override int MaxFrogsOnPad { get { return 1; } }
+    public override int CurrentFrogsOnPad
+    {
+        get { return base.CurrentFrogsOnPad; }
+        set { base.CurrentFrogsOnPad = value; alligatorEnemy.MakeAlligatorAwakeOnTurn(true); }
+    }
+    [SerializeField]
+    private AlligatorEnemy alligatorEnemy;
 
     public override void CroakUsedOnPad()
     {
-        alligatorAwake = true;
+        alligatorEnemy.MakeAlligatorAwake(true);
     }
 
-    public void DoAlligatorTurn()
+    public void DoAlligatorTurn(bool makeAlligatorAwakeOnTurn, bool alligatorAwake)
     {
         if (TurnManager.Instance.CurrentPhase != TurnManager.TurnPhase.Enemy)
         {
@@ -39,8 +43,8 @@ public class AlligatorNode : BasicNode
 
         if (!alligatorAwake)
         {
-            ChangeAlligatorAwake(makeAlligatorAwakeOnTurn);
-            makeAlligatorAwakeOnTurn = false;
+            alligatorEnemy.MakeAlligatorAwake(makeAlligatorAwakeOnTurn);
+            alligatorEnemy.MakeAlligatorAwakeOnTurn(false);
             return;
         }
 
@@ -54,12 +58,6 @@ public class AlligatorNode : BasicNode
             }
         }
 
-        ChangeAlligatorAwake(false);
-    }
-
-    // Will mainly be for if we want visual changes for this
-    private void ChangeAlligatorAwake(bool awake)
-    {
-        alligatorAwake = awake;
+        alligatorEnemy.MakeAlligatorAwake(false);
     }
 }

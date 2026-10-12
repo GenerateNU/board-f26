@@ -15,7 +15,7 @@ public class MiteNode : LilyPadNode
     private Renderer miteRenderer;
     public bool MitesActive { get; private set; }
 
-    void Start()
+    protected override void Start()
     {
         MitesActive = true;
         miteRenderer = this.gameObject.GetComponentInChildren<Renderer>();
@@ -23,6 +23,7 @@ public class MiteNode : LilyPadNode
         {
             Debug.Log("Mite node is missing a renderer, will not be able to update materials.");
         }
+        base.Start();
     }
 
     public override void CroakUsedOnPad()
