@@ -193,6 +193,14 @@
       },
       "url": "https://packages.unity.com"
     },
+    "fun.board": {
+      "version": "file:../LocalPackages/fun.board-3.3.0.tgz",
+      "depth": 0,
+      "source": "local-tarball",
+      "dependencies": {
+        "com.unity.inputsystem": "1.7.0"
+      }
+    },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",
       "depth": 0,

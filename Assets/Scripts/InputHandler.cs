@@ -1,5 +1,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Board.Input;
+using System;
+using System.Collections.Generic;
 
 public class InputHandler : MonoBehaviour
 {
@@ -23,8 +26,20 @@ public class InputHandler : MonoBehaviour
     [Tooltip("Press Space to advance the turn (for testing).")]
     [SerializeField] private bool _enableSpaceToAdvance = true;
 
+    [SerializeField] private bool useBoardInput = true;
+
     public bool InAnimation => _inAnimation;
     public bool IsInputBlocked => _preventInputMidAnimation && _inAnimation;
+
+    [SerializeField] FrogActions[] frogs;
+    [SerializeField] GlyphActionPair[] GlyphActionPairs;
+
+    [Serializable]
+    public struct GlyphActionPair 
+    {
+        public int id;
+        public ActionType action;
+    }
 
     private void Awake()
     {
@@ -49,8 +64,11 @@ public class InputHandler : MonoBehaviour
 
     private void OnEnable()
     {
+        if(useBoardInput) DeviceInputManager.FingerDown += OnFingerDown;
+        if(useBoardInput) DeviceInputManager.PieceDown += OnPieceDown;
+
         if (_mouseClickAction == null) return;
-        _mouseClickAction.performed += OnMouseClick;
+        if(!useBoardInput) _mouseClickAction.performed += OnMouseClick;
         _mouseClickAction.Enable();
     }
 
@@ -81,16 +99,14 @@ public class InputHandler : MonoBehaviour
     }
 
 
-    // On Mouse CLICK
-
-    private void OnMouseClick(InputAction.CallbackContext context)
+    private void HopToLilyPad(Vector2 rayOrigin)
     {
         if (IsInputBlocked) return;
 
         var turnManager = TurnManager.Instance;
         if (turnManager == null || turnManager.CurrentPhase != TurnManager.TurnPhase.Player) return;
 
-        BasicNode clickedLilyPad = GetLilyPadUnderMouse();
+        BasicNode clickedLilyPad = GetLilyPadUnderMouse(rayOrigin);
         if (clickedLilyPad == null) return;
 
         FrogMove frog = turnManager.GetCurrentFrog();
@@ -103,12 +119,39 @@ public class InputHandler : MonoBehaviour
         frog.TryHopTo(clickedLilyPad);
     }
 
+    private void OnMouseClick(InputAction.CallbackContext context)
+    {
+        HopToLilyPad(Mouse.current.position.ReadValue());
+    }
+
+    private void OnFingerDown(BoardContact contact)
+    {
+        HopToLilyPad(contact.screenPosition);
+    }
+
+    void OnPieceDown(BoardContact contact)
+    {
+        if (IsInputBlocked) return;
+
+        var turnManager = TurnManager.Instance;
+        if (turnManager == null || turnManager.CurrentPhase != TurnManager.TurnPhase.Player) return;
+
+        FrogMove frog = turnManager.GetCurrentFrog();
+        FrogActions frogAction = frog.transform.GetComponent<FrogActions>();
+        GlyphActionPair pair = Array.Find(GlyphActionPairs,p => p.id == contact.glyphId);
+        if(frogAction.IsActionAvailable(pair.action))
+        {
+            frogAction.DoAction(pair.action);
+            Debug.Log("Did " + pair.action);
+        }
+    }
+
     // Makes a raycast from the mouse and returns the lily pad it hit, if any
-    private BasicNode GetLilyPadUnderMouse()
+    private BasicNode GetLilyPadUnderMouse(Vector2 ScreenPoint)
     {
         if (_camera == null || Mouse.current == null) return null;
 
-        Ray ray = _camera.ScreenPointToRay(Mouse.current.position.ReadValue());
+        Ray ray = _camera.ScreenPointToRay(ScreenPoint);
         //Debugging
         Debug.DrawRay(ray.origin, ray.direction * _maxRayDistance, Color.yellow, 1f);
 

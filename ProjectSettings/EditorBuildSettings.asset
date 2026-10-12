@@ -6,8 +6,10 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/_Scenes/Main.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    path: Assets/_Scenes/LilypadHazardTest.unity
+    guid: 6e73fb2d1bd9ee0469cb410524974e02
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    fun.board.input.settings: {fileID: 11400000, guid: 663cbc4d6838a524c998cfbaa5abd595, type: 2}
+    fun.board.settings: {fileID: 11400000, guid: 9ddde376a709b6642901587f678d131f, type: 2}
   m_UseUCBPForAssetBundles: 0

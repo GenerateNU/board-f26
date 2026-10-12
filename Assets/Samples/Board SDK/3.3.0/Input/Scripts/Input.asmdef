@@ -1,0 +1,17 @@
+{
+    "name": "Input",
+    "rootNamespace": "Board.Samples",
+    "references": [
+        "Unity.InputSystem",
+        "Board"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
