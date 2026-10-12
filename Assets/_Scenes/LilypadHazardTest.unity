@@ -403,7 +403,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3296762940072127986, guid: 9e16eea08782fa04e840881451e97294, type: 3}
       propertyPath: m_Name
-      value: InputManager
+      value: DeviceInputManager
       objectReference: {fileID: 0}
     - target: {fileID: 6256126157774346971, guid: 9e16eea08782fa04e840881451e97294, type: 3}
       propertyPath: m_LocalPosition.x
@@ -599,6 +599,18 @@ MonoBehaviour:
   _clickActionName: Attack
   _preventInputMidAnimation: 1
   _enableSpaceToAdvance: 1
+  useDeviceInput: 1
+  frogs:
+  - {fileID: 1768844332}
+  GlyphActionPairs:
+  - id: 0
+    action: 0
+  - id: 1
+    action: 1
+  - id: 2
+    action: 2
+  - id: 3
+    action: 3
 --- !u!1 &1053912059
 GameObject:
   m_ObjectHideFlags: 0
