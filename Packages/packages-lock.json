@@ -194,7 +194,7 @@
       "url": "https://packages.unity.com"
     },
     "fun.board": {
-      "version": "file:C:/Users/joshu/Downloads/fun.board-3.3.0.tgz",
+      "version": "file:../LocalPackages/fun.board-3.3.0.tgz",
       "depth": 0,
       "source": "local-tarball",
       "dependencies": {
