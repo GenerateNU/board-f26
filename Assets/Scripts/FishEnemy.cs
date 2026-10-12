@@ -7,7 +7,7 @@ using UnityEngine.Rendering;
 using UnityEngine.InputSystem;
 using Unity.VisualScripting;
 
-public class FishEnemy : MonoBehaviour
+public class FishEnemy : AEnemy
 {
     [SerializeField] private BasicNode currentFishNode;
     private FrogMove frogMove;
@@ -27,13 +27,9 @@ public class FishEnemy : MonoBehaviour
         reassignFrogComponents();
     }
 
-    void changeTurn()
+    public override void DoEnemyTurn()
     {
-        if (TurnManager.Instance.CurrentPhase == TurnManager.TurnPhase.Enemy)
-        {
-            MoveTowards();
-            TurnManager.Instance.AdvanceTurn();
-        }
+        MoveTowards();
     }
 
     //for future, only one frog in the scene so not needed.
@@ -61,14 +57,14 @@ public class FishEnemy : MonoBehaviour
 
     void Start()
     {
+        Debug.Log(currentFishNode);
+        Debug.Log(frogMove.GetLilyPadFrogOn());
         Path = CalculatePath(currentFishNode, frogMove.GetLilyPadFrogOn());
         progress = 0;
         for (int i = 0; i < Path.Count; i++)
         {
             Debug.Log($"path step {i}: {Path[i].gameObject.name}", Path[i].gameObject);
         }
-
-        TurnManager.Instance.OnTurnChanged += changeTurn;
     }
 
     [ContextMenu("Move Towards")]
@@ -82,6 +78,7 @@ public class FishEnemy : MonoBehaviour
 
     public void MoveTowards(BasicNode target)
     {
+        Debug.Log(target);
         Path = CalculatePath(currentFishNode, target);
         lastPos = transform.position;
         progress = 0;
@@ -91,6 +88,8 @@ public class FishEnemy : MonoBehaviour
 
     void UpdateCurrentNode(List<BasicNode> path, int progress)
     {
+        Debug.Log(path);
+        Debug.Log(progress);
         if (progress < path.Count)
         {
             currentFishNode = path[progress];
@@ -194,7 +193,10 @@ public class FishEnemy : MonoBehaviour
         int step = 0;
         while (true)
         {
-
+            Debug.Log(parents);
+            // trace is null?
+            Debug.Log(target);
+            Debug.Log(parents.TryGetValue(trace, out next));
             if (parents.TryGetValue(trace, out next))
             {
                 result.Insert(0, next);

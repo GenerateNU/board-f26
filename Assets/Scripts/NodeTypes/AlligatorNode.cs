@@ -35,6 +35,7 @@ public class AlligatorNode : BasicNode
         {
             return;
         }
+        Debug.Log("Alligator awake " + alligatorAwake);
 
         if (!alligatorAwake)
         {
@@ -49,7 +50,6 @@ public class AlligatorNode : BasicNode
         {
             if (frog.GetLilyPadFrogOn() == this)
             {
-                Debug.Log("gator trying to kill frog");
                 frog.KillFrog();
             }
         }

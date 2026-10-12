@@ -4,7 +4,7 @@ public class EnemyTurnManager : MonoBehaviour
 {
     [Tooltip("Enemies should be in turn order, this generally means fish last.")]
     [SerializeField]
-    private Enemy[] enemies;
+    private AEnemy[] enemies;
 
     void Start()
     {

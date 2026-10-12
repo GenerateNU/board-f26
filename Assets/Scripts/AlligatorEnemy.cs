@@ -1,7 +1,7 @@
 using UnityEngine;
 
 // This class primarily exists for the ease of the EnemyTurnManager. 
-public class AlligatorEnemy : Enemy
+public class AlligatorEnemy : AEnemy
 {
     private AlligatorNode alligatorNode;
     // Start is called once before the first execution of Update after the MonoBehaviour is created

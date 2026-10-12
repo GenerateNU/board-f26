@@ -26,9 +26,13 @@ public class FrogMove : MonoBehaviour
 
     public int AssignedPlayer => _assignedPlayer;
 
-    void Start()
+    void Awake()
     {
         _currentLilyPad = _startingLilyPad;
+    }
+    void Start()
+    {
+        //_currentLilyPad = _startingLilyPad;
         if (_currentLilyPad == null) Debug.LogWarning($"{name} has no starting lily pad assigned.");
 
         if (TurnManager.Instance != null)
@@ -47,6 +51,7 @@ public class FrogMove : MonoBehaviour
 
     public BasicNode GetLilyPadFrogOn()
     {
+        Debug.Log(_currentLilyPad);
         return _currentLilyPad;
     }
 
