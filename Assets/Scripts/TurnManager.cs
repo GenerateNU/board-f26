@@ -159,12 +159,18 @@ public class TurnManager : MonoBehaviour
 
     public void AdvanceTurn()
     {
+        if (_frogs.Count == 0) { return; }
         GetCurrentFrog()?.EndTurn();
 
         if (CurrentPhase == TurnPhase.Player)
         {
             _currentPlayerIndex++;
-            if (_currentPlayerIndex >= _players.Count) CurrentPhase = TurnPhase.Enemy;
+            if (_currentPlayerIndex >= _players.Count)
+            {
+                CurrentPhase = TurnPhase.Enemy;
+            }
+
+            AdjustPlayerIndexToAlivePlayer();
         }
         else // Enemy
         {
@@ -172,14 +178,32 @@ public class TurnManager : MonoBehaviour
             {
                 CurrentPhase = TurnPhase.Player;
                 _currentPlayerIndex = 0;
+                AdjustPlayerIndexToAlivePlayer();
             }
             // No players yet: stay on the enemy turn.
         }
 
         Debug.Log("Current Turn: " + CurrentTurnLabel);
+
         UpdateTurnUI();
         StartCurrentFrogTurn();
         OnTurnChanged?.Invoke();
+    }
+
+    private void AdjustPlayerIndexToAlivePlayer()
+    {
+        /*
+        if (GetCurrentFrog() == null)
+        {
+            while (GetCurrentFrog() == null && _currentPlayerIndex < _players.Count)
+            {
+                Debug.Log("trying to get alive frog currently at " + _currentPlayerIndex);
+                _currentPlayerIndex++;
+            }
+
+            if (_currentPlayerIndex >= _players.Count) CurrentPhase = TurnPhase.Enemy;
+        }
+        */
     }
 
     private void StartCurrentFrogTurn()
