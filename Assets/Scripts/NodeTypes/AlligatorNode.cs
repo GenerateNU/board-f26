@@ -34,7 +34,7 @@ public class AlligatorNode : BasicNode
         alligatorEnemy.MakeAlligatorAwake(true);
     }
 
-    public void DoAlligatorTurn(bool makeAlligatorAwakeOnTurn, bool alligatorAwake)
+    public void DoAlligatorTurn(bool makeAlligatorAwakeOnTurn, bool alligatorAwake, bool resetVariables)
     {
         if (TurnManager.Instance.CurrentPhase != TurnManager.TurnPhase.Enemy)
         {
@@ -44,7 +44,7 @@ public class AlligatorNode : BasicNode
         if (!alligatorAwake)
         {
             alligatorEnemy.MakeAlligatorAwake(makeAlligatorAwakeOnTurn);
-            alligatorEnemy.MakeAlligatorAwakeOnTurn(false);
+            if (resetVariables) { alligatorEnemy.MakeAlligatorAwakeOnTurn(false); }
             return;
         }
 
@@ -58,6 +58,6 @@ public class AlligatorNode : BasicNode
             }
         }
 
-        alligatorEnemy.MakeAlligatorAwake(false);
+        if (resetVariables) { alligatorEnemy.MakeAlligatorAwake(false); }
     }
 }

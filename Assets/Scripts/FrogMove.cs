@@ -52,6 +52,7 @@ public class FrogMove : MonoBehaviour
     private void OnDestroy()
     {
         // Don't leave input locked if the frog is destroyed mid-hop.
+        this.GetLilyPadFrogOn().CurrentFrogsOnPad -= 1;
         if (_isHopping) InputHandler.Instance?.EndAnimation();
         TurnManager.Instance?.UnregisterFrog(this, _assignedPlayer, _frogSucceeded);
         SetNeighborHighlights(false);
@@ -72,6 +73,14 @@ public class FrogMove : MonoBehaviour
     public void EndTurn()
     {
         SetNeighborHighlights(false);
+    }
+
+    public void DoAction(ActionType action)
+    {
+        if (_frogActions.IsActionAvailable(action))
+        {
+            _frogActions.DoAction(action);
+        }
     }
 
     // Let the player move again this turn

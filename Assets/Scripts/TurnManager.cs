@@ -192,18 +192,15 @@ public class TurnManager : MonoBehaviour
 
     private void AdjustPlayerIndexToAlivePlayer()
     {
-        /*
         if (GetCurrentFrog() == null)
         {
             while (GetCurrentFrog() == null && _currentPlayerIndex < _players.Count)
             {
-                Debug.Log("trying to get alive frog currently at " + _currentPlayerIndex);
                 _currentPlayerIndex++;
             }
 
             if (_currentPlayerIndex >= _players.Count) CurrentPhase = TurnPhase.Enemy;
         }
-        */
     }
 
     private void StartCurrentFrogTurn()

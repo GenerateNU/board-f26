@@ -26,7 +26,7 @@ public class AlligatorEnemy : AEnemy
         // TODO: Add art/death animation above if necessary and await on it
         for (int i = 0; i < alligatorNodes.Length; i++)
         {
-            alligatorNodes[i].DoAlligatorTurn(makeAlligatorAwakeOnTurn, alligatorAwake);
+            alligatorNodes[i].DoAlligatorTurn(makeAlligatorAwakeOnTurn, alligatorAwake, i == alligatorNodes.Length - 1);
         }
         animationFinished = true;
     }

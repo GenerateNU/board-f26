@@ -710,14 +710,26 @@ PrefabInstance:
       propertyPath: frog
       value: 
       objectReference: {fileID: 1334462126}
+    - target: {fileID: 1529155146138660590, guid: 9fab6a429bce38249b663b10e30533d7, type: 3}
+      propertyPath: handler
+      value: 
+      objectReference: {fileID: 1497426000}
     - target: {fileID: 3813768889150808577, guid: 9fab6a429bce38249b663b10e30533d7, type: 3}
       propertyPath: frog
       value: 
       objectReference: {fileID: 1334462126}
+    - target: {fileID: 3813768889150808577, guid: 9fab6a429bce38249b663b10e30533d7, type: 3}
+      propertyPath: handler
+      value: 
+      objectReference: {fileID: 1497426000}
     - target: {fileID: 6033666366516345032, guid: 9fab6a429bce38249b663b10e30533d7, type: 3}
       propertyPath: frog
       value: 
       objectReference: {fileID: 1334462126}
+    - target: {fileID: 6033666366516345032, guid: 9fab6a429bce38249b663b10e30533d7, type: 3}
+      propertyPath: handler
+      value: 
+      objectReference: {fileID: 1497426000}
     - target: {fileID: 7209951608567927411, guid: 9fab6a429bce38249b663b10e30533d7, type: 3}
       propertyPath: m_Name
       value: DebugCanvas
@@ -726,6 +738,10 @@ PrefabInstance:
       propertyPath: frog
       value: 
       objectReference: {fileID: 1334462126}
+    - target: {fileID: 8139832085122240732, guid: 9fab6a429bce38249b663b10e30533d7, type: 3}
+      propertyPath: handler
+      value: 
+      objectReference: {fileID: 1497426000}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1955,6 +1971,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c66500ab00148204ea4975df1a8b3476, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LilyPadNode
+--- !u!114 &1497426000 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5411670380741070961, guid: e617e6c48146e28409fdbaaee72c516c, type: 3}
+  m_PrefabInstance: {fileID: 1356808117}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4ce11ff8fcbc46a6be10f76055bb106, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InputHandler
 --- !u!114 &1536411067 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2123804158843072683, guid: b9ea6b690fcd7ac458b40c396d43d2ee, type: 3}
