@@ -71,26 +71,18 @@ public class FrogActions : MonoBehaviour
     {
         foreach (BasicNode node in frogMove.GetLilyPadFrogOn().Neighbors)
         {
-            UseCroakOnMiteNode(node);
+            node.CroakUsedOnPad();
 
             foreach (BasicNode childNode in node.Neighbors)
             {
-                UseCroakOnMiteNode(childNode);
+                node.CroakUsedOnPad();
             }
         }
         HasActedThisTurn = true;
 
         // Rehighlight so mite nodes will be highlighted
         if (!frogMove.HasMovedThisTurn) { frogMove.SetNeighborHighlights(true); }
-    }
-
-    private void UseCroakOnMiteNode(BasicNode node)
-    {
-        if (node.NodeType == NodeHazard.Mites)
-        {
-            MiteNode tempNode = (MiteNode)node;
-            tempNode.CroakUsedOnPad();
-        }
+        if (frogMove.ShouldEndTurn(HasActedThisTurn)) { EndTurn(); }
     }
 
     private void LayEgg()
@@ -99,19 +91,25 @@ public class FrogActions : MonoBehaviour
         currentPad.SpawnObjectOnPad(eggPrefab);
         respawnNode = currentPad;
         HasActedThisTurn = true;
+        if (frogMove.ShouldEndTurn(HasActedThisTurn)) { EndTurn(); }
     }
 
     private void HopAgain()
     {
-        // We don't have any way of determining how many times a frog can hop / what a hop is yet.
-        // Once we do, this should essentially do hops += 1.
+        if (frogMove.GetLilyPadFrogOn().NodeType == NodeHazard.Mites)
+        {
+            return;
+        }
+
         HasActedThisTurn = true;
+        frogMove.HopAgainUsed();
 
         // Rehighlight so new nodes will be highlighted
         frogMove.SetNeighborHighlights(true);
+        if (frogMove.ShouldEndTurn(HasActedThisTurn)) { EndTurn(); }
     }
 
-    private void EndTurn()
+    public void EndTurn()
     {
         TurnManager.Instance.AdvanceTurn();
         HasActedThisTurn = false;

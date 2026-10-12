@@ -7,7 +7,7 @@ using UnityEngine.Rendering;
 using UnityEngine.InputSystem;
 using Unity.VisualScripting;
 
-public class FishEnemy : MonoBehaviour
+public class FishEnemy : AEnemy
 {
     [SerializeField] private BasicNode currentFishNode;
     private FrogMove frogMove;
@@ -27,13 +27,10 @@ public class FishEnemy : MonoBehaviour
         reassignFrogComponents();
     }
 
-    void changeTurn()
+    public override void DoEnemyTurn()
     {
-        if (TurnManager.Instance.CurrentPhase == TurnManager.TurnPhase.Enemy)
-        {
-            MoveTowards();
-            TurnManager.Instance.AdvanceTurn();
-        }
+        animationFinished = false;
+        MoveTowards();
     }
 
     //for future, only one frog in the scene so not needed.
@@ -67,8 +64,6 @@ public class FishEnemy : MonoBehaviour
         {
             Debug.Log($"path step {i}: {Path[i].gameObject.name}", Path[i].gameObject);
         }
-
-        TurnManager.Instance.OnTurnChanged += changeTurn;
     }
 
     [ContextMenu("Move Towards")]
@@ -128,6 +123,7 @@ public class FishEnemy : MonoBehaviour
         }
 
         transform.position = currentFishNode.transform.position;
+        animationFinished = true;
     }
 
     //deprecated
@@ -194,7 +190,6 @@ public class FishEnemy : MonoBehaviour
         int step = 0;
         while (true)
         {
-
             if (parents.TryGetValue(trace, out next))
             {
                 result.Insert(0, next);

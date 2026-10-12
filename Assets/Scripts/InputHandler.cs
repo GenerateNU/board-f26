@@ -120,9 +120,9 @@ public class InputHandler : MonoBehaviour
     }
 
 
-    // call this when a hop animation starts.
+    // call this when a hop animation starts or animation which is meant to prevent input starts.
     public void BeginAnimation() => _inAnimation = true;
 
-    // call this when a hop animation finishes.
+    // call this when a hop animation finishes or animation which is meant to prevent input starts.
     public void EndAnimation() => _inAnimation = false;
 }

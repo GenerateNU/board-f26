@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 234270117652135448}
   - component: {fileID: 36055965214156517}
   - component: {fileID: 1694923991862373557}
+  - component: {fileID: 8828214017290117847}
   m_Layer: 0
   m_Name: Alligator
   m_TagString: Untagged
@@ -126,9 +127,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebebcccd32dd4054fbdb183218c46908, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AlligatorNode
-  nodeID: 0
   neighbors: []
   lilypadGlow: {fileID: 8681680829702258643}
+--- !u!114 &8828214017290117847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5832308663451854612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a95da768db03d364a92004fe8925d6b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AlligatorEnemy
 --- !u!1 &8681680829702258643
 GameObject:
   m_ObjectHideFlags: 0

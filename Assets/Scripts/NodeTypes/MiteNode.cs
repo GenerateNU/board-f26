@@ -1,26 +1,23 @@
 using UnityEngine;
 
+/*
+On a LilyPadNode which has Mites Frogs cannot use the hop again action.
+Mites are permanently dispelled by a Frog croaking within 2 nodes of it.
+*/
 public class MiteNode : LilyPadNode
 {
     [SerializeField]
     private Material _lilyPadMat;
     [SerializeField]
     private Material _miteMat;
-    // Design note: I believe Mites are technically traversable but they kill you? We may want to make this doable if a player
-    // falls very far behind mid-level and wants to give up so that way they don't carry the frustration with them
-    // up to game design though.
-    public override bool IsTraversable => !IsOccupied && currentTurnsUntilMitesActive != 0;
+    public override bool IsTraversable => !IsOccupied;
     public override NodeHazard NodeType => NodeHazard.Mites;
-    [Tooltip("This refers to how many enemy actions before they reappear.")]
-    [SerializeField]
-    private int turnsForMitesToReappear = 3;
     private Renderer miteRenderer;
-
-    // At 0 mites are considered active, stop decrementing.
-    private int currentTurnsUntilMitesActive = 0;
+    public bool MitesActive { get; private set; }
 
     void Start()
     {
+        MitesActive = true;
         miteRenderer = this.gameObject.GetComponent<Renderer>();
         if (!miteRenderer)
         {
@@ -28,10 +25,10 @@ public class MiteNode : LilyPadNode
         }
     }
 
-    public void CroakUsedOnPad()
+    public override void CroakUsedOnPad()
     {
-        currentTurnsUntilMitesActive = turnsForMitesToReappear;
-        UpdateMaterial(currentTurnsUntilMitesActive == 0);
+        MitesActive = false;
+        UpdateMaterial(false);
     }
 
     private void UpdateMaterial(bool mitesActive)
