@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class EnemyTurnManager : MonoBehaviour
@@ -28,8 +29,24 @@ public class EnemyTurnManager : MonoBehaviour
             enemies[i].DoEnemyTurn();
         }
 
-        // Once we add animations we may want a WhenAll await before switching turn
-        // over to play. For now switch back immediately
+        _ = SwitchTurn();
+    }
+
+    private async Task SwitchTurn()
+    {
+        // Would love to do an AwaitAll async here but this allows more flexibility
+        // if people wanna do coroutines. Although the code here is worse to read.
+        // Need small time between enemy and player turn otherwise
+        // highlighting gets messed up. Wait for all animations to finish before
+        // switching turn
+        for (int i = 0; i < enemies.Length; i++)
+        {
+            while (!enemies[i].AnimationFinished)
+            {
+                await Awaitable.WaitForSecondsAsync(0.1f);
+            }
+        }
+
         InputHandler.Instance?.EndAnimation();
         TurnManager.Instance.AdvanceTurn();
     }

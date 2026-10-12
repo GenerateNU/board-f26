@@ -29,6 +29,7 @@ public class FishEnemy : AEnemy
 
     public override void DoEnemyTurn()
     {
+        animationFinished = false;
         MoveTowards();
     }
 
@@ -127,6 +128,7 @@ public class FishEnemy : AEnemy
         }
 
         transform.position = currentFishNode.transform.position;
+        animationFinished = true;
     }
 
     //deprecated

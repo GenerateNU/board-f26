@@ -39,7 +39,7 @@ public class FrogMove : MonoBehaviour
 
         if (!_frogActions)
         {
-            Debug.Log($"Missing frog actions for {name}, will not be able to cycle through turns.");
+            Debug.LogWarning($"Missing frog actions for {name}, will not be able to cycle through turns.");
         }
 
         if (TurnManager.Instance != null)
@@ -58,7 +58,6 @@ public class FrogMove : MonoBehaviour
 
     public BasicNode GetLilyPadFrogOn()
     {
-        Debug.Log(_currentLilyPad);
         return _currentLilyPad;
     }
 
@@ -104,12 +103,6 @@ public class FrogMove : MonoBehaviour
         _hopsLeft--;
         if (_hopsLeft < 1) { HasMovedThisTurn = true; }
         ChangeFrogLilyPad(clickedLilyPad, _hopsLeft > 0);
-
-        // Normal move/first move, check if action is done to end game
-        if (_hopsLeft == 0 && ShouldEndTurn(_frogActions.HasActedThisTurn))
-        {
-            _frogActions.EndTurn();
-        }
 
         return true;
     }
@@ -160,6 +153,11 @@ public class FrogMove : MonoBehaviour
         _isHopping = false;
         InputHandler.Instance?.EndAnimation();
         SetNeighborHighlights(updateHighlights);
+        // Normal move/first move, check if action is done to end game
+        if (_hopsLeft == 0 && ShouldEndTurn(_frogActions.HasActedThisTurn))
+        {
+            _frogActions.EndTurn();
+        }
     }
 
     // Checks if the given lilypad is a neighbor of the current lilypad

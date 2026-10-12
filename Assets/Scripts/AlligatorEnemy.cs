@@ -16,8 +16,11 @@ public class AlligatorEnemy : AEnemy
 
     public override void DoEnemyTurn()
     {
+        animationFinished = false;
         // There isn't enough logic in AlligatorNode to justify 
         // dealing with the field sharing here.
+        // TODO: Add art/death animation above if necessary and await on it
         alligatorNode.DoAlligatorTurn();
+        animationFinished = true;
     }
 }
