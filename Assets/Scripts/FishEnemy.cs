@@ -62,7 +62,7 @@ public class FishEnemy : AEnemy
         progress = 0;
         for (int i = 0; i < Path.Count; i++)
         {
-            Debug.Log($"path step {i}: {Path[i].gameObject.name}", Path[i].gameObject);
+            //Debug.Log($"path step {i}: {Path[i].gameObject.name}", Path[i].gameObject);
         }
     }
 
@@ -91,8 +91,8 @@ public class FishEnemy : AEnemy
             currentFishNode = path[progress];
             CheckKillFrog();
         }
-        else
-            Debug.Log("progress: " + progress + " reached end of path");
+        //else
+        //Debug.Log("progress: " + progress + " reached end of path");
     }
 
     void CheckKillFrog()

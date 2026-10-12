@@ -18,7 +18,7 @@ public class MiteNode : LilyPadNode
     void Start()
     {
         MitesActive = true;
-        miteRenderer = this.gameObject.GetComponent<Renderer>();
+        miteRenderer = this.gameObject.GetComponentInChildren<Renderer>();
         if (!miteRenderer)
         {
             Debug.Log("Mite node is missing a renderer, will not be able to update materials.");
