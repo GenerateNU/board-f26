@@ -18,9 +18,10 @@ If the Alligator is awake it eats what's on it.
 */
 public class AlligatorNode : BasicNode
 {
-    public override bool IsOccupied { get => base.IsOccupied; set { base.IsOccupied = value; makeAlligatorAwakeOnTurn = true; } }
     public override bool IsTraversable => !IsOccupied;
     public override NodeHazard NodeType => NodeHazard.Alligator;
+    public override int MaxFrogsOnPad { get { return 3; } }
+    public override int CurrentFrogsOnPad { get { return base.CurrentFrogsOnPad; } set { base.CurrentFrogsOnPad = value; makeAlligatorAwakeOnTurn = true; } }
     private bool makeAlligatorAwakeOnTurn = false;
     private bool alligatorAwake = false;
 
@@ -35,7 +36,6 @@ public class AlligatorNode : BasicNode
         {
             return;
         }
-        Debug.Log("Alligator awake " + alligatorAwake);
 
         if (!alligatorAwake)
         {

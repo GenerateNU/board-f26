@@ -8,12 +8,16 @@ public abstract class BasicNode : MonoBehaviour
     public IReadOnlyList<BasicNode> Neighbors => neighbors;
     [Tooltip("Should be consistent across most objects of this prefab.")]
     [SerializeField] private GameObject lilypadGlow;
-    public virtual bool IsOccupied { get; set; }
-    // Design note: At the moment Nodes aren't traverserable if a frog is already on one (I can't test this until turn system is up)
-    // also wondering if we actually want it work this way based on the playtest, and if so how will we deal with it artwise
+    public bool IsOccupied { get { return MaxFrogsOnPad == CurrentFrogsOnPad; } }
     public abstract bool IsTraversable { get; }
     public abstract NodeHazard NodeType { get; }
+    public virtual int MaxFrogsOnPad { get { return 1; } }
+    public virtual int CurrentFrogsOnPad { get; set; }
 
+    void Start()
+    {
+        CurrentFrogsOnPad = 0;
+    }
 
     // if node is walkable by current frog, highlight/vfx/etc. glows only for this node
     // Can make overrides for this if we want different vfx for different node types

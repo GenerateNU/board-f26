@@ -37,6 +37,7 @@ public class TurnManager : MonoBehaviour
     private readonly List<PlayerSlot> _players = new List<PlayerSlot>();
     private readonly Dictionary<int, FrogMove> _frogs = new Dictionary<int, FrogMove>(); // player number -> frog
     private int _currentPlayerIndex;
+    private int _frogsSucceeded;
     private bool _started;
 
     public TurnPhase CurrentPhase { get; private set; } = TurnPhase.Player;
@@ -119,12 +120,25 @@ public class TurnManager : MonoBehaviour
         if (_started && IsPlayersTurn(playerNumber)) frog.StartTurn();
     }
 
-    public void UnregisterFrog(FrogMove frog, int playerNumber)
+    public void UnregisterFrog(FrogMove frog, int playerNumber, bool frogOutcomePositive)
     {
         if (_frogs.TryGetValue(playerNumber, out var registered) && registered == frog)
+        {
             _frogs.Remove(playerNumber);
+        }
+
+        if (frogOutcomePositive) { _frogsSucceeded++; }
+        if (_frogs.Count == 0)
+        {
+            this.GameOver(_frogsSucceeded > 0);
+        }
     }
 
+    // If any frog makes it to the end count it as a win for now
+    public void GameOver(bool won)
+    {
+        _frogsSucceeded = 0;
+    }
 
     public FrogMove GetCurrentFrog()
     {

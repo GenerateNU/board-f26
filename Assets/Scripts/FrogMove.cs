@@ -25,6 +25,7 @@ public class FrogMove : MonoBehaviour
     private bool _isHopping;
     private FrogActions _frogActions;
     private int _hopsLeft = 1;
+    private bool _frogSucceeded = false;
 
     public int AssignedPlayer => _assignedPlayer;
 
@@ -52,7 +53,7 @@ public class FrogMove : MonoBehaviour
     {
         // Don't leave input locked if the frog is destroyed mid-hop.
         if (_isHopping) InputHandler.Instance?.EndAnimation();
-        TurnManager.Instance?.UnregisterFrog(this, _assignedPlayer);
+        TurnManager.Instance?.UnregisterFrog(this, _assignedPlayer, _frogSucceeded);
         SetNeighborHighlights(false);
     }
 
@@ -129,8 +130,8 @@ public class FrogMove : MonoBehaviour
         InputHandler.Instance?.BeginAnimation();
 
         _ = MoveFrog(newLilyPad.transform.position, updateHighlights);
-        _currentLilyPad.IsOccupied = false;
-        newLilyPad.IsOccupied = true;
+        _currentLilyPad.CurrentFrogsOnPad -= 1;
+        newLilyPad.CurrentFrogsOnPad += 1;
 
         // Update current lilypad
         _currentLilyPad = newLilyPad;
@@ -153,8 +154,14 @@ public class FrogMove : MonoBehaviour
         _isHopping = false;
         InputHandler.Instance?.EndAnimation();
         SetNeighborHighlights(updateHighlights);
-        // Normal move/first move, check if action is done to end game
-        if (_hopsLeft == 0 && ShouldEndTurn(_frogActions.HasActedThisTurn))
+
+        // Normal move/first move, check if action is done to end game/turn
+        if (_currentLilyPad.NodeType == NodeHazard.Winning)
+        {
+            _frogSucceeded = true;
+            KillFrog();
+        }
+        else if (_hopsLeft == 0 && ShouldEndTurn(_frogActions.HasActedThisTurn))
         {
             _frogActions.EndTurn();
         }

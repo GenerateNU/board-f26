@@ -58,8 +58,6 @@ public class FishEnemy : AEnemy
 
     void Start()
     {
-        Debug.Log(currentFishNode);
-        Debug.Log(frogMove.GetLilyPadFrogOn());
         Path = CalculatePath(currentFishNode, frogMove.GetLilyPadFrogOn());
         progress = 0;
         for (int i = 0; i < Path.Count; i++)
@@ -79,7 +77,6 @@ public class FishEnemy : AEnemy
 
     public void MoveTowards(BasicNode target)
     {
-        Debug.Log(target);
         Path = CalculatePath(currentFishNode, target);
         lastPos = transform.position;
         progress = 0;
@@ -89,8 +86,6 @@ public class FishEnemy : AEnemy
 
     void UpdateCurrentNode(List<BasicNode> path, int progress)
     {
-        Debug.Log(path);
-        Debug.Log(progress);
         if (progress < path.Count)
         {
             currentFishNode = path[progress];
@@ -195,10 +190,6 @@ public class FishEnemy : AEnemy
         int step = 0;
         while (true)
         {
-            Debug.Log(parents);
-            // trace is null?
-            Debug.Log(target);
-            Debug.Log(parents.TryGetValue(trace, out next));
             if (parents.TryGetValue(trace, out next))
             {
                 result.Insert(0, next);

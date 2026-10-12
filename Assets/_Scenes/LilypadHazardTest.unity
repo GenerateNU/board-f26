@@ -501,6 +501,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1b245a3703ffd5640825c7cc7f7c1010, type: 3}
+--- !u!114 &344664777 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6083177021981607989, guid: cafff678e989d1c43883a758de9020bb, type: 3}
+  m_PrefabInstance: {fileID: 2705775706149340872}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fbfd0a1d5f7a37c4c9e36357b43af01f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WinningNode
 --- !u!1 &452246138
 GameObject:
   m_ObjectHideFlags: 0
@@ -1414,7 +1425,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5060650645785842594, guid: 1b245a3703ffd5640825c7cc7f7c1010, type: 3}
       propertyPath: neighbors.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5060650645785842594, guid: 1b245a3703ffd5640825c7cc7f7c1010, type: 3}
       propertyPath: 'neighbors.Array.data[0]'
@@ -1423,7 +1434,7 @@ PrefabInstance:
     - target: {fileID: 5060650645785842594, guid: 1b245a3703ffd5640825c7cc7f7c1010, type: 3}
       propertyPath: 'neighbors.Array.data[1]'
       value: 
-      objectReference: {fileID: 1507747043}
+      objectReference: {fileID: 344664777}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2557,6 +2568,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3692660419558340423, guid: cafff678e989d1c43883a758de9020bb, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5701053346835686781, guid: cafff678e989d1c43883a758de9020bb, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.15215
