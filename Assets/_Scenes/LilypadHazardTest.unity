@@ -656,9 +656,9 @@ MonoBehaviour:
   _clickActionName: Attack
   _preventInputMidAnimation: 1
   _enableSpaceToAdvance: 1
-  useBoardInput: 1
+  useBoardInput: 0
   frogs:
-  - {fileID: 0}
+  - {fileID: 766758942}
   GlyphActionPairs:
   - id: 0
     action: 0
