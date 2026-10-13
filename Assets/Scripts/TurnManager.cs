@@ -159,8 +159,11 @@ public class TurnManager : MonoBehaviour
 
     public void AdvanceTurn()
     {
+        // Never change turns while a frog is still hopping.
+        if (InputHandler.Instance != null && InputHandler.Instance.InAnimation) { return; }
+
         if (_frogs.Count == 0) { return; }
-        GetCurrentFrog()?.EndTurn();
+        GetCurrentFrog()?.EndTurn(); // FrogMove.EndTurn() locks the frog until its next turn
 
         if (CurrentPhase == TurnPhase.Player)
         {
@@ -207,7 +210,6 @@ public class TurnManager : MonoBehaviour
     {
         GetCurrentFrog()?.StartTurn();
     }
-
 
     private void UpdateTurnUI()
     {

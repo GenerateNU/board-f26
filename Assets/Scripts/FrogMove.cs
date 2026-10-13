@@ -68,9 +68,14 @@ public class FrogMove : MonoBehaviour
         SetNeighborHighlights(true);
     }
 
+    //public void EndTurn()
+    //{
+       // SetNeighborHighlights(false);
+    //}
     public void EndTurn()
     {
         SetNeighborHighlights(false);
+        HasMovedThisTurn = true; // can't act again until StartTurn() resets it
     }
 
     public void DoAction(ActionType action)
