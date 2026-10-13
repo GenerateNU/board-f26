@@ -6,5 +6,6 @@ public abstract class AEnemy : MonoBehaviour
 {
     protected bool animationFinished;
     public bool AnimationFinished { get { return animationFinished; } }
+    public virtual void CroakUsed() { return; }
     public abstract void DoEnemyTurn();
 }

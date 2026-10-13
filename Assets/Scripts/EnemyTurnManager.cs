@@ -6,11 +6,35 @@ public class EnemyTurnManager : MonoBehaviour
     [Tooltip("Enemies should be in turn order, this generally means fish last.")]
     [SerializeField]
     private AEnemy[] enemies;
+    public static EnemyTurnManager Instance { get; private set; }
 
-    void Start()
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Debug.LogWarning("Multiple TurnManagers found; destroying the duplicate.");
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
+    }
+
+    private void Start()
     {
         TurnManager.Instance.OnTurnChanged += DoEnemyTurn;
+    }
 
+    public void CroakUsed()
+    {
+        for (int i = 0; i < enemies.Length; i++)
+        {
+            enemies[i].CroakUsed();
+        }
     }
 
     private void DoEnemyTurn()

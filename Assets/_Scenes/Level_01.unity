@@ -2833,6 +2833,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1334462124}
     - target: {fileID: 1241953583717251712, guid: cb64d7ee9f413fd4b84b2348ade1d590, type: 3}
+      propertyPath: closestFrog
+      value: 
+      objectReference: {fileID: 1334462124}
+    - target: {fileID: 1241953583717251712, guid: cb64d7ee9f413fd4b84b2348ade1d590, type: 3}
       propertyPath: currentFishNode
       value: 
       objectReference: {fileID: 1490595771}
@@ -7113,7 +7117,7 @@ PrefabInstance:
       objectReference: {fileID: 1733755953}
     - target: {fileID: 1152814856628739711, guid: 5df5298283d2db741a2716f0abf01d7f, type: 3}
       propertyPath: useBoardInput
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1152814856628739711, guid: 5df5298283d2db741a2716f0abf01d7f, type: 3}
       propertyPath: 'frogs.Array.data[0]'

@@ -7,13 +7,23 @@ using UnityEngine.Rendering;
 using UnityEngine.InputSystem;
 using Unity.VisualScripting;
 
+/*
+Fish AI:
+Current: Fish moves toward the closest player and traverses lilypads to reach them.
+Fish should move 1.5 lilypads each turn this is shown by having them move 1 lilypad 
+in Turn1 then 2 lilypads in Turn2.
+Fish should move 1 lilypad if croak is used.
+*/
 public class FishEnemy : AEnemy
 {
     [SerializeField] private BasicNode currentFishNode;
     private FrogMove frogMove;
     private FrogActions frogActions;
-    [SerializeField] private GameObject frog;
+    private GameObject currentClosestFrog;
     [SerializeField] private float swimSpeed = 1;
+    [SerializeField] private int lilyPadsPerOddTurn = 1;
+    [SerializeField] private int lilyPadsPerEvenTurn = 2;
+    private bool oddTurn = true;
 
     private int progress = 0;
     private Vector3 lastPos;
@@ -29,46 +39,66 @@ public class FishEnemy : AEnemy
 
     public override void DoEnemyTurn()
     {
-        animationFinished = false;
+        int timesDoEnemyTurn = oddTurn ? lilyPadsPerOddTurn : lilyPadsPerEvenTurn;
+
+        SetClosestFrog();
+
+        for (int i = 0; i < timesDoEnemyTurn; i++)
+        {
+            if (!currentClosestFrog) { SetClosestFrog(); }
+            MoveTowards();
+        }
+
+        oddTurn = !oddTurn;
+    }
+
+    public override void CroakUsed()
+    {
+        if (!currentClosestFrog) { SetClosestFrog(); }
         MoveTowards();
     }
 
+    private void SetClosestFrog()
+    {
+        currentClosestFrog = FindClosestFrog(TurnManager.Instance.GetAllFrogs());
+        Debug.Log(currentClosestFrog);
+        if (currentClosestFrog == null) { return; }
+        reassignFrogComponents();
+        Path = CalculatePath(currentFishNode, frogMove.GetLilyPadFrogOn());
+        progress = 0;
+    }
+
     //for future, only one frog in the scene so not needed.
-    GameObject FindClosestFrog(GameObject[] frogs)
+    GameObject FindClosestFrog(List<FrogMove> frogs)
     {
         float minDist = float.MaxValue;
         GameObject closestFrog = null;
-        foreach (GameObject frog in frogs)
+        foreach (FrogMove frogScript in frogs)
         {
+            GameObject frog = frogScript.gameObject;
+            Debug.Log(frog + " loop");
             float dist = Vector3.Distance(frog.transform.position, transform.position);
             if (dist < minDist)
             {
                 minDist = dist;
                 closestFrog = frog;
+                Debug.Log(closestFrog + " new closest frog");
             }
         }
-        return frog;
+        return closestFrog;
     }
 
     void reassignFrogComponents()
     {
-        frogMove = frog.GetComponent<FrogMove>();
-        frogActions = frog.GetComponent<FrogActions>();
-    }
-
-    void Start()
-    {
-        Path = CalculatePath(currentFishNode, frogMove.GetLilyPadFrogOn());
-        progress = 0;
-        for (int i = 0; i < Path.Count; i++)
-        {
-            //Debug.Log($"path step {i}: {Path[i].gameObject.name}", Path[i].gameObject);
-        }
+        if (currentClosestFrog == null) { return; }
+        frogMove = currentClosestFrog.GetComponent<FrogMove>();
+        frogActions = currentClosestFrog.GetComponent<FrogActions>();
     }
 
     [ContextMenu("Move Towards")]
     public void MoveTowards()
     {
+        if (currentClosestFrog == null) { Debug.LogWarning("No closest frog"); return; }
         lastPos = transform.position;
         progress++;
         UpdateCurrentNode(Path, progress);
@@ -102,11 +132,11 @@ public class FishEnemy : AEnemy
             BasicNode respawn = frogActions.respawnNode;
             if (respawn) // if a respawn node exists => frog has layed an egg
             {
-                frog.transform.position = respawn.transform.position; //teleport frog to respawn
+                currentClosestFrog.transform.position = respawn.transform.position; //teleport frog to respawn
             }
             else //frog did not lay egg
             {
-                Destroy(frog);
+                Destroy(currentClosestFrog);
                 Debug.Log("Frog Eaten");
             }
         }
@@ -114,6 +144,7 @@ public class FishEnemy : AEnemy
 
     IEnumerator GlideToCurrentFishNode()
     {
+        animationFinished = false;
         float elapsed = 0;
         while (Vector3.Distance(transform.position, currentFishNode.transform.position) > 0.1f)
         {

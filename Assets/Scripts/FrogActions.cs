@@ -77,6 +77,7 @@ public class FrogActions : MonoBehaviour
                 childNode.CroakUsedOnPad();
             }
         }
+        EnemyTurnManager.Instance.CroakUsed();
         HasActedThisTurn = true;
 
         // Rehighlight so mite nodes will be highlighted
