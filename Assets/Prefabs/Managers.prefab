@@ -78,6 +78,7 @@ MonoBehaviour:
     action: 2
   - id: 3
     action: 3
+  debugButtonsForMouse: {fileID: 0}
 --- !u!114 &6617130360181876341
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -91,3 +92,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyTurnManager
   enemies: []
+  turnFishStartsActions: 2

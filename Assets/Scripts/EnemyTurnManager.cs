@@ -6,11 +6,39 @@ public class EnemyTurnManager : MonoBehaviour
     [Tooltip("Enemies should be in turn order, this generally means fish last.")]
     [SerializeField]
     private AEnemy[] enemies;
+    [SerializeField]
+    private int turnFishStartsActions;
+    private int currentTurn = 0;
+    public static EnemyTurnManager Instance { get; private set; }
 
-    void Start()
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Debug.LogWarning("Multiple TurnManagers found; destroying the duplicate.");
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
+    }
+
+    private void Start()
     {
         TurnManager.Instance.OnTurnChanged += DoEnemyTurn;
+    }
 
+    public void CroakUsed()
+    {
+        for (int i = 0; i < enemies.Length; i++)
+        {
+            if (ShouldSkipFishTurn(enemies[i])) { continue; }
+            enemies[i].CroakUsed();
+        }
     }
 
     private void DoEnemyTurn()
@@ -26,10 +54,21 @@ public class EnemyTurnManager : MonoBehaviour
         // would've also tried to eat.
         for (int i = 0; i < enemies.Length; i++)
         {
+            if (ShouldSkipFishTurn(enemies[i]))
+            {
+                enemies[i].AnimationFinished = true;
+                continue;
+            }
             enemies[i].DoEnemyTurn();
         }
 
+        currentTurn++;
         _ = SwitchTurn();
+    }
+
+    private bool ShouldSkipFishTurn(AEnemy enemy)
+    {
+        return currentTurn < turnFishStartsActions && enemy is FishEnemy;
     }
 
     private async Task SwitchTurn()

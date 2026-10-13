@@ -33,6 +33,7 @@ public class InputHandler : MonoBehaviour
 
     [SerializeField] FrogActions[] frogs;
     [SerializeField] GlyphActionPair[] GlyphActionPairs;
+    [SerializeField] private GameObject debugButtonsForMouse;
 
     [Serializable]
     public struct GlyphActionPair
@@ -59,6 +60,14 @@ public class InputHandler : MonoBehaviour
             Debug.LogWarning($"No '{_clickActionName}' action found in the project-wide Input Actions; using left mouse button instead.");
             _mouseClickAction = new InputAction("Click", InputActionType.Button, "<Mouse>/leftButton");
             _ownsClickAction = true;
+        }
+    }
+
+    private void Start()
+    {
+        if (useBoardInput && debugButtonsForMouse)
+        {
+            debugButtonsForMouse.SetActive(false);
         }
     }
 
@@ -100,7 +109,7 @@ public class InputHandler : MonoBehaviour
 
     public void OnActionButtonPressed(ActionType action)
     {
-        if (useBoardInput) { return; }
+        if (useBoardInput || IsInputBlocked) { return; }
         if (TurnManager.Instance.CurrentPhase != TurnManager.TurnPhase.Player) return;
         FrogMove frog = TurnManager.Instance.GetCurrentFrog();
         frog.DoAction(action);
@@ -129,16 +138,19 @@ public class InputHandler : MonoBehaviour
 
     private void OnMouseClick(InputAction.CallbackContext context)
     {
+        if (useBoardInput) { return; }
         HopToLilyPad(Mouse.current.position.ReadValue());
     }
 
     private void OnFingerDown(BoardContact contact)
     {
+        if (!useBoardInput) { return; }
         HopToLilyPad(contact.screenPosition);
     }
 
     void OnPieceDown(BoardContact contact)
     {
+        if (!useBoardInput) { return; }
         if (IsInputBlocked) return;
 
         var turnManager = TurnManager.Instance;

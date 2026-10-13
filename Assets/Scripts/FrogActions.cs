@@ -77,6 +77,7 @@ public class FrogActions : MonoBehaviour
                 childNode.CroakUsedOnPad();
             }
         }
+        EnemyTurnManager.Instance.CroakUsed();
         HasActedThisTurn = true;
 
         // Rehighlight so mite nodes will be highlighted
@@ -86,11 +87,13 @@ public class FrogActions : MonoBehaviour
 
     private void LayEgg()
     {
-        BasicNode currentPad = gameObject.GetComponent<FrogMove>().GetLilyPadFrogOn();
+        return;
+        // We should still use this code for egg refactoring just take out the respawnNode part
+        /*BasicNode currentPad = gameObject.GetComponent<FrogMove>().GetLilyPadFrogOn();
         currentPad.SpawnObjectOnPad(eggPrefab);
         respawnNode = currentPad;
         HasActedThisTurn = true;
-        if (frogMove.ShouldEndTurn(HasActedThisTurn)) { EndTurn(); }
+        if (frogMove.ShouldEndTurn(HasActedThisTurn)) { EndTurn(); }*/
     }
 
     private void HopAgain()
