@@ -7143,6 +7143,10 @@ PrefabInstance:
       propertyPath: 'enemies.Array.data[2]'
       value: 
       objectReference: {fileID: 1715136580}
+    - target: {fileID: 2247656338738047099, guid: 5df5298283d2db741a2716f0abf01d7f, type: 3}
+      propertyPath: turnFishStartsActions
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 5265749302191256489, guid: 5df5298283d2db741a2716f0abf01d7f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.03363
