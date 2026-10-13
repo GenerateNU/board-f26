@@ -24,14 +24,30 @@ public class AlligatorNode : BasicNode
     public override int CurrentFrogsOnPad
     {
         get { return base.CurrentFrogsOnPad; }
-        set { base.CurrentFrogsOnPad = value; alligatorEnemy.MakeAlligatorAwakeOnTurn(true); }
+        set { base.CurrentFrogsOnPad = value; if (value != 0) { alligatorEnemy.MakeAlligatorAwakeOnTurn(true); } }
     }
     [SerializeField]
     private AlligatorEnemy alligatorEnemy;
+    private Renderer alligatorRenderer;
+
+    protected override void Start()
+    {
+        alligatorRenderer = this.gameObject.GetComponentInChildren<Renderer>();
+        if (!alligatorRenderer)
+        {
+            Debug.Log("Alligator node is missing a renderer, will not be able to update materials.");
+        }
+        base.Start();
+    }
 
     public override void CroakUsedOnPad()
     {
         alligatorEnemy.MakeAlligatorAwake(true);
+    }
+
+    public void UpdateMaterial(bool alligatorAwake, Material alligatorAwakeMat, Material alligatorNormalMat)
+    {
+        alligatorRenderer.material = alligatorAwake ? alligatorAwakeMat : alligatorNormalMat;
     }
 
     public void KillFrogsOnAlligator()
