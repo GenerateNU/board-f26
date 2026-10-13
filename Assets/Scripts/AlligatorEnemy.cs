@@ -3,24 +3,40 @@ using UnityEngine;
 // This class primarily exists for the ease of the EnemyTurnManager. 
 public class AlligatorEnemy : AEnemy
 {
-    private AlligatorNode alligatorNode;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField]
+    private AlligatorNode[] alligatorNodes;
+    private bool makeAlligatorAwakeOnTurn = false;
+    private bool alligatorAwake = false;
+
+    public void MakeAlligatorAwakeOnTurn(bool awake)
     {
-        alligatorNode = this.GetComponent<AlligatorNode>();
-        if (alligatorNode == null)
-        {
-            Debug.Log("Alligator enemy requires an alligator node.");
-        }
+        makeAlligatorAwakeOnTurn = awake;
+    }
+
+    public void MakeAlligatorAwake(bool awake)
+    {
+        alligatorAwake = awake;
     }
 
     public override void DoEnemyTurn()
     {
         animationFinished = false;
-        // There isn't enough logic in AlligatorNode to justify 
-        // dealing with the field sharing here.
+
         // TODO: Add art/death animation above if necessary and await on it
-        alligatorNode.DoAlligatorTurn();
+        if (!alligatorAwake)
+        {
+            alligatorAwake = makeAlligatorAwakeOnTurn;
+            makeAlligatorAwakeOnTurn = false;
+            animationFinished = true;
+            return;
+        }
+
+        for (int i = 0; i < alligatorNodes.Length; i++)
+        {
+            alligatorNodes[i].KillFrogsOnAlligator();
+        }
+
+        alligatorAwake = false;
         animationFinished = true;
     }
 }

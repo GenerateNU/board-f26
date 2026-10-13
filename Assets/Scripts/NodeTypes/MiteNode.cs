@@ -11,11 +11,11 @@ public class MiteNode : LilyPadNode
     [SerializeField]
     private Material _miteMat;
     public override bool IsTraversable => !IsOccupied;
-    public override NodeHazard NodeType => NodeHazard.Mites;
+    public override NodeHazard NodeType => MitesActive ? NodeHazard.Mites : NodeHazard.None;
     private Renderer miteRenderer;
     public bool MitesActive { get; private set; }
 
-    void Start()
+    protected override void Start()
     {
         MitesActive = true;
         miteRenderer = this.gameObject.GetComponentInChildren<Renderer>();
@@ -23,6 +23,7 @@ public class MiteNode : LilyPadNode
         {
             Debug.Log("Mite node is missing a renderer, will not be able to update materials.");
         }
+        base.Start();
     }
 
     public override void CroakUsedOnPad()

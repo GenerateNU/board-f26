@@ -95,7 +95,8 @@ public class FrogActions : MonoBehaviour
 
     private void HopAgain()
     {
-        if (frogMove.GetLilyPadFrogOn().NodeType == NodeHazard.Mites)
+        // Don't let the player use HopAgain unless it is their second action.
+        if (frogMove.GetLilyPadFrogOn().NodeType == NodeHazard.Mites || !frogMove.HasMovedThisTurn)
         {
             return;
         }

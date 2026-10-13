@@ -35,7 +35,7 @@ public class InputHandler : MonoBehaviour
     [SerializeField] GlyphActionPair[] GlyphActionPairs;
 
     [Serializable]
-    public struct GlyphActionPair 
+    public struct GlyphActionPair
     {
         public int id;
         public ActionType action;
@@ -64,11 +64,11 @@ public class InputHandler : MonoBehaviour
 
     private void OnEnable()
     {
-        if(useBoardInput) DeviceInputManager.FingerDown += OnFingerDown;
-        if(useBoardInput) DeviceInputManager.PieceDown += OnPieceDown;
+        if (useBoardInput) DeviceInputManager.FingerDown += OnFingerDown;
+        if (useBoardInput) DeviceInputManager.PieceDown += OnPieceDown;
 
         if (_mouseClickAction == null) return;
-        if(!useBoardInput) _mouseClickAction.performed += OnMouseClick;
+        if (!useBoardInput) _mouseClickAction.performed += OnMouseClick;
         _mouseClickAction.Enable();
     }
 
@@ -96,6 +96,14 @@ public class InputHandler : MonoBehaviour
         {
             TurnManager.Instance.AdvanceTurn();
         }
+    }
+
+    public void OnActionButtonPressed(ActionType action)
+    {
+        if (useBoardInput) { return; }
+        if (TurnManager.Instance.CurrentPhase != TurnManager.TurnPhase.Player) return;
+        FrogMove frog = TurnManager.Instance.GetCurrentFrog();
+        frog.DoAction(action);
     }
 
 
@@ -137,13 +145,8 @@ public class InputHandler : MonoBehaviour
         if (turnManager == null || turnManager.CurrentPhase != TurnManager.TurnPhase.Player) return;
 
         FrogMove frog = turnManager.GetCurrentFrog();
-        FrogActions frogAction = frog.transform.GetComponent<FrogActions>();
-        GlyphActionPair pair = Array.Find(GlyphActionPairs,p => p.id == contact.glyphId);
-        if(frogAction.IsActionAvailable(pair.action))
-        {
-            frogAction.DoAction(pair.action);
-            Debug.Log("Did " + pair.action);
-        }
+        GlyphActionPair pair = Array.Find(GlyphActionPairs, p => p.id == contact.glyphId);
+        frog.DoAction(pair.action);
     }
 
     // Makes a raycast from the mouse and returns the lily pad it hit, if any
