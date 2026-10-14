@@ -1,40 +1,58 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using TMPro;
 
 public class MainMenu : MonoBehaviour
 {
     [Tooltip("Exact name of the level scene (must be in Build Settings).")]
     [SerializeField] private string levelSceneName = "Level_01";
 
-    [Tooltip("Dropdown for choosing the number of players. Options are filled in automatically.")]
-    [SerializeField] private TMP_Dropdown playerCountDropdown;
-
-    [SerializeField, Range(1, TurnManager.MaxPlayers)] private int defaultPlayerCount = 1;
+    [Header("Panels")]
+    [Tooltip("Optional: the 1/2/3 player buttons. If empty, PLAY starts with 1 player.")]
+    [SerializeField] private GameObject playerSelectPanel;
+    [Tooltip("Optional: placeholder How To Play panel.")]
+    [SerializeField] private GameObject howToPlayPanel;
+    [Tooltip("Optional: placeholder Settings panel (gear).")]
+    [SerializeField] private GameObject settingsPanel;
 
     private void Start()
     {
-        if (playerCountDropdown == null) return;
-
-        var options = new List<string>();
-        for (int i = 1; i <= TurnManager.MaxPlayers; i++)
-        {
-            options.Add(i == 1 ? "1 Player" : i + " Players");
-        }
-
-        playerCountDropdown.ClearOptions();
-        playerCountDropdown.AddOptions(options);
-        playerCountDropdown.value = defaultPlayerCount - 1;
-        playerCountDropdown.RefreshShownValue();
+        CloseAllPanels();
     }
 
-    public void StartGame()
+    // PLAY button
+    public void OnPlayPressed()
     {
-        int count = playerCountDropdown != null ? playerCountDropdown.value + 1 : defaultPlayerCount;
-        GameSettings.PlayerCount = Mathf.Clamp(count, 1, TurnManager.MaxPlayers);
+        if (playerSelectPanel == null)
+        {
+            SelectPlayers(1); // no panel set up yet: just start
+            return;
+        }
+        ShowOnly(playerSelectPanel);
+    }
 
+    // HOW TO PLAY button
+    public void OnHowToPlayPressed() => ShowOnly(howToPlayPanel);
+
+    // Gear button
+    public void OnSettingsPressed() => ShowOnly(settingsPanel);
+
+    // Back buttons on any panel
+    public void CloseAllPanels() => ShowOnly(null);
+
+    // 1 / 2 / 3 Player
+
+    public void SelectPlayers(int count)
+    {
+        GameSettings.PlayerCount = Mathf.Clamp(count, 1, TurnManager.MaxPlayers);
         Debug.Log($"Starting {levelSceneName} with {GameSettings.PlayerCount} player(s).");
         SceneManager.LoadScene(levelSceneName);
     }
+
+    private void ShowOnly(GameObject panel)
+    {
+        if (playerSelectPanel != null) playerSelectPanel.SetActive(panel == playerSelectPanel);
+        if (howToPlayPanel != null) howToPlayPanel.SetActive(panel == howToPlayPanel);
+        if (settingsPanel != null) settingsPanel.SetActive(panel == settingsPanel);
+    }
+
 }

@@ -5010,6 +5010,10 @@ PrefabInstance:
       propertyPath: startingPlayers
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 6178494385404352344, guid: e617e6c48146e28409fdbaaee72c516c, type: 3}
+      propertyPath: gameOverScreenPrefab
+      value: 
+      objectReference: {fileID: 7029519803717485589, guid: d3a9951abc7a04c7382c235457d0b95e, type: 3}
     - target: {fileID: 6617130360181876341, guid: e617e6c48146e28409fdbaaee72c516c, type: 3}
       propertyPath: enemies.Array.size
       value: 3

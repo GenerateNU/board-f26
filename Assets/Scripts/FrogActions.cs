@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,13 +23,46 @@ public class FrogActions : MonoBehaviour
 
     public bool HasActedThisTurn { get; set; } = false;
 
+    private bool _endTurnPending;
+
+    void Awake()
+    {
+        frogMove = GetComponent<FrogMove>();
+    }
+
     void Start()
     {
-        frogMove = gameObject.GetComponent<FrogMove>();
+        if (TurnManager.Instance != null) TurnManager.Instance.OnTurnChanged += OnTurnChanged;
+    }
+
+    void OnDestroy()
+    {
+        if (TurnManager.Instance != null) TurnManager.Instance.OnTurnChanged -= OnTurnChanged;
+    }
+
+    // Reset only when a NEW turn actually starts for this frog,
+    // not when EndTurn is requested (the turn change can be blocked or delayed).
+    private void OnTurnChanged()
+    {
+        if (IsMyTurn())
+        {
+            HasActedThisTurn = false;
+            _endTurnPending = false;
+        }
+    }
+
+    private bool IsMyTurn()
+    {
+        return TurnManager.Instance != null
+            && frogMove != null
+            && TurnManager.Instance.GetCurrentFrog() == frogMove;
     }
 
     public bool IsActionAvailable(ActionType action)
     {
+        // Nothing is available outside this frog's turn, or once it has asked to end its turn.
+        if (!IsMyTurn() || _endTurnPending) return false;
+
         switch (action)
         {
             case ActionType.Croak:
@@ -46,6 +80,12 @@ public class FrogActions : MonoBehaviour
 
     public void DoAction(ActionType action)
     {
+        if (!IsActionAvailable(action))
+        {
+            Debug.Log($"{name}: {action} isn't available right now.");
+            return;
+        }
+
         switch (action)
         {
             case ActionType.Croak:
@@ -68,7 +108,10 @@ public class FrogActions : MonoBehaviour
     // croak, lay egg, hop again etc.
     private void Croak()
     {
-        foreach (BasicNode node in frogMove.GetLilyPadFrogOn().Neighbors)
+        BasicNode currentPad = frogMove.GetLilyPadFrogOn();
+        if (currentPad == null) return;
+
+        foreach (BasicNode node in currentPad.Neighbors)
         {
             node.CroakUsedOnPad();
 
@@ -86,7 +129,9 @@ public class FrogActions : MonoBehaviour
 
     private void LayEgg()
     {
-        BasicNode currentPad = gameObject.GetComponent<FrogMove>().GetLilyPadFrogOn();
+        BasicNode currentPad = frogMove.GetLilyPadFrogOn();
+        if (currentPad == null) return;
+
         currentPad.SpawnObjectOnPad(eggPrefab);
         respawnNode = currentPad;
         HasActedThisTurn = true;
@@ -109,10 +154,26 @@ public class FrogActions : MonoBehaviour
         if (frogMove.ShouldEndTurn(HasActedThisTurn)) { EndTurn(); }
     }
 
+    // Ends this frog's turn. If an animation (like a hop) is still playing,
+    // waits for it to finish instead of being silently ignored.
     public void EndTurn()
     {
-        TurnManager.Instance.AdvanceTurn();
-        HasActedThisTurn = false;
+        if (_endTurnPending || !IsMyTurn()) return;
+        _endTurnPending = true;
+        StartCoroutine(EndTurnWhenReady());
     }
 
+    private IEnumerator EndTurnWhenReady()
+    {
+        while (InputHandler.Instance != null && InputHandler.Instance.InAnimation)
+        {
+            yield return null;
+        }
+
+        // Still our turn? (Something else may have advanced it meanwhile.)
+        if (IsMyTurn() && TurnManager.Instance != null)
+        {
+            TurnManager.Instance.AdvanceTurn();
+        }
+    }
 }
