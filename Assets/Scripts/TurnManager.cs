@@ -25,7 +25,8 @@ public class TurnManager : MonoBehaviour
     public static TurnManager Instance { get; private set; }
 
     [Header("Players")]
-    [Tooltip("How many players exist when the scene starts (handy for testing). More can join with AddPlayer().")]
+    [Tooltip("Players to use when the level is played directly in the editor. " +
+    "When started from the Main Menu, the menu's choice is used instead.")]
     [SerializeField, Range(0, MaxPlayers)] private int startingPlayers = 1;
 
     [Header("UI")]
@@ -34,21 +35,27 @@ public class TurnManager : MonoBehaviour
     [Tooltip("Optional: the Add Player button. It greys out once the game is full.")]
     [SerializeField] private Button addPlayerButton;
 
+    [Header("Game Over")]
+    [Tooltip("The GameOver_Canvas prefab (with the GameOverScreen script on its root).")]
+    [SerializeField] private GameOverScreen gameOverScreenPrefab;
+
     private readonly List<PlayerSlot> _players = new List<PlayerSlot>();
     private readonly Dictionary<int, FrogMove> _frogs = new Dictionary<int, FrogMove>(); // player number -> frog
     private int _currentPlayerIndex;
     private int _frogsSucceeded;
     private bool _started;
+    private bool _gameOver;
 
     public TurnPhase CurrentPhase { get; private set; } = TurnPhase.Player;
     public IReadOnlyList<PlayerSlot> Players => _players;
     public int PlayerCount => _players.Count;
     public bool CanAddPlayer => _players.Count < MaxPlayers;
+    public bool IsGameOver => _gameOver;
     public int CurrentPlayerNumber =>
         CurrentPhase == TurnPhase.Player && _players.Count > 0 ? _players[_currentPlayerIndex].Number : 0;
 
     public bool IsPlayersTurn(int playerNumber) =>
-        CurrentPhase == TurnPhase.Player && CurrentPlayerNumber == playerNumber;
+        !_gameOver && CurrentPhase == TurnPhase.Player && CurrentPlayerNumber == playerNumber;
 
     public string CurrentTurnLabel =>
         CurrentPhase == TurnPhase.Enemy ? "Enemy" : "Player " + CurrentPlayerNumber;
@@ -74,7 +81,13 @@ public class TurnManager : MonoBehaviour
 
     private void Start()
     {
-        for (int i = 0; i < startingPlayers; i++) AddPlayer();
+        // Use the Main Menu's choice if there was one, otherwise the Inspector value.
+        int playerCount = GameSettings.HasPlayerCount ? GameSettings.PlayerCount : startingPlayers;
+        playerCount = Mathf.Clamp(playerCount, 0, MaxPlayers);
+        for (int i = 0; i < playerCount; i++) AddPlayer();
+
+        // Frogs for players who aren't in this game get removed.
+        RemoveFrogsWithoutPlayers();
 
         // With no players yet, sit on the enemy turn until someone joins.
         CurrentPhase = _players.Count > 0 ? TurnPhase.Player : TurnPhase.Enemy;
@@ -111,6 +124,13 @@ public class TurnManager : MonoBehaviour
             return;
         }
 
+        // Frog registered after the game started for a player who isn't playing: remove it.
+        if (_started && playerNumber > _players.Count)
+        {
+            frog.gameObject.SetActive(false);
+            return;
+        }
+
         if (_frogs.ContainsKey(playerNumber))
             Debug.LogWarning($"Player {playerNumber} already has a frog; replacing it with {frog.name}.");
 
@@ -118,6 +138,23 @@ public class TurnManager : MonoBehaviour
 
         // If the game is already running and it's this frog's turn, kick its turn off now.
         if (_started && IsPlayersTurn(playerNumber)) frog.StartTurn();
+    }
+
+    // Hides frogs whose player number is higher than the number of players in this game.
+    private void RemoveFrogsWithoutPlayers()
+    {
+        var toRemove = new List<int>();
+        foreach (var kvp in _frogs)
+        {
+            if (kvp.Key > _players.Count) toRemove.Add(kvp.Key);
+        }
+
+        foreach (int playerNumber in toRemove)
+        {
+            FrogMove frog = _frogs[playerNumber];
+            _frogs.Remove(playerNumber); // remove first so it doesn't count toward win/loss
+            if (frog != null) frog.gameObject.SetActive(false);
+        }
     }
 
     public void UnregisterFrog(FrogMove frog, int playerNumber, bool frogOutcomePositive)
@@ -137,7 +174,16 @@ public class TurnManager : MonoBehaviour
     // If any frog makes it to the end count it as a win for now
     public void GameOver(bool won)
     {
+        if (_gameOver) return;
+        _gameOver = true;
         _frogsSucceeded = 0;
+
+        Debug.Log(won ? "Game Over: won" : "Game Over: lost");
+
+        if (gameOverScreenPrefab != null)
+            Instantiate(gameOverScreenPrefab).Show(won);
+        else
+            Debug.LogWarning("No GameOver_Canvas prefab assigned on TurnManager.");
     }
 
     public FrogMove GetCurrentFrog()
@@ -159,6 +205,8 @@ public class TurnManager : MonoBehaviour
 
     public void AdvanceTurn()
     {
+        if (_gameOver) { return; }
+
         // Never change turns while a frog is still hopping.
         if (InputHandler.Instance != null && InputHandler.Instance.InAnimation) { return; }
 
