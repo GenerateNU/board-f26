@@ -151,7 +151,8 @@ public class InputHandler : MonoBehaviour
     // Mouse click (or regular touchscreen / pen tap)
     private void OnMouseClick(InputAction.CallbackContext context)
     {
-        HopToLilyPad(Mouse.current.position.ReadValue());
+        if (useBoardInput || Pointer.current == null) { return; }
+        HopToLilyPad(Pointer.current.position.ReadValue());
     }
 
     // Board finger touch

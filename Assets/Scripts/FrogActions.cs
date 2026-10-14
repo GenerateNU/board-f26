@@ -130,13 +130,13 @@ public class FrogActions : MonoBehaviour
 
     private void LayEgg()
     {
-        return;
-        // We should still use this code for egg refactoring just take out the respawnNode part
-        /*BasicNode currentPad = gameObject.GetComponent<FrogMove>().GetLilyPadFrogOn();
+        BasicNode currentPad = frogMove.GetLilyPadFrogOn();
+        if (currentPad == null) return;
+
         currentPad.SpawnObjectOnPad(eggPrefab);
         respawnNode = currentPad;
         HasActedThisTurn = true;
-        if (frogMove.ShouldEndTurn(HasActedThisTurn)) { EndTurn(); }*/
+        if (frogMove.ShouldEndTurn(HasActedThisTurn)) { EndTurn(); }
     }
 
     private void HopAgain()
