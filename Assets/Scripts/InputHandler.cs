@@ -26,6 +26,7 @@ public class InputHandler : MonoBehaviour
     [Tooltip("Press Space to advance the turn (for testing).")]
     [SerializeField] private bool _enableSpaceToAdvance = true;
 
+    [Tooltip("ON: Board hardware (finger touches + game pieces). OFF: mouse / regular touchscreen + on-screen buttons.")]
     [SerializeField] private bool useBoardInput = true;
 
     public bool InAnimation => _inAnimation;
@@ -57,8 +58,8 @@ public class InputHandler : MonoBehaviour
         _mouseClickAction = InputSystem.actions != null ? InputSystem.actions.FindAction(_clickActionName) : null;
         if (_mouseClickAction == null)
         {
-            Debug.LogWarning($"No '{_clickActionName}' action found in the project-wide Input Actions; using left mouse button instead.");
-            _mouseClickAction = new InputAction("Click", InputActionType.Button, "<Mouse>/leftButton");
+            Debug.LogWarning($"No '{_clickActionName}' action found in the project-wide Input Actions; using pointer press (mouse/touch/pen) instead.");
+            _mouseClickAction = new InputAction("Click", InputActionType.Button, "<Pointer>/press");
             _ownsClickAction = true;
         }
     }
@@ -73,8 +74,11 @@ public class InputHandler : MonoBehaviour
 
     private void OnEnable()
     {
-        if (useBoardInput) DeviceInputManager.FingerDown += OnFingerDown;
-        if (useBoardInput) DeviceInputManager.PieceDown += OnPieceDown;
+        if (useBoardInput)
+        {
+            DeviceInputManager.FingerDown += OnFingerDown;
+            DeviceInputManager.PieceDown += OnPieceDown;
+        }
 
         if (_mouseClickAction == null) return;
         if (!useBoardInput) _mouseClickAction.performed += OnMouseClick;
@@ -83,6 +87,10 @@ public class InputHandler : MonoBehaviour
 
     private void OnDisable()
     {
+        // Static events: always unsubscribe, or after Restart they'd still call this destroyed object.
+        DeviceInputManager.FingerDown -= OnFingerDown;
+        DeviceInputManager.PieceDown -= OnPieceDown;
+
         if (_mouseClickAction == null) return;
         _mouseClickAction.performed -= OnMouseClick;
         // Don't disable the shared project action; other scripts may use it.
@@ -107,66 +115,77 @@ public class InputHandler : MonoBehaviour
         }
     }
 
-    public void OnActionButtonPressed(ActionType action)
+    // Returns the current player's frog if input is allowed right now, otherwise null.
+    private FrogMove GetFrogIfInputAllowed()
     {
-        if (useBoardInput || IsInputBlocked) { return; }
-        if (TurnManager.Instance.CurrentPhase != TurnManager.TurnPhase.Player) return;
-        FrogMove frog = TurnManager.Instance.GetCurrentFrog();
-        frog.DoAction(action);
-    }
-
-
-    private void HopToLilyPad(Vector2 rayOrigin)
-    {
-        if (IsInputBlocked) return;
+        if (IsInputBlocked) return null;
 
         var turnManager = TurnManager.Instance;
-        if (turnManager == null || turnManager.CurrentPhase != TurnManager.TurnPhase.Player) return;
-
-        BasicNode clickedLilyPad = GetLilyPadUnderMouse(rayOrigin);
-        if (clickedLilyPad == null) return;
+        if (turnManager == null || turnManager.IsGameOver || turnManager.CurrentPhase != TurnManager.TurnPhase.Player) return null;
 
         FrogMove frog = turnManager.GetCurrentFrog();
         if (frog == null)
-        {
-            Debug.Log($"{turnManager.CurrentTurnLabel} has no frog assigned, so the click was ignored.");
-            return;
-        }
+            Debug.Log($"{turnManager.CurrentTurnLabel} has no frog, so the input was ignored.");
+        return frog;
+    }
+
+    // On-screen action buttons (mouse mode only)
+    public void OnActionButtonPressed(ActionType action)
+    {
+        if (useBoardInput) { return; }
+        FrogMove frog = GetFrogIfInputAllowed();
+        if (frog != null) frog.DoAction(action);
+    }
+
+    private void HopToLilyPad(Vector2 screenPosition)
+    {
+        FrogMove frog = GetFrogIfInputAllowed();
+        if (frog == null) return;
+
+        BasicNode clickedLilyPad = GetLilyPadAtScreenPoint(screenPosition);
+        if (clickedLilyPad == null) return;
 
         frog.TryHopTo(clickedLilyPad);
     }
 
+    // Mouse click (or regular touchscreen / pen tap)
     private void OnMouseClick(InputAction.CallbackContext context)
     {
-        if (useBoardInput) { return; }
-        HopToLilyPad(Mouse.current.position.ReadValue());
+        if (useBoardInput || Pointer.current == null) { return; }
+        HopToLilyPad(Pointer.current.position.ReadValue());
     }
 
+    // Board finger touch
     private void OnFingerDown(BoardContact contact)
     {
         if (!useBoardInput) { return; }
         HopToLilyPad(contact.screenPosition);
     }
 
+    // Board game piece placed
     void OnPieceDown(BoardContact contact)
     {
-        if (!useBoardInput) { return; }
         if (IsInputBlocked) return;
 
-        var turnManager = TurnManager.Instance;
-        if (turnManager == null || turnManager.CurrentPhase != TurnManager.TurnPhase.Player) return;
+        FrogMove frog = GetFrogIfInputAllowed();
+        if (frog == null) return;
 
-        FrogMove frog = turnManager.GetCurrentFrog();
-        GlyphActionPair pair = Array.Find(GlyphActionPairs, p => p.id == contact.glyphId);
-        frog.DoAction(pair.action);
+        int index = Array.FindIndex(GlyphActionPairs, p => p.id == contact.glyphId);
+        if (index < 0)
+        {
+            Debug.Log($"No action is mapped to glyph {contact.glyphId}.");
+            return;
+        }
+
+        frog.DoAction(GlyphActionPairs[index].action);
     }
 
-    // Makes a raycast from the mouse and returns the lily pad it hit, if any
-    private BasicNode GetLilyPadUnderMouse(Vector2 ScreenPoint)
+    // Raycasts from a screen point (mouse, finger, or pen) and returns the lily pad it hit, if any
+    private BasicNode GetLilyPadAtScreenPoint(Vector2 screenPoint)
     {
-        if (_camera == null || Mouse.current == null) return null;
+        if (_camera == null) return null;
 
-        Ray ray = _camera.ScreenPointToRay(ScreenPoint);
+        Ray ray = _camera.ScreenPointToRay(screenPoint);
         //Debugging
         Debug.DrawRay(ray.origin, ray.direction * _maxRayDistance, Color.yellow, 1f);
 
@@ -176,7 +195,6 @@ public class InputHandler : MonoBehaviour
         }
         return null;
     }
-
 
     // call this when a hop animation starts or animation which is meant to prevent input starts.
     public void BeginAnimation() => _inAnimation = true;

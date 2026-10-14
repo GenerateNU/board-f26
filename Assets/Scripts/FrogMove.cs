@@ -50,11 +50,22 @@ public class FrogMove : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (gameObject.scene.isLoaded)
+        {
+            string padName = _currentLilyPad != null ? _currentLilyPad.name : "no pad";
+            Debug.Log($"{name} (Player {_assignedPlayer}) destroyed on {padName}", this);
+        }
+
         // Don't leave input locked if the frog is destroyed mid-hop.
-        this.GetLilyPadFrogOn().CurrentFrogsOnPad -= 1;
         if (_isHopping) InputHandler.Instance?.EndAnimation();
-        TurnManager.Instance?.UnregisterFrog(this, _assignedPlayer, _frogSucceeded);
+
+        // The whole scene is unloading (Restart / Main Menu): this isn't a death or a win,
+        // so don't report it. Otherwise Restart would trigger Game Over during the reload.
+        if (!gameObject.scene.isLoaded) return;
+
+        if (_currentLilyPad != null) _currentLilyPad.CurrentFrogsOnPad -= 1;
         SetNeighborHighlights(false);
+        TurnManager.Instance?.UnregisterFrog(this, _assignedPlayer, _frogSucceeded);
     }
 
     public BasicNode GetLilyPadFrogOn()
@@ -68,10 +79,6 @@ public class FrogMove : MonoBehaviour
         SetNeighborHighlights(true);
     }
 
-    //public void EndTurn()
-    //{
-       // SetNeighborHighlights(false);
-    //}
     public void EndTurn()
     {
         SetNeighborHighlights(false);
@@ -80,7 +87,7 @@ public class FrogMove : MonoBehaviour
 
     public void DoAction(ActionType action)
     {
-        if (_frogActions.IsActionAvailable(action))
+        if (_frogActions != null && _frogActions.IsActionAvailable(action))
         {
             _frogActions.DoAction(action);
         }
@@ -94,7 +101,21 @@ public class FrogMove : MonoBehaviour
 
     public void KillFrog()
     {
+        // won't show who called it. This log does.
+        Debug.Log($"KillFrog called on {name} (Player {_assignedPlayer})", this);
         Destroy(this.gameObject);
+    }
+
+    public void RespawnAt(BasicNode node)
+    {
+        if (node == null) return;
+
+        SetNeighborHighlights(false);
+        if (_currentLilyPad != null) _currentLilyPad.CurrentFrogsOnPad -= 1;
+        node.CurrentFrogsOnPad += 1;
+
+        _currentLilyPad = node;
+        transform.position = node.transform.position;
     }
 
     public void SetNeighborHighlights(bool on)
@@ -170,7 +191,7 @@ public class FrogMove : MonoBehaviour
             KillFrog();
             TurnManager.Instance.AdvanceTurn();
         }
-        else if (ShouldEndTurn(_frogActions.HasActedThisTurn))
+        else if (_frogActions != null && ShouldEndTurn(_frogActions.HasActedThisTurn))
         {
             _frogActions.EndTurn();
         }
