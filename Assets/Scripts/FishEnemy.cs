@@ -2,10 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+Fish AI:
+Current: Fish moves toward the closest player and traverses lilypads to reach them.
+Fish should move 1.5 lilypads each turn this is shown by having them move 1 lilypad 
+in Turn1 then 2 lilypads in Turn2.
+Fish should move 1 lilypad if croak is used.
+*/
 public class FishEnemy : AEnemy
 {
     [SerializeField] private BasicNode currentFishNode;
     [SerializeField] private float swimSpeed = 1;
+    [SerializeField] private int lilyPadsPerOddTurn = 1;
+    [SerializeField] private int lilyPadsPerEvenTurn = 2;
+    private bool oddTurn = true;
 
     private Vector3 lastPos;
     private List<BasicNode> Path;
@@ -25,6 +35,12 @@ public class FishEnemy : AEnemy
         }
 
         StepTowards(target.GetLilyPadFrogOn());
+    }
+
+    // Called when a frog uses the Croak action
+    public override void CroakUsed()
+    {
+        DoEnemyTurn();
     }
 
     // Kept for other scripts / testing: take one step toward a specific node.
@@ -117,6 +133,7 @@ public class FishEnemy : AEnemy
 
     IEnumerator GlideToCurrentFishNode()
     {
+        animationFinished = false;
         float elapsed = 0;
         Vector3 targetPos = currentFishNode.transform.position;
         float duration = swimSpeed > 0 ? 1f / swimSpeed : 0f;
@@ -132,7 +149,7 @@ public class FishEnemy : AEnemy
         animationFinished = true;
     }
 
-    List<BasicNode> CalculatePath(BasicNode start, BasicNode target) //uses djisktra
+    List<BasicNode> CalculatePath(BasicNode start, BasicNode target) // uses dijkstra
     {
         if (start == null || target == null) return null;
         if (start == target) return new List<BasicNode> { start };
@@ -157,7 +174,7 @@ public class FishEnemy : AEnemy
             BasicNode current = frontier[toPop];
             frontier.RemoveAt(toPop);
             if (!visited.Add(current)) continue; // already finalized (duplicate entry)
-            if (current == target) break; //path reached
+            if (current == target) break; // path reached
 
             foreach (BasicNode neighbor in current.Neighbors)
             {

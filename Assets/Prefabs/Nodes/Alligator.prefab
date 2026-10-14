@@ -50,6 +50,8 @@ MonoBehaviour:
   - {fileID: 1679570221409587215}
   - {fileID: 8543494896884444087}
   - {fileID: 2123804158843072683}
+  alligatorNormalMat: {fileID: 2100000, guid: 7c76e0b19c71d934d9aad8f580e14d3d, type: 2}
+  alligatorAwakeMat: {fileID: 2100000, guid: ad4f7712fc5c1a14783d97b1db4400ee, type: 2}
 --- !u!65 &3829315398856978944
 BoxCollider:
   m_ObjectHideFlags: 0

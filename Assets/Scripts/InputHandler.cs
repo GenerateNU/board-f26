@@ -34,6 +34,7 @@ public class InputHandler : MonoBehaviour
 
     [SerializeField] FrogActions[] frogs;
     [SerializeField] GlyphActionPair[] GlyphActionPairs;
+    [SerializeField] private GameObject debugButtonsForMouse;
 
     [Serializable]
     public struct GlyphActionPair
@@ -60,6 +61,14 @@ public class InputHandler : MonoBehaviour
             Debug.LogWarning($"No '{_clickActionName}' action found in the project-wide Input Actions; using pointer press (mouse/touch/pen) instead.");
             _mouseClickAction = new InputAction("Click", InputActionType.Button, "<Pointer>/press");
             _ownsClickAction = true;
+        }
+    }
+
+    private void Start()
+    {
+        if (useBoardInput && debugButtonsForMouse)
+        {
+            debugButtonsForMouse.SetActive(false);
         }
     }
 
@@ -142,8 +151,7 @@ public class InputHandler : MonoBehaviour
     // Mouse click (or regular touchscreen / pen tap)
     private void OnMouseClick(InputAction.CallbackContext context)
     {
-        if (useBoardInput || Pointer.current == null) { return; }
-        HopToLilyPad(Pointer.current.position.ReadValue());
+        HopToLilyPad(Mouse.current.position.ReadValue());
     }
 
     // Board finger touch
@@ -156,7 +164,7 @@ public class InputHandler : MonoBehaviour
     // Board game piece placed
     void OnPieceDown(BoardContact contact)
     {
-        if (!useBoardInput) { return; }
+        if (IsInputBlocked) return;
 
         FrogMove frog = GetFrogIfInputAllowed();
         if (frog == null) return;
