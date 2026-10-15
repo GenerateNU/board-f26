@@ -130,6 +130,7 @@ public class FrogActions : MonoBehaviour
 
     private void LayEgg()
     {
+        return;
         BasicNode currentPad = frogMove.GetLilyPadFrogOn();
         if (currentPad == null) return;
 

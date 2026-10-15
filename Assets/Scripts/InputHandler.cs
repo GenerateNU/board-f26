@@ -132,7 +132,7 @@ public class InputHandler : MonoBehaviour
     // On-screen action buttons (mouse mode only)
     public void OnActionButtonPressed(ActionType action)
     {
-        if (useBoardInput) { return; }
+        if (IsInputBlocked) { return; }
         FrogMove frog = GetFrogIfInputAllowed();
         if (frog != null) frog.DoAction(action);
     }
