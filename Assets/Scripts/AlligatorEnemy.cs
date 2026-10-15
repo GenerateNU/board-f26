@@ -8,14 +8,14 @@ public class AlligatorEnemy : AEnemy
     private bool makeAlligatorAwakeOnTurn = false;
     private bool alligatorAwake = false;
     [SerializeField]
-    private Material alligatorNormalMat;
+    private Color alligatorNormalColor;
     [SerializeField]
-    private Material alligatorAwakeMat;
-    private Renderer alligatorEnemyRenderer;
+    private Color alligatorAwakeColor;
+    private SpriteRenderer alligatorEnemyRenderer;
 
     protected void Start()
     {
-        alligatorEnemyRenderer = this.gameObject.GetComponentInChildren<Renderer>();
+        alligatorEnemyRenderer = this.gameObject.GetComponentInChildren<SpriteRenderer>();
         if (!alligatorEnemyRenderer)
         {
             Debug.Log("Alligator enemy is missing a renderer, will not be able to update materials.");
@@ -35,10 +35,10 @@ public class AlligatorEnemy : AEnemy
 
     public void UpdateMaterial(bool alligatorAwake)
     {
-        alligatorEnemyRenderer.material = alligatorAwake ? alligatorAwakeMat : alligatorNormalMat;
+        alligatorEnemyRenderer.color = alligatorAwake ? alligatorAwakeColor : alligatorNormalColor;
         for (int i = 0; i < alligatorNodes.Length; i++)
         {
-            alligatorNodes[i].UpdateMaterial(alligatorAwake, alligatorAwakeMat, alligatorNormalMat);
+            alligatorNodes[i].UpdateMaterial(alligatorAwake, alligatorAwakeColor, alligatorNormalColor);
         }
     }
 

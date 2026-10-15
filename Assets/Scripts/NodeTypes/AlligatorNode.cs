@@ -28,11 +28,11 @@ public class AlligatorNode : BasicNode
     }
     [SerializeField]
     private AlligatorEnemy alligatorEnemy;
-    private Renderer alligatorRenderer;
+    private SpriteRenderer alligatorRenderer;
 
     protected override void Start()
     {
-        alligatorRenderer = this.gameObject.GetComponentInChildren<Renderer>();
+        alligatorRenderer = this.gameObject.GetComponentInChildren<SpriteRenderer>();
         if (!alligatorRenderer)
         {
             Debug.Log("Alligator node is missing a renderer, will not be able to update materials.");
@@ -45,9 +45,9 @@ public class AlligatorNode : BasicNode
         alligatorEnemy.MakeAlligatorAwake(true);
     }
 
-    public void UpdateMaterial(bool alligatorAwake, Material alligatorAwakeMat, Material alligatorNormalMat)
+    public void UpdateMaterial(bool alligatorAwake, Color alligatorAwakeColor, Color alligatorNormalColor)
     {
-        alligatorRenderer.material = alligatorAwake ? alligatorAwakeMat : alligatorNormalMat;
+        alligatorRenderer.color = alligatorAwake ? alligatorAwakeColor : alligatorNormalColor;
     }
 
     public void KillFrogsOnAlligator()
