@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,13 +23,46 @@ public class FrogActions : MonoBehaviour
 
     public bool HasActedThisTurn { get; set; } = false;
 
+    private bool _endTurnPending;
+
+    void Awake()
+    {
+        frogMove = GetComponent<FrogMove>();
+    }
+
     void Start()
     {
-        frogMove = gameObject.GetComponent<FrogMove>();
+        if (TurnManager.Instance != null) TurnManager.Instance.OnTurnChanged += OnTurnChanged;
+    }
+
+    void OnDestroy()
+    {
+        if (TurnManager.Instance != null) TurnManager.Instance.OnTurnChanged -= OnTurnChanged;
+    }
+
+    // Reset only when a NEW turn actually starts for this frog,
+    // not when EndTurn is requested (the turn change can be blocked or delayed).
+    private void OnTurnChanged()
+    {
+        if (IsMyTurn())
+        {
+            HasActedThisTurn = false;
+            _endTurnPending = false;
+        }
+    }
+
+    private bool IsMyTurn()
+    {
+        return TurnManager.Instance != null
+            && frogMove != null
+            && TurnManager.Instance.GetCurrentFrog() == frogMove;
     }
 
     public bool IsActionAvailable(ActionType action)
     {
+        // Nothing is available outside this frog's turn, or once it has asked to end its turn.
+        if (!IsMyTurn() || _endTurnPending) return false;
+
         switch (action)
         {
             case ActionType.Croak:
@@ -46,6 +80,12 @@ public class FrogActions : MonoBehaviour
 
     public void DoAction(ActionType action)
     {
+        if (!IsActionAvailable(action))
+        {
+            Debug.Log($"{name}: {action} isn't available right now.");
+            return;
+        }
+
         switch (action)
         {
             case ActionType.Croak:
@@ -68,52 +108,74 @@ public class FrogActions : MonoBehaviour
     // croak, lay egg, hop again etc.
     private void Croak()
     {
-        foreach (BasicNode node in frogMove.GetLilyPadFrogOn().Neighbors)
+        BasicNode currentPad = frogMove.GetLilyPadFrogOn();
+        if (currentPad == null) return;
+
+        foreach (BasicNode node in currentPad.Neighbors)
         {
-            UseCroakOnMiteNode(node);
+            node.CroakUsedOnPad();
 
             foreach (BasicNode childNode in node.Neighbors)
             {
-                UseCroakOnMiteNode(childNode);
+                childNode.CroakUsedOnPad();
             }
         }
+        EnemyTurnManager.Instance.CroakUsed();
         HasActedThisTurn = true;
 
         // Rehighlight so mite nodes will be highlighted
         if (!frogMove.HasMovedThisTurn) { frogMove.SetNeighborHighlights(true); }
-    }
-
-    private void UseCroakOnMiteNode(BasicNode node)
-    {
-        if (node.NodeType == NodeHazard.Mites)
-        {
-            MiteNode tempNode = (MiteNode)node;
-            tempNode.CroakUsedOnPad();
-        }
+        if (frogMove.ShouldEndTurn(HasActedThisTurn)) { EndTurn(); }
     }
 
     private void LayEgg()
     {
-        BasicNode currentPad = gameObject.GetComponent<FrogMove>().GetLilyPadFrogOn();
+        return;
+        BasicNode currentPad = frogMove.GetLilyPadFrogOn();
+        if (currentPad == null) return;
+
         currentPad.SpawnObjectOnPad(eggPrefab);
         respawnNode = currentPad;
         HasActedThisTurn = true;
+        if (frogMove.ShouldEndTurn(HasActedThisTurn)) { EndTurn(); }
     }
 
     private void HopAgain()
     {
-        // We don't have any way of determining how many times a frog can hop / what a hop is yet.
-        // Once we do, this should essentially do hops += 1.
+        // Don't let the player use HopAgain unless it is their second action.
+        if (frogMove.GetLilyPadFrogOn().NodeType == NodeHazard.Mites || !frogMove.HasMovedThisTurn)
+        {
+            return;
+        }
+
         HasActedThisTurn = true;
+        frogMove.HopAgainUsed();
 
         // Rehighlight so new nodes will be highlighted
         frogMove.SetNeighborHighlights(true);
+        if (frogMove.ShouldEndTurn(HasActedThisTurn)) { EndTurn(); }
     }
 
-    private void EndTurn()
+    // Ends this frog's turn. If an animation (like a hop) is still playing,
+    // waits for it to finish instead of being silently ignored.
+    public void EndTurn()
     {
-        TurnManager.Instance.AdvanceTurn();
-        HasActedThisTurn = false;
+        if (_endTurnPending || !IsMyTurn()) return;
+        _endTurnPending = true;
+        StartCoroutine(EndTurnWhenReady());
     }
 
+    private IEnumerator EndTurnWhenReady()
+    {
+        while (InputHandler.Instance != null && InputHandler.Instance.InAnimation)
+        {
+            yield return null;
+        }
+
+        // Still our turn? (Something else may have advanced it meanwhile.)
+        if (IsMyTurn() && TurnManager.Instance != null)
+        {
+            TurnManager.Instance.AdvanceTurn();
+        }
+    }
 }

@@ -23,13 +23,24 @@ public class FrogMove : MonoBehaviour
     private float _moveTimeStep;
     private BasicNode _currentLilyPad;
     private bool _isHopping;
+    private FrogActions _frogActions;
+    private bool _frogSucceeded = false;
 
     public int AssignedPlayer => _assignedPlayer;
 
-    void Start()
+    void Awake()
     {
         _currentLilyPad = _startingLilyPad;
+    }
+    void Start()
+    {
         if (_currentLilyPad == null) Debug.LogWarning($"{name} has no starting lily pad assigned.");
+        _frogActions = this.GetComponent<FrogActions>();
+
+        if (!_frogActions)
+        {
+            Debug.LogWarning($"Missing frog actions for {name}, will not be able to cycle through turns.");
+        }
 
         if (TurnManager.Instance != null)
             TurnManager.Instance.RegisterFrog(this, _assignedPlayer);
@@ -39,16 +50,28 @@ public class FrogMove : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (gameObject.scene.isLoaded)
+        {
+            string padName = _currentLilyPad != null ? _currentLilyPad.name : "no pad";
+            Debug.Log($"{name} (Player {_assignedPlayer}) destroyed on {padName}", this);
+        }
+
         // Don't leave input locked if the frog is destroyed mid-hop.
         if (_isHopping) InputHandler.Instance?.EndAnimation();
-        TurnManager.Instance?.UnregisterFrog(this, _assignedPlayer);
+
+        // The whole scene is unloading (Restart / Main Menu): this isn't a death or a win,
+        // so don't report it. Otherwise Restart would trigger Game Over during the reload.
+        if (!gameObject.scene.isLoaded) return;
+
+        if (_currentLilyPad != null) _currentLilyPad.CurrentFrogsOnPad -= 1;
+        SetNeighborHighlights(false);
+        TurnManager.Instance?.UnregisterFrog(this, _assignedPlayer, _frogSucceeded);
     }
 
     public BasicNode GetLilyPadFrogOn()
     {
         return _currentLilyPad;
     }
-
 
     public void StartTurn()
     {
@@ -59,6 +82,40 @@ public class FrogMove : MonoBehaviour
     public void EndTurn()
     {
         SetNeighborHighlights(false);
+        HasMovedThisTurn = true; // can't act again until StartTurn() resets it
+    }
+
+    public void DoAction(ActionType action)
+    {
+        if (_frogActions != null && _frogActions.IsActionAvailable(action))
+        {
+            _frogActions.DoAction(action);
+        }
+    }
+
+    // Let the player move again this turn
+    public void HopAgainUsed()
+    {
+        HasMovedThisTurn = false;
+    }
+
+    public void KillFrog()
+    {
+        // won't show who called it. This log does.
+        Debug.Log($"KillFrog called on {name} (Player {_assignedPlayer})", this);
+        Destroy(this.gameObject);
+    }
+
+    public void RespawnAt(BasicNode node)
+    {
+        if (node == null) return;
+
+        SetNeighborHighlights(false);
+        if (_currentLilyPad != null) _currentLilyPad.CurrentFrogsOnPad -= 1;
+        node.CurrentFrogsOnPad += 1;
+
+        _currentLilyPad = node;
+        transform.position = node.transform.position;
     }
 
     public void SetNeighborHighlights(bool on)
@@ -76,7 +133,13 @@ public class FrogMove : MonoBehaviour
         SetNeighborHighlights(false); // clear the glow before _currentLilyPad changes
         HasMovedThisTurn = true;
         ChangeFrogLilyPad(clickedLilyPad);
+
         return true;
+    }
+
+    public bool ShouldEndTurn(bool actionUsed)
+    {
+        return actionUsed && this.HasMovedThisTurn;
     }
 
     public bool IsValidMove(BasicNode clickedLilyPad)
@@ -96,8 +159,8 @@ public class FrogMove : MonoBehaviour
         InputHandler.Instance?.BeginAnimation();
 
         _ = MoveFrog(newLilyPad.transform.position);
-        _currentLilyPad.IsOccupied = false;
-        newLilyPad.IsOccupied = true;
+        _currentLilyPad.CurrentFrogsOnPad -= 1;
+        newLilyPad.CurrentFrogsOnPad += 1;
 
         // Update current lilypad
         _currentLilyPad = newLilyPad;
@@ -119,17 +182,29 @@ public class FrogMove : MonoBehaviour
 
         _isHopping = false;
         InputHandler.Instance?.EndAnimation();
+        SetNeighborHighlights(false);
+
+        // Normal move/first move, check if action is done to end game/turn
+        if (_currentLilyPad.NodeType == NodeHazard.Winning)
+        {
+            _frogSucceeded = true;
+            KillFrog();
+            TurnManager.Instance.AdvanceTurn();
+        }
+        else if (_frogActions != null && ShouldEndTurn(_frogActions.HasActedThisTurn))
+        {
+            _frogActions.EndTurn();
+        }
     }
 
     // Checks if the given lilypad is a neighbor of the current lilypad
     private bool CheckIfLilyPadIsNeighbor(BasicNode clickedLilyPad)
     {
-        int lilyPadID = clickedLilyPad.NodeID;
         IReadOnlyList<BasicNode> neighbors = _currentLilyPad.Neighbors;
 
         for (int i = 0; i < neighbors.Count; i++)
         {
-            if (lilyPadID == neighbors[i].NodeID)
+            if (clickedLilyPad == neighbors[i])
             {
                 return true;
             }

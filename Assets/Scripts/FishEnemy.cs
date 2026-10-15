@@ -1,154 +1,158 @@
-using System.Collections.Generic;
 using System.Collections;
-using System.IO;
-using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.InputSystem;
-using Unity.VisualScripting;
 
-public class FishEnemy : MonoBehaviour
+/*
+Fish AI:
+Current: Fish moves toward the closest player and traverses lilypads to reach them.
+Fish should move 1.5 lilypads each turn this is shown by having them move 1 lilypad 
+in Turn1 then 2 lilypads in Turn2.
+Fish should move 1 lilypad if croak is used.
+*/
+public class FishEnemy : AEnemy
 {
     [SerializeField] private BasicNode currentFishNode;
-    private FrogMove frogMove;
-    private FrogActions frogActions;
-    [SerializeField] private GameObject frog;
     [SerializeField] private float swimSpeed = 1;
+    [SerializeField] private int lilyPadsPerOddTurn = 1;
+    [SerializeField] private int lilyPadsPerEvenTurn = 2;
+    private bool oddTurn = true;
 
-    private int progress = 0;
     private Vector3 lastPos;
-
-    List<BasicNode> Path;
+    private List<BasicNode> Path;
 
     public BasicNode CurrentFishNode => currentFishNode;
 
-    void Awake()
+    public override void DoEnemyTurn()
     {
-        reassignFrogComponents();
-    }
+        animationFinished = false;
 
-    void changeTurn()
-    {
-        if (TurnManager.Instance.CurrentPhase == TurnManager.TurnPhase.Enemy)
+        // Every turn: chase whichever living frog is closest right now.
+        FrogMove target = FindClosestFrog();
+        if (target == null || target.GetLilyPadFrogOn() == null || currentFishNode == null)
         {
-            MoveTowards();
-            TurnManager.Instance.AdvanceTurn();
+            animationFinished = true; // no frogs left (or no board): nothing to do
+            return;
         }
+
+        StepTowards(target.GetLilyPadFrogOn());
     }
 
-    //for future, only one frog in the scene so not needed.
-    GameObject FindClosestFrog(GameObject[] frogs)
+    // Called when a frog uses the Croak action
+    public override void CroakUsed()
     {
-        float minDist = float.MaxValue;
-        GameObject closestFrog = null;
-        foreach (GameObject frog in frogs)
+        DoEnemyTurn();
+    }
+
+    // Kept for other scripts / testing: take one step toward a specific node.
+    public void MoveTowards(BasicNode target)
+    {
+        animationFinished = false;
+        StepTowards(target);
+    }
+
+    [ContextMenu("Move Towards Closest Frog")]
+    public void MoveTowards()
+    {
+        DoEnemyTurn();
+    }
+
+    // Recalculates the path from where the fish is now and moves ONE node along it.
+    private void StepTowards(BasicNode targetNode)
+    {
+        if (targetNode == null)
         {
-            float dist = Vector3.Distance(frog.transform.position, transform.position);
+            animationFinished = true;
+            return;
+        }
+
+        // Already on the frog's pad: just try to eat.
+        if (targetNode == currentFishNode)
+        {
+            CheckKillFrogs();
+            animationFinished = true;
+            return;
+        }
+
+        Path = CalculatePath(currentFishNode, targetNode);
+        if (Path == null || Path.Count < 2)
+        {
+            Debug.Log($"{name}: no path to {targetNode.name}, skipping this turn.");
+            animationFinished = true;
+            return;
+        }
+
+        lastPos = transform.position;
+        currentFishNode = Path[1]; // Path[0] is where the fish is now
+        CheckKillFrogs();
+        StartCoroutine(GlideToCurrentFishNode());
+    }
+
+    private FrogMove FindClosestFrog()
+    {
+        if (TurnManager.Instance == null) return null;
+
+        float minDist = float.MaxValue;
+        FrogMove closest = null;
+        foreach (FrogMove candidate in TurnManager.Instance.GetAllFrogs())
+        {
+            if (candidate == null) continue; // destroyed
+            float dist = Vector3.Distance(candidate.transform.position, transform.position);
             if (dist < minDist)
             {
                 minDist = dist;
-                closestFrog = frog;
+                closest = candidate;
             }
         }
-        return frog;
+        return closest;
     }
 
-    void reassignFrogComponents()
+    // Eats (or respawns) every frog on the fish's current node.
+    private void CheckKillFrogs()
     {
-        frogMove = frog.GetComponent<FrogMove>();
-        frogActions = frog.GetComponent<FrogActions>();
-    }
+        if (TurnManager.Instance == null) return;
 
-    void Start()
-    {
-        Path = CalculatePath(currentFishNode, frogMove.GetLilyPadFrogOn());
-        progress = 0;
-        for (int i = 0; i < Path.Count; i++)
+        foreach (FrogMove frogMove in TurnManager.Instance.GetAllFrogs())
         {
-            Debug.Log($"path step {i}: {Path[i].gameObject.name}", Path[i].gameObject);
-        }
+            if (frogMove == null || frogMove.GetLilyPadFrogOn() != currentFishNode) continue;
 
-        TurnManager.Instance.OnTurnChanged += changeTurn;
-    }
+            FrogActions frogActions = frogMove.GetComponent<FrogActions>();
+            BasicNode respawn = frogActions != null ? frogActions.respawnNode : null;
 
-    [ContextMenu("Move Towards")]
-    public void MoveTowards()
-    {
-        lastPos = transform.position;
-        progress++;
-        UpdateCurrentNode(Path, progress);
-        StartCoroutine(GlideToCurrentFishNode());
-    }
-
-    public void MoveTowards(BasicNode target)
-    {
-        Path = CalculatePath(currentFishNode, target);
-        lastPos = transform.position;
-        progress = 0;
-        UpdateCurrentNode(Path, progress);
-        StartCoroutine(GlideToCurrentFishNode());
-    }
-
-    void UpdateCurrentNode(List<BasicNode> path, int progress)
-    {
-        if (progress < path.Count)
-        {
-            currentFishNode = path[progress];
-            CheckKillFrog();
-        }
-        else
-            Debug.Log("progress: " + progress + " reached end of path");
-    }
-
-    void CheckKillFrog()
-    {
-        if (currentFishNode == frogMove.GetLilyPadFrogOn()) //frog caught
-        {
-            BasicNode respawn = frogActions.respawnNode;
-            if (respawn) // if a respawn node exists => frog has layed an egg
+            if (respawn) // frog has laid an egg
             {
-                frog.transform.position = respawn.transform.position; //teleport frog to respawn
+                frogMove.RespawnAt(respawn); // moves the frog AND updates its current pad
+                Debug.Log($"{frogMove.name} caught, respawning at egg.");
             }
-            else //frog did not lay egg
+            else // frog did not lay egg
             {
-                Destroy(frog);
-                Debug.Log("Frog Eaten");
+                Destroy(frogMove.gameObject);
+                Debug.Log($"{frogMove.name} eaten");
             }
         }
     }
 
     IEnumerator GlideToCurrentFishNode()
     {
+        animationFinished = false;
         float elapsed = 0;
-        while (Vector3.Distance(transform.position, currentFishNode.transform.position) > 0.1f)
+        Vector3 targetPos = currentFishNode.transform.position;
+        float duration = swimSpeed > 0 ? 1f / swimSpeed : 0f;
+
+        while (Vector3.Distance(transform.position, targetPos) > 0.1f && elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            transform.position = Vector3.Lerp(lastPos, currentFishNode.transform.position, elapsed / (1 / swimSpeed));
+            transform.position = Vector3.Lerp(lastPos, targetPos, duration > 0 ? elapsed / duration : 1f);
             yield return null;
         }
 
-        transform.position = currentFishNode.transform.position;
+        transform.position = targetPos;
+        animationFinished = true;
     }
 
-    //deprecated
-    // BasicNode CalculateClosestNeighbor(BasicNode target) //has the issue of not being able to travel backwards
-    // {
-    //     BasicNode result = currentFishNode;
-    //     float minDistance = Vector3.Distance(currentFishNode.transform.position, testTargetNode.transform.position);
-    //     foreach(BasicNode neighbor in currentFishNode.Neighbors)
-    //     {
-    //         float distance = Vector3.Distance(neighbor.transform.position, target.transform.position);
-    //         if(distance < minDistance)
-    //         {
-    //             minDistance = distance;
-    //             result = neighbor;
-    //         }
-    //     }
-    //     return result;
-    // }
-
-    List<BasicNode> CalculatePath(BasicNode start, BasicNode target) //uses djisktra
+    List<BasicNode> CalculatePath(BasicNode start, BasicNode target) // uses dijkstra
     {
+        if (start == null || target == null) return null;
+        if (start == target) return new List<BasicNode> { start };
 
         Dictionary<BasicNode, float> distances = new Dictionary<BasicNode, float> { [start] = 0f };
         Dictionary<BasicNode, BasicNode> parents = new Dictionary<BasicNode, BasicNode>();
@@ -170,11 +174,11 @@ public class FishEnemy : MonoBehaviour
             BasicNode current = frontier[toPop];
             frontier.RemoveAt(toPop);
             if (!visited.Add(current)) continue; // already finalized (duplicate entry)
-            if (current == target) break; //path reached
+            if (current == target) break; // path reached
 
             foreach (BasicNode neighbor in current.Neighbors)
             {
-                if (visited.Contains(neighbor)) continue;
+                if (neighbor == null || visited.Contains(neighbor)) continue;
                 float edge = Vector3.Distance(current.transform.position, neighbor.transform.position);
                 float newDist = distances[current] + edge;
 
@@ -186,33 +190,20 @@ public class FishEnemy : MonoBehaviour
                 }
             }
         }
+
         // back track
-        List<BasicNode> result = new List<BasicNode>();
+        List<BasicNode> result = new List<BasicNode> { target };
         BasicNode trace = target;
-        result.Insert(0, trace);
-        BasicNode next = null;
-        int step = 0;
-        while (true)
+        int safety = 0;
+        while (trace != start)
         {
-
-            if (parents.TryGetValue(trace, out next))
+            if (!parents.TryGetValue(trace, out BasicNode next) || ++safety > 10000)
             {
-                result.Insert(0, next);
-                trace = next;
+                return null; // target not reachable from start
             }
-            else
-            {
-                Debug.Log("error in back tracing in step: " + step);
-                return null;
-            }
-            if (next == start)
-            {
-                return result;
-            }
-            step++;
-
+            result.Insert(0, next);
+            trace = next;
         }
-
+        return result;
     }
-
 }

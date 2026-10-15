@@ -1,25 +1,70 @@
 using UnityEngine;
+using System.Collections.Generic;
 
-// The alligator AI (angry after turn then hit nodes within x neighbors) may be simple enough
-// to put in this script
 
-// Set up a basic skeleton for AI as well with alligatorAngry and DoAlligatorTurn
+/*
+Alligator AI logic is very closely tied to node logic. 
 
-// Notes for future AI:
-// we may need AlligatorTurn to return a list of Nodes hit and then check if players are 
-// on any of them based on the player's lilypad ID (doesn't feel good) 
-// or we may need to have nodes have access to player that's on them
+Alligator Node:
+Frogs can step on the Alligaotr, this will make the Alligator wake up during its turn.
+
+Alligator AI:
+The Alligator Wakes Up:
+- On its turn if a frog previously stepped on it.
+- Immediately if a frog croaks.
+On its Turn:
+If the Alligator is not awake it does nothing.
+If the Alligator is awake it eats what's on it.
+*/
 public class AlligatorNode : BasicNode
 {
-    public override bool IsOccupied { get => base.IsOccupied; set { base.IsOccupied = value; alligatorAngry = true; } }
     public override bool IsTraversable => !IsOccupied;
     public override NodeHazard NodeType => NodeHazard.Alligator;
-    private bool alligatorAngry = false;
-
-
-
-    public void DoAlligatorTurn()
+    public override int MaxFrogsOnPad { get { return 1; } }
+    public override int CurrentFrogsOnPad
     {
-        if (!alligatorAngry) { return; }
+        get { return base.CurrentFrogsOnPad; }
+        set { base.CurrentFrogsOnPad = value; if (value != 0) { alligatorEnemy.MakeAlligatorAwakeOnTurn(true); } }
+    }
+    [SerializeField]
+    private AlligatorEnemy alligatorEnemy;
+    private Renderer alligatorRenderer;
+
+    protected override void Start()
+    {
+        alligatorRenderer = this.gameObject.GetComponentInChildren<Renderer>();
+        if (!alligatorRenderer)
+        {
+            Debug.Log("Alligator node is missing a renderer, will not be able to update materials.");
+        }
+        base.Start();
+    }
+
+    public override void CroakUsedOnPad()
+    {
+        alligatorEnemy.MakeAlligatorAwake(true);
+    }
+
+    public void UpdateMaterial(bool alligatorAwake, Material alligatorAwakeMat, Material alligatorNormalMat)
+    {
+        alligatorRenderer.material = alligatorAwake ? alligatorAwakeMat : alligatorNormalMat;
+    }
+
+    public void KillFrogsOnAlligator()
+    {
+        if (TurnManager.Instance.CurrentPhase != TurnManager.TurnPhase.Enemy)
+        {
+            return;
+        }
+
+        // Kill any frogs or eggs on the alligator
+        List<FrogMove> allFrogs = TurnManager.Instance.GetAllFrogs();
+        foreach (FrogMove frog in allFrogs)
+        {
+            if (frog.GetLilyPadFrogOn() == this)
+            {
+                frog.KillFrog();
+            }
+        }
     }
 }

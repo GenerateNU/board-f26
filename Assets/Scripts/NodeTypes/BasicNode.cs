@@ -3,22 +3,21 @@ using UnityEngine;
 
 public abstract class BasicNode : MonoBehaviour
 {
-    // nodeID and future level design note: Technically this can be generated at the start of runtime 
-    // as long as it isn't the same as any other node.
-    // If we end up having really big levels we should have a nodeID creation script.
     [Tooltip("Fields which change per node.")]
-    [SerializeField] private int nodeID;
-    public int NodeID { get { return nodeID; } }
     [SerializeField] private List<BasicNode> neighbors = new();
     public IReadOnlyList<BasicNode> Neighbors => neighbors;
     [Tooltip("Should be consistent across most objects of this prefab.")]
     [SerializeField] private GameObject lilypadGlow;
-    public virtual bool IsOccupied { get; set; }
-    // Design note: At the moment Nodes aren't traverserable if a frog is already on one (I can't test this until turn system is up)
-    // also wondering if we actually want it work this way based on the playtest, and if so how will we deal with it artwise
+    public bool IsOccupied { get { return MaxFrogsOnPad == CurrentFrogsOnPad; } }
     public abstract bool IsTraversable { get; }
     public abstract NodeHazard NodeType { get; }
+    public virtual int MaxFrogsOnPad { get { return 1; } }
+    public virtual int CurrentFrogsOnPad { get; set; }
 
+    protected virtual void Start()
+    {
+        CurrentFrogsOnPad = 0;
+    }
 
     // if node is walkable by current frog, highlight/vfx/etc. glows only for this node
     // Can make overrides for this if we want different vfx for different node types
@@ -42,6 +41,8 @@ public abstract class BasicNode : MonoBehaviour
             }
         }
     }
+
+    public virtual void CroakUsedOnPad() { }
 
     public void SpawnObjectOnPad(GameObject obj)
     {
