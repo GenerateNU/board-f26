@@ -1,11 +1,8 @@
 {
   "dependencies": {
-<<<<<<< Updated upstream
-=======
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.ai.assistant": "2.20.0-pre.2",
     "com.unity.ai.inference": "2.6.1",
->>>>>>> Stashed changes
     "com.unity.ai.navigation": "2.0.11",
     "com.unity.collab-proxy": "2.11.4",
     "com.unity.ide.rider": "3.0.39",
