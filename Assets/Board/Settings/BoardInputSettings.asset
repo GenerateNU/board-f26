@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: Board::Board.Input.BoardInputSettings
   m_TranslationSmoothing: 0.5
   m_RotationSmoothing: 0.5
-  m_Persistence: 4
+  m_Persistence: 40
   m_GlyphModelFilename: arcade_v1.3.7.tflite

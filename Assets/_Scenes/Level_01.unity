@@ -2943,6 +2943,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!1 &679807311 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9076183374305405266, guid: 9fab6a429bce38249b663b10e30533d7, type: 3}
+  m_PrefabInstance: {fileID: 679807308}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &698521341
 GameObject:
   m_ObjectHideFlags: 0
@@ -5201,6 +5206,10 @@ PrefabInstance:
       propertyPath: 'frogs.Array.data[2]'
       value: 
       objectReference: {fileID: 2041846005}
+    - target: {fileID: 5411670380741070961, guid: e617e6c48146e28409fdbaaee72c516c, type: 3}
+      propertyPath: debugButtonsForMouse
+      value: 
+      objectReference: {fileID: 679807311}
     - target: {fileID: 6178494385404352344, guid: e617e6c48146e28409fdbaaee72c516c, type: 3}
       propertyPath: turnText
       value: 
