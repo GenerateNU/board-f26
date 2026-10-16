@@ -78,7 +78,7 @@ public class EnemyTurnManager : MonoBehaviour
         // Need small time between enemy and player turn otherwise
         // highlighting gets messed up. Wait for all animations to finish before
         // switching turn
-        Awaitable.WaitForSecondsAsync(0.1f);
+        await Awaitable.WaitForSecondsAsync(0.1f);
         for (int i = 0; i < enemies.Length; i++)
         {
             while (!enemies[i].AnimationFinished)

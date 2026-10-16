@@ -62,8 +62,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FrogMove
   _assignedPlayer: 1
   _startingLilyPad: {fileID: 0}
-  _hopSpeed: 1
-  _moveTimeStep: 0.01
+  _hopSpeed: 0.1
+  _moveTimeStep: 0.02
 --- !u!1 &4354705422455423622
 GameObject:
   m_ObjectHideFlags: 0
