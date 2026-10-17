@@ -196,7 +196,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.76495504, y: 0.22206523, z: 0.6819165}
+  m_Size: {x: 0.76495504, y: 0.77, z: 0.6819165}
   m_Center: {x: 0.035031557, y: -0.025808655, z: -0.0033329725}
 --- !u!1 &3207975044613371693
 GameObject:
@@ -306,7 +306,7 @@ MeshCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 5
   m_Convex: 0
   m_CookingOptions: 30
