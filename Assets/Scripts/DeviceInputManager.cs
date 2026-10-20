@@ -41,6 +41,7 @@ public class DeviceInputManager : MonoBehaviour
         BoardContact[] FingerContacts = BoardInput.GetActiveContacts(BoardContactType.Finger);
         foreach (var contact in FingerContacts)
         {
+            Debug.Log("FINGER CONTACT!!!!");
             switch (contact.phase)
             {
                 case BoardContactPhase.Began: FingerDown?.Invoke(contact); break;

@@ -28,11 +28,16 @@ public class AlligatorNode : BasicNode
     }
     [SerializeField]
     private AlligatorEnemy alligatorEnemy;
-    private Renderer alligatorRenderer;
+    [SerializeField] private Renderer alligatorRenderer; // (was SpriteRenderer)
 
     protected override void Start()
     {
-        alligatorRenderer = this.gameObject.GetComponentInChildren<Renderer>();
+        // search children to find 3d model
+        if (alligatorRenderer == null && transform.parent != null)
+        {
+            alligatorRenderer = transform.parent.GetComponentInChildren<MeshRenderer>();
+        }
+
         if (!alligatorRenderer)
         {
             Debug.Log("Alligator node is missing a renderer, will not be able to update materials.");
@@ -45,9 +50,15 @@ public class AlligatorNode : BasicNode
         alligatorEnemy.MakeAlligatorAwake(true);
     }
 
-    public void UpdateMaterial(bool alligatorAwake, Material alligatorAwakeMat, Material alligatorNormalMat)
-    {
-        alligatorRenderer.material = alligatorAwake ? alligatorAwakeMat : alligatorNormalMat;
+    public void UpdateMaterial(bool alligatorAwake, Color alligatorAwakeColor, Color alligatorNormalColor)
+    { // quick check to prevent NullReferenceException during all hands
+        if (alligatorRenderer != null)
+        {
+            Color targetColor = alligatorAwake ? alligatorAwakeColor : alligatorNormalColor;
+            
+            // bc it's 3d now
+            alligatorRenderer.material.SetColor("_BaseColor", targetColor);
+        }
     }
 
     public void KillFrogsOnAlligator()

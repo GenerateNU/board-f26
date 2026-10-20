@@ -113,14 +113,27 @@ public class FrogActions : MonoBehaviour
 
         foreach (BasicNode node in currentPad.Neighbors)
         {
+            if (node == null) continue; // adding some safety checks so nothing explodes during all hands
             node.CroakUsedOnPad();
 
+            if (node.Neighbors == null) continue;
             foreach (BasicNode childNode in node.Neighbors)
             {
+                if (childNode == null) continue; // safety check 2
                 childNode.CroakUsedOnPad();
             }
         }
-        EnemyTurnManager.Instance.CroakUsed();
+
+        // safety check 3 just in case
+        if (EnemyTurnManager.Instance != null)
+        {
+            EnemyTurnManager.Instance.CroakUsed();
+        }
+        else
+        {
+            Debug.LogWarning("EnemyTurnManager.Instance not found in scene");
+        }
+
         HasActedThisTurn = true;
 
         // Rehighlight so mite nodes will be highlighted
