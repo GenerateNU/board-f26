@@ -48,26 +48,6 @@ public class FrogMove : MonoBehaviour
             Debug.LogWarning($"{name}: no TurnManager in the scene, so this frog can't take turns.");
     }
 
-    private void OnDestroy()
-    {
-        if (gameObject.scene.isLoaded)
-        {
-            string padName = _currentLilyPad != null ? _currentLilyPad.name : "no pad";
-            Debug.Log($"{name} (Player {_assignedPlayer}) destroyed on {padName}", this);
-        }
-
-        // Don't leave input locked if the frog is destroyed mid-hop.
-        if (_isHopping) InputHandler.Instance?.EndAnimation();
-
-        // The whole scene is unloading (Restart / Main Menu): this isn't a death or a win,
-        // so don't report it. Otherwise Restart would trigger Game Over during the reload.
-        if (!gameObject.scene.isLoaded) return;
-
-        if (_currentLilyPad != null) _currentLilyPad.CurrentFrogsOnPad -= 1;
-        SetNeighborHighlights(false);
-        TurnManager.Instance?.UnregisterFrog(this, _assignedPlayer, _frogSucceeded);
-    }
-
     public BasicNode GetLilyPadFrogOn()
     {
         return _currentLilyPad;
@@ -104,6 +84,23 @@ public class FrogMove : MonoBehaviour
         // won't show who called it. This log does.
         Debug.Log($"KillFrog called on {name} (Player {_assignedPlayer})", this);
         Destroy(this.gameObject);
+        
+        if (gameObject.scene.isLoaded)
+        {
+            string padName = _currentLilyPad != null ? _currentLilyPad.name : "no pad";
+            Debug.Log($"{name} (Player {_assignedPlayer}) destroyed on {padName}", this);
+        }
+
+        // Don't leave input locked if the frog is destroyed mid-hop.
+        if (_isHopping) InputHandler.Instance?.EndAnimation();
+
+        // The whole scene is unloading (Restart / Main Menu): this isn't a death or a win,
+        // so don't report it. Otherwise Restart would trigger Game Over during the reload.
+        if (!gameObject.scene.isLoaded) return;
+
+        if (_currentLilyPad != null) _currentLilyPad.CurrentFrogsOnPad -= 1;
+        SetNeighborHighlights(false);
+        TurnManager.Instance?.UnregisterFrog(this, _assignedPlayer, _frogSucceeded);
     }
 
     public void RespawnAt(BasicNode node)

@@ -114,20 +114,7 @@ public class FishEnemy : AEnemy
         foreach (FrogMove frogMove in TurnManager.Instance.GetAllFrogs())
         {
             if (frogMove == null || frogMove.GetLilyPadFrogOn() != currentFishNode) continue;
-
-            FrogActions frogActions = frogMove.GetComponent<FrogActions>();
-            BasicNode respawn = frogActions != null ? frogActions.respawnNode : null;
-
-            if (respawn) // frog has laid an egg
-            {
-                frogMove.RespawnAt(respawn); // moves the frog AND updates its current pad
-                Debug.Log($"{frogMove.name} caught, respawning at egg.");
-            }
-            else // frog did not lay egg
-            {
-                Destroy(frogMove.gameObject);
-                Debug.Log($"{frogMove.name} eaten");
-            }
+            frogMove.KillFrog();
         }
     }
 
