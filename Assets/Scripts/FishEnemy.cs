@@ -15,6 +15,8 @@ public class FishEnemy : AEnemy
     [SerializeField] private float swimSpeed = 1;
     [SerializeField] private int lilyPadsPerOddTurn = 1;
     [SerializeField] private int lilyPadsPerEvenTurn = 2;
+
+
     private bool oddTurn = true;
 
     private Vector3 lastPos;
@@ -34,7 +36,17 @@ public class FishEnemy : AEnemy
             return;
         }
 
-        StepTowards(target.GetLilyPadFrogOn());
+        if(EnemyTurnManager.Instance.currentTurn % 2 == 0)  //turn number is even
+        {
+            StepTowards(target.GetLilyPadFrogOn());
+            StepTowards(target.GetLilyPadFrogOn());
+        }
+        else
+        {
+            StepTowards(target.GetLilyPadFrogOn());
+        }
+
+        
     }
 
     // Called when a frog uses the Croak action
