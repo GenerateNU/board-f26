@@ -34,7 +34,6 @@ public class InputHandler : MonoBehaviour
 
     [SerializeField] FrogActions[] frogs;
     [SerializeField] GlyphActionPair[] GlyphActionPairs;
-    [SerializeField] private GameObject debugButtonsForMouse;
 
     [Serializable]
     public struct GlyphActionPair
@@ -61,14 +60,6 @@ public class InputHandler : MonoBehaviour
             Debug.LogWarning($"No '{_clickActionName}' action found in the project-wide Input Actions; using pointer press (mouse/touch/pen) instead.");
             _mouseClickAction = new InputAction("Click", InputActionType.Button, "<Pointer>/press");
             _ownsClickAction = true;
-        }
-    }
-
-    private void Start()
-    {
-        if (useBoardInput && debugButtonsForMouse)
-        {
-            debugButtonsForMouse.SetActive(false);
         }
     }
 
@@ -129,10 +120,11 @@ public class InputHandler : MonoBehaviour
         return frog;
     }
 
-    // On-screen action buttons (mouse mode only)
+    // On-screen action buttons (End Turn, Croak, etc.). Works with both mouse and Board taps.
+    // If a tap ever reaches a button twice (e.g. Board Simulation sends a mouse click too),
+    // FrogActions ignores the repeat: actions can only be used once per turn and EndTurn can't double-fire.
     public void OnActionButtonPressed(ActionType action)
     {
-        if (IsInputBlocked) { return; }
         FrogMove frog = GetFrogIfInputAllowed();
         if (frog != null) frog.DoAction(action);
     }
@@ -155,17 +147,21 @@ public class InputHandler : MonoBehaviour
         HopToLilyPad(Pointer.current.position.ReadValue());
     }
 
-    // Board finger touch
+    // Board finger touch: press a UI button if one was tapped, otherwise treat it as a board tap.
     private void OnFingerDown(BoardContact contact)
     {
         if (!useBoardInput) { return; }
+
+        // UI first, and regardless of turn/animation state, so buttons like Restart always work.
+        if (BoardUIClick.TryClick(contact.screenPosition)) return;
+
         HopToLilyPad(contact.screenPosition);
     }
 
     // Board game piece placed
     void OnPieceDown(BoardContact contact)
     {
-        if (IsInputBlocked) return;
+        if (!useBoardInput) { return; }
 
         FrogMove frog = GetFrogIfInputAllowed();
         if (frog == null) return;
