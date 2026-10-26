@@ -8,7 +8,7 @@ public class EnemyTurnManager : MonoBehaviour
     private AEnemy[] enemies;
     [SerializeField]
     private int turnFishStartsActions;
-    private int currentTurn = 0;
+    public int currentTurn { get; private set; } = 0;
     public static EnemyTurnManager Instance { get; private set; }
 
     private void Awake()
@@ -47,6 +47,7 @@ public class EnemyTurnManager : MonoBehaviour
         {
             return;
         }
+
         InputHandler.Instance?.BeginAnimation();
         // All animations can play at the same time (no async/await needed)
         // But actual turn order should be sequential to deal with
