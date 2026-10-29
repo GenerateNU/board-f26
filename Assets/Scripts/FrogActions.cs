@@ -111,6 +111,8 @@ public class FrogActions : MonoBehaviour
         BasicNode currentPad = frogMove.GetLilyPadFrogOn();
         if (currentPad == null) return;
 
+        currentPad.FrogCroakedOnPad(frogMove);
+
         foreach (BasicNode node in currentPad.Neighbors)
         {
             if (node == null) continue; // adding some safety checks so nothing explodes during all hands

@@ -11,6 +11,7 @@ public class FrogMove : MonoBehaviour
 
     // One hop per turn. Reset in StartTurn().
     public bool HasMovedThisTurn { get; private set; }
+    public int Score { get; private set; }
 
     [Header("Movement")]
     [SerializeField]
@@ -63,6 +64,16 @@ public class FrogMove : MonoBehaviour
     {
         SetNeighborHighlights(false);
         HasMovedThisTurn = true; // can't act again until StartTurn() resets it
+
+        if (_currentLilyPad != null && _currentLilyPad.TryGetComponent<FlyPickup>(out var flyPickup))
+        {
+            flyPickup.Collect(this);
+        }
+    }
+
+    public void AddScore(int points)
+    {
+        Score += points;
     }
 
     public void DoAction(ActionType action)
@@ -144,6 +155,7 @@ public class FrogMove : MonoBehaviour
         if (clickedLilyPad == null || _currentLilyPad == null) return false;
         if (clickedLilyPad == _currentLilyPad) return false;
         if (!clickedLilyPad.IsTraversable) return false;
+        if (!clickedLilyPad.CanBeEnteredFrom(_currentLilyPad)) return false;
         return CheckIfLilyPadIsNeighbor(clickedLilyPad);
     }
 

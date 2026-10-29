@@ -6,6 +6,7 @@ public class EnemyTurnManager : MonoBehaviour
     [Tooltip("Enemies should be in turn order, this generally means fish last.")]
     [SerializeField]
     private AEnemy[] enemies;
+    [SerializeField] private TurtleNode[] turtles;
     [SerializeField]
     private int turnFishStartsActions;
     public int currentTurn { get; private set; } = 0;
@@ -61,6 +62,14 @@ public class EnemyTurnManager : MonoBehaviour
                 continue;
             }
             enemies[i].DoEnemyTurn();
+        }
+
+        if (turtles != null)
+        {
+            for (int i = 0; i < turtles.Length; i++)
+            {
+                if (turtles[i] != null) turtles[i].DoTurtleTurn();
+            }
         }
 
         currentTurn++;
