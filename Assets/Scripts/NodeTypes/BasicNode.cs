@@ -5,7 +5,7 @@ public abstract class BasicNode : MonoBehaviour
 {
     [Tooltip("Fields which change per node.")]
     [SerializeField] private List<BasicNode> neighbors = new();
-    public IReadOnlyList<BasicNode> Neighbors => neighbors;
+    public virtual IReadOnlyList<BasicNode> Neighbors => neighbors;
     [Tooltip("Should be consistent across most objects of this prefab.")]
     [SerializeField] private GameObject lilypadGlow;
     public bool IsOccupied { get { return MaxFrogsOnPad == CurrentFrogsOnPad; } }
@@ -31,7 +31,7 @@ public abstract class BasicNode : MonoBehaviour
     {
         for (int i = 0; i < Neighbors.Count; i++)
         {
-            if (neighbors[i] == null) { continue; }
+            if (Neighbors[i] == null) { continue; }
 
             // Only light up pads the frog can actually move to,
             // but always turn them all off so nothing gets stuck glowing.
@@ -43,6 +43,13 @@ public abstract class BasicNode : MonoBehaviour
     }
 
     public virtual void CroakUsedOnPad() { }
+
+    public virtual void FrogCroakedOnPad(FrogMove frog)
+    {
+        CroakUsedOnPad();
+    }
+
+    public virtual bool CanBeEnteredFrom(BasicNode source) => true;
 
     public void SpawnObjectOnPad(GameObject obj)
     {
