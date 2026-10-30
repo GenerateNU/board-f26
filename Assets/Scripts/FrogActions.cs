@@ -13,13 +13,14 @@ public enum ActionType
 
 public class FrogActions : MonoBehaviour
 {
-    // sprint 2 skel
-    // needs to be public to check for respawn
-    public BasicNode respawnNode;
-
+    [Tooltip("Egg prefab (with the DecoyEgg script). Laying it lures the fish away from frogs.")]
     [SerializeField]
     private GameObject eggPrefab;
     private FrogMove frogMove;
+
+    // This frog's egg that hasn't been eaten yet (one at a time).
+    private DecoyEgg _activeEgg;
+    public bool HasActiveEgg => _activeEgg != null;
 
     public bool HasActedThisTurn { get; set; } = false;
 
@@ -70,7 +71,7 @@ public class FrogActions : MonoBehaviour
             case ActionType.HopAgain:
                 return !HasActedThisTurn;
             case ActionType.LayEgg:
-                return !HasActedThisTurn && respawnNode == null;
+                return !HasActedThisTurn && !HasActiveEgg; // one uneaten egg per frog at a time
             case ActionType.EndTurn:
                 return true;
             default:
@@ -141,14 +142,25 @@ public class FrogActions : MonoBehaviour
         if (frogMove.ShouldEndTurn(HasActedThisTurn)) { EndTurn(); }
     }
 
+    // Lays a decoy egg on the frog's current pad. While any eggs exist, the fish chases eggs instead of frogs.
     private void LayEgg()
     {
-        return;
         BasicNode currentPad = frogMove.GetLilyPadFrogOn();
         if (currentPad == null) return;
+        if (eggPrefab == null)
+        {
+            Debug.LogWarning($"{name}: no Egg Prefab assigned on FrogActions.");
+            return;
+        }
 
-        currentPad.SpawnObjectOnPad(eggPrefab);
-        respawnNode = currentPad;
+        // Spawn the decoy on this pad and tell it where it is.
+        GameObject eggObject = Instantiate(eggPrefab, currentPad.transform.position, Quaternion.identity);
+        DecoyEgg egg = eggObject.GetComponent<DecoyEgg>();
+        if (egg == null) egg = eggObject.AddComponent<DecoyEgg>(); // safety if the prefab is missing it
+        egg.Init(currentPad, this);
+        _activeEgg = egg;
+
+        Debug.Log($"{name} laid a decoy egg on {currentPad.name}");
         HasActedThisTurn = true;
         if (frogMove.ShouldEndTurn(HasActedThisTurn)) { EndTurn(); }
     }
