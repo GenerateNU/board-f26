@@ -5,7 +5,10 @@ public class AlligatorEnemy : AEnemy
 {
     [SerializeField]
     private AlligatorNode[] alligatorNodes;
-    private bool makeAlligatorAwakeOnTurn = false;
+    [Tooltip("How many enemy turns (rounds) the alligator stays angry and lethal after being stepped on or croaked at.")]
+    [SerializeField, Min(1)]
+    private int angryRounds = 2;
+    private int angryRoundsLeft = 0;
     private bool alligatorAwake = false;
     [SerializeField]
     private Color alligatorNormalColor;
@@ -22,9 +25,11 @@ public class AlligatorEnemy : AEnemy
         }
     }
 
-    public void MakeAlligatorAwakeOnTurn(bool awake)
+    // Stepping on or croaking at the alligator (re)starts its angry countdown.
+    public void MakeAngry()
     {
-        makeAlligatorAwakeOnTurn = awake;
+        angryRoundsLeft = angryRounds;
+        MakeAlligatorAwake(true);
     }
 
     public void MakeAlligatorAwake(bool awake)
@@ -47,10 +52,8 @@ public class AlligatorEnemy : AEnemy
         animationFinished = false;
 
         // TODO: Add art/death animation above if necessary and await on it
-        if (!alligatorAwake)
+        if (angryRoundsLeft <= 0)
         {
-            MakeAlligatorAwake(makeAlligatorAwakeOnTurn);
-            makeAlligatorAwakeOnTurn = false;
             animationFinished = true;
             return;
         }
@@ -60,9 +63,12 @@ public class AlligatorEnemy : AEnemy
             alligatorNodes[i].KillFrogsOnAlligator();
         }
 
-        MakeAlligatorAwake(false);
-        // If the alligator just killed someone it shouldn't wake up next turn
-        makeAlligatorAwakeOnTurn = false;
+        // Stays angry for angryRounds enemy turns, then cools down
+        angryRoundsLeft--;
+        if (angryRoundsLeft <= 0)
+        {
+            MakeAlligatorAwake(false);
+        }
         animationFinished = true;
     }
 }
