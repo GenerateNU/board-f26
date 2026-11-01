@@ -62,13 +62,6 @@ public class FrogUnit : MonoBehaviour
             TurnManager.Instance.RegisterFrog(this, _assignedPlayer);
         else
             Debug.LogWarning($"{name}: no TurnManager in the scene, so this frog can't take turns.");
-
-        if (TurnManager.Instance != null) TurnManager.Instance.OnTurnChanged += OnTurnChanged;
-    }
-
-    void OnDestroy()
-    {
-        if (TurnManager.Instance != null) TurnManager.Instance.OnTurnChanged -= OnTurnChanged;
     }
 
     public void KillFrog()
@@ -111,33 +104,13 @@ public class FrogUnit : MonoBehaviour
         Score += points;
     }
 
-    // Let the player move again this turn
-    public void HopAgainUsed()
-    {
-        HasMovedThisTurn = false;
-    }
-
     // Turn Logic
     public void StartTurn()
     {
         HasMovedThisTurn = false;
+        HasActedThisTurn = false;
+        _endTurnPending = false;
         SetNeighborHighlights(true);
-    }
-
-    // To do: Move into StartTurn
-    private void OnTurnChanged()
-    {
-        if (IsMyTurn())
-        {
-            HasActedThisTurn = false;
-            _endTurnPending = false;
-        }
-    }
-
-    private bool IsMyTurn()
-    {
-        // should always be my turn 
-        return true;
     }
 
     public bool ShouldEndTurn(bool actionUsed)
@@ -158,7 +131,7 @@ public class FrogUnit : MonoBehaviour
 
     public void EndPlayerTurn()
     {
-        if (_endTurnPending || !IsMyTurn()) return;
+        if (_endTurnPending) return;
         _endTurnPending = true;
         StartCoroutine(EndTurnWhenReady());
     }
@@ -171,7 +144,7 @@ public class FrogUnit : MonoBehaviour
         }
 
         // Still our turn? (Something else may have advanced it meanwhile.)
-        if (IsMyTurn() && TurnManager.Instance != null)
+        if (TurnManager.Instance != null)
         {
             TurnManager.Instance.AdvanceTurn();
         }
@@ -190,7 +163,7 @@ public class FrogUnit : MonoBehaviour
     public bool IsActionAvailable(ActionType action)
     {
         // Nothing is available outside this frog's turn, or once it has asked to end its turn.
-        if (!IsMyTurn() || _endTurnPending) return false;
+        if (_endTurnPending) return false;
 
         switch (action)
         {
@@ -372,7 +345,7 @@ public class FrogUnit : MonoBehaviour
         }
 
         HasActedThisTurn = true;
-        HopAgainUsed();
+        HasMovedThisTurn = false;
 
         // Rehighlight so new nodes will be highlighted
         SetNeighborHighlights(true);
