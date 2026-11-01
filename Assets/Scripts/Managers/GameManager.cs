@@ -5,7 +5,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
 
-    [SerializeField] private FrogMove frog; 
+    [SerializeField] private FrogUnit frog;
     [SerializeField] private FishEnemy Fish;
     [SerializeField] private GameObject WinText;
 

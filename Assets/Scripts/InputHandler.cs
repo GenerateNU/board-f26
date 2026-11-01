@@ -116,14 +116,14 @@ public class InputHandler : MonoBehaviour
     }
 
     // Returns the current player's frog if input is allowed right now, otherwise null.
-    private FrogMove GetFrogIfInputAllowed()
+    private FrogUnit GetFrogIfInputAllowed()
     {
         if (IsInputBlocked) return null;
 
         var turnManager = TurnManager.Instance;
         if (turnManager == null || turnManager.IsGameOver || turnManager.CurrentPhase != TurnManager.TurnPhase.Player) return null;
 
-        FrogMove frog = turnManager.GetCurrentFrog();
+        FrogUnit frog = turnManager.GetCurrentFrog();
         if (frog == null)
             Debug.Log($"{turnManager.CurrentTurnLabel} has no frog, so the input was ignored.");
         return frog;
@@ -133,13 +133,13 @@ public class InputHandler : MonoBehaviour
     public void OnActionButtonPressed(ActionType action)
     {
         if (IsInputBlocked) { return; }
-        FrogMove frog = GetFrogIfInputAllowed();
+        FrogUnit frog = GetFrogIfInputAllowed();
         if (frog != null) frog.DoAction(action);
     }
 
     private void HopToLilyPad(Vector2 screenPosition)
     {
-        FrogMove frog = GetFrogIfInputAllowed();
+        FrogUnit frog = GetFrogIfInputAllowed();
         if (frog == null) return;
 
         BasicNode clickedLilyPad = GetLilyPadAtScreenPoint(screenPosition);
@@ -167,7 +167,7 @@ public class InputHandler : MonoBehaviour
     {
         if (IsInputBlocked) return;
 
-        FrogMove frog = GetFrogIfInputAllowed();
+        FrogUnit frog = GetFrogIfInputAllowed();
         if (frog == null) return;
 
         int index = Array.FindIndex(GlyphActionPairs, p => p.id == contact.glyphId);

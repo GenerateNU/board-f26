@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class FrogMove : MonoBehaviour
+public class FrogUnit : MonoBehaviour
 {
     [Header("Turn")]
     [Tooltip("Which player (1-3) controls this frog.")]
@@ -49,53 +49,12 @@ public class FrogMove : MonoBehaviour
             Debug.LogWarning($"{name}: no TurnManager in the scene, so this frog can't take turns.");
     }
 
-    public BasicNode GetLilyPadFrogOn()
-    {
-        return _currentLilyPad;
-    }
-
-    public void StartTurn()
-    {
-        HasMovedThisTurn = false;
-        SetNeighborHighlights(true);
-    }
-
-    public void EndTurn()
-    {
-        SetNeighborHighlights(false);
-        HasMovedThisTurn = true; // can't act again until StartTurn() resets it
-
-        if (_currentLilyPad != null && _currentLilyPad.TryGetComponent<FlyPickup>(out var flyPickup))
-        {
-            flyPickup.Collect(this);
-        }
-    }
-
-    public void AddScore(int points)
-    {
-        Score += points;
-    }
-
-    public void DoAction(ActionType action)
-    {
-        if (_frogActions != null && _frogActions.IsActionAvailable(action))
-        {
-            _frogActions.DoAction(action);
-        }
-    }
-
-    // Let the player move again this turn
-    public void HopAgainUsed()
-    {
-        HasMovedThisTurn = false;
-    }
-
     public void KillFrog()
     {
         // won't show who called it. This log does.
         Debug.Log($"KillFrog called on {name} (Player {_assignedPlayer})", this);
         Destroy(this.gameObject);
-        
+
         if (gameObject.scene.isLoaded)
         {
             string padName = _currentLilyPad != null ? _currentLilyPad.name : "no pad";
@@ -114,21 +73,85 @@ public class FrogMove : MonoBehaviour
         TurnManager.Instance?.UnregisterFrog(this, _assignedPlayer, _frogSucceeded);
     }
 
-    public void RespawnAt(BasicNode node)
+    // Getters and Setters
+    public BasicNode GetLilyPadFrogOn()
     {
-        if (node == null) return;
-
-        SetNeighborHighlights(false);
-        if (_currentLilyPad != null) _currentLilyPad.CurrentFrogsOnPad -= 1;
-        node.CurrentFrogsOnPad += 1;
-
-        _currentLilyPad = node;
-        transform.position = node.transform.position;
+        return _currentLilyPad;
     }
 
     public void SetNeighborHighlights(bool on)
     {
         if (_currentLilyPad != null) _currentLilyPad.HighlightNeighbors(on);
+    }
+
+    public void AddScore(int points)
+    {
+        Score += points;
+    }
+
+    // Let the player move again this turn
+    public void HopAgainUsed()
+    {
+        HasMovedThisTurn = false;
+    }
+
+    // Turn Logic
+    public void StartTurn()
+    {
+        HasMovedThisTurn = false;
+        SetNeighborHighlights(true);
+    }
+
+    public bool ShouldEndTurn(bool actionUsed)
+    {
+        return actionUsed && this.HasMovedThisTurn;
+    }
+
+    public void EndTurn()
+    {
+        SetNeighborHighlights(false);
+        HasMovedThisTurn = true; // can't act again until StartTurn() resets it
+
+        if (_currentLilyPad != null && _currentLilyPad.TryGetComponent<FlyPickup>(out var flyPickup))
+        {
+            flyPickup.Collect(this);
+        }
+    }
+
+    // Helper Functions for Checking
+    public bool IsValidMove(BasicNode clickedLilyPad)
+    {
+        if (clickedLilyPad == null || _currentLilyPad == null) return false;
+        if (clickedLilyPad == _currentLilyPad) return false;
+        if (!clickedLilyPad.IsTraversable) return false;
+        if (!clickedLilyPad.CanBeEnteredFrom(_currentLilyPad)) return false;
+        return CheckIfLilyPadIsNeighbor(clickedLilyPad);
+    }
+
+
+    // Checks if the given lilypad is a neighbor of the current lilypad
+    private bool CheckIfLilyPadIsNeighbor(BasicNode clickedLilyPad)
+    {
+        IReadOnlyList<BasicNode> neighbors = _currentLilyPad.Neighbors;
+
+        for (int i = 0; i < neighbors.Count; i++)
+        {
+            if (clickedLilyPad == neighbors[i])
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // Player Actions + Movement
+    public void DoAction(ActionType action)
+    {
+        if (_frogActions != null && _frogActions.IsActionAvailable(action))
+        {
+            _frogActions.DoAction(action);
+        }
     }
 
     public bool TryHopTo(BasicNode clickedLilyPad)
@@ -143,20 +166,6 @@ public class FrogMove : MonoBehaviour
         ChangeFrogLilyPad(clickedLilyPad);
 
         return true;
-    }
-
-    public bool ShouldEndTurn(bool actionUsed)
-    {
-        return actionUsed && this.HasMovedThisTurn;
-    }
-
-    public bool IsValidMove(BasicNode clickedLilyPad)
-    {
-        if (clickedLilyPad == null || _currentLilyPad == null) return false;
-        if (clickedLilyPad == _currentLilyPad) return false;
-        if (!clickedLilyPad.IsTraversable) return false;
-        if (!clickedLilyPad.CanBeEnteredFrom(_currentLilyPad)) return false;
-        return CheckIfLilyPadIsNeighbor(clickedLilyPad);
     }
 
     // Updates the current lilypad to the given one and moves the frog toward it
@@ -204,21 +213,5 @@ public class FrogMove : MonoBehaviour
         {
             _frogActions.EndTurn();
         }
-    }
-
-    // Checks if the given lilypad is a neighbor of the current lilypad
-    private bool CheckIfLilyPadIsNeighbor(BasicNode clickedLilyPad)
-    {
-        IReadOnlyList<BasicNode> neighbors = _currentLilyPad.Neighbors;
-
-        for (int i = 0; i < neighbors.Count; i++)
-        {
-            if (clickedLilyPad == neighbors[i])
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

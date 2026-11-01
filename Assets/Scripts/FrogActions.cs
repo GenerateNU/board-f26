@@ -19,7 +19,7 @@ public class FrogActions : MonoBehaviour
 
     [SerializeField]
     private GameObject eggPrefab;
-    private FrogMove frogMove;
+    private FrogUnit frogMove;
 
     public bool HasActedThisTurn { get; set; } = false;
 
@@ -27,7 +27,7 @@ public class FrogActions : MonoBehaviour
 
     void Awake()
     {
-        frogMove = GetComponent<FrogMove>();
+        frogMove = GetComponent<FrogUnit>();
     }
 
     void Start()
