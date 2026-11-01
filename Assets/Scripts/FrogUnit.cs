@@ -1,6 +1,16 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+
+public enum ActionType
+{
+    Croak,
+    LayEgg,
+    HopAgain,
+    EndTurn
+}
 
 public class FrogUnit : MonoBehaviour
 {
@@ -24,8 +34,19 @@ public class FrogUnit : MonoBehaviour
     private float _moveTimeStep;
     private BasicNode _currentLilyPad;
     private bool _isHopping;
-    private FrogActions _frogActions;
     private bool _frogSucceeded = false;
+
+    [Header("Actions")]
+    // sprint 2 skel
+    // needs to be public to check for respawn
+    public BasicNode respawnNode;
+
+    [SerializeField]
+    private GameObject eggPrefab;
+
+    public bool HasActedThisTurn { get; set; } = false;
+
+    private bool _endTurnPending;
 
     public int AssignedPlayer => _assignedPlayer;
 
@@ -36,17 +57,18 @@ public class FrogUnit : MonoBehaviour
     void Start()
     {
         if (_currentLilyPad == null) Debug.LogWarning($"{name} has no starting lily pad assigned.");
-        _frogActions = this.GetComponent<FrogActions>();
-
-        if (!_frogActions)
-        {
-            Debug.LogWarning($"Missing frog actions for {name}, will not be able to cycle through turns.");
-        }
 
         if (TurnManager.Instance != null)
             TurnManager.Instance.RegisterFrog(this, _assignedPlayer);
         else
             Debug.LogWarning($"{name}: no TurnManager in the scene, so this frog can't take turns.");
+
+        if (TurnManager.Instance != null) TurnManager.Instance.OnTurnChanged += OnTurnChanged;
+    }
+
+    void OnDestroy()
+    {
+        if (TurnManager.Instance != null) TurnManager.Instance.OnTurnChanged -= OnTurnChanged;
     }
 
     public void KillFrog()
@@ -102,6 +124,22 @@ public class FrogUnit : MonoBehaviour
         SetNeighborHighlights(true);
     }
 
+    // To do: Move into StartTurn
+    private void OnTurnChanged()
+    {
+        if (IsMyTurn())
+        {
+            HasActedThisTurn = false;
+            _endTurnPending = false;
+        }
+    }
+
+    private bool IsMyTurn()
+    {
+        // should always be my turn 
+        return true;
+    }
+
     public bool ShouldEndTurn(bool actionUsed)
     {
         return actionUsed && this.HasMovedThisTurn;
@@ -118,6 +156,27 @@ public class FrogUnit : MonoBehaviour
         }
     }
 
+    public void EndPlayerTurn()
+    {
+        if (_endTurnPending || !IsMyTurn()) return;
+        _endTurnPending = true;
+        StartCoroutine(EndTurnWhenReady());
+    }
+
+    private IEnumerator EndTurnWhenReady()
+    {
+        while (InputHandler.Instance != null && InputHandler.Instance.InAnimation)
+        {
+            yield return null;
+        }
+
+        // Still our turn? (Something else may have advanced it meanwhile.)
+        if (IsMyTurn() && TurnManager.Instance != null)
+        {
+            TurnManager.Instance.AdvanceTurn();
+        }
+    }
+
     // Helper Functions for Checking
     public bool IsValidMove(BasicNode clickedLilyPad)
     {
@@ -128,6 +187,25 @@ public class FrogUnit : MonoBehaviour
         return CheckIfLilyPadIsNeighbor(clickedLilyPad);
     }
 
+    public bool IsActionAvailable(ActionType action)
+    {
+        // Nothing is available outside this frog's turn, or once it has asked to end its turn.
+        if (!IsMyTurn() || _endTurnPending) return false;
+
+        switch (action)
+        {
+            case ActionType.Croak:
+                return !HasActedThisTurn;
+            case ActionType.HopAgain:
+                return !HasActedThisTurn;
+            case ActionType.LayEgg:
+                return !HasActedThisTurn && respawnNode == null;
+            case ActionType.EndTurn:
+                return true;
+            default:
+                return false;
+        }
+    }
 
     // Checks if the given lilypad is a neighbor of the current lilypad
     private bool CheckIfLilyPadIsNeighbor(BasicNode clickedLilyPad)
@@ -145,15 +223,7 @@ public class FrogUnit : MonoBehaviour
         return false;
     }
 
-    // Player Actions + Movement
-    public void DoAction(ActionType action)
-    {
-        if (_frogActions != null && _frogActions.IsActionAvailable(action))
-        {
-            _frogActions.DoAction(action);
-        }
-    }
-
+    // Movement
     public bool TryHopTo(BasicNode clickedLilyPad)
     {
         var turnManager = TurnManager.Instance;
@@ -209,9 +279,103 @@ public class FrogUnit : MonoBehaviour
             KillFrog();
             TurnManager.Instance.AdvanceTurn();
         }
-        else if (_frogActions != null && ShouldEndTurn(_frogActions.HasActedThisTurn))
+        else if (ShouldEndTurn(HasActedThisTurn))
         {
-            _frogActions.EndTurn();
+            EndPlayerTurn();
         }
+    }
+
+    // Actions
+    public void DoAction(ActionType action)
+    {
+        if (!IsActionAvailable(action))
+        {
+            Debug.Log($"{name}: {action} isn't available right now.");
+            return;
+        }
+
+        switch (action)
+        {
+            case ActionType.Croak:
+                Croak();
+                break;
+            case ActionType.HopAgain:
+                HopAgain();
+                break;
+            case ActionType.LayEgg:
+                LayEgg();
+                break;
+            case ActionType.EndTurn:
+                EndPlayerTurn();
+                break;
+            default:
+                return;
+        }
+    }
+
+    // croak, lay egg, hop again etc.
+    private void Croak()
+    {
+        BasicNode currentPad = GetLilyPadFrogOn();
+        if (currentPad == null) return;
+
+        currentPad.FrogCroakedOnPad(this);
+
+        foreach (BasicNode node in currentPad.Neighbors)
+        {
+            if (node == null) continue; // adding some safety checks so nothing explodes during all hands
+            node.CroakUsedOnPad();
+
+            if (node.Neighbors == null) continue;
+            foreach (BasicNode childNode in node.Neighbors)
+            {
+                if (childNode == null) continue; // safety check 2
+                childNode.CroakUsedOnPad();
+            }
+        }
+
+        // safety check 3 just in case
+        if (EnemyTurnManager.Instance != null)
+        {
+            EnemyTurnManager.Instance.CroakUsed();
+        }
+        else
+        {
+            Debug.LogWarning("EnemyTurnManager.Instance not found in scene");
+        }
+
+        HasActedThisTurn = true;
+
+        // Rehighlight so mite nodes will be highlighted
+        if (!HasMovedThisTurn) { SetNeighborHighlights(true); }
+        if (ShouldEndTurn(HasActedThisTurn)) { EndPlayerTurn(); }
+    }
+
+    private void LayEgg()
+    {
+        return;
+        BasicNode currentPad = GetLilyPadFrogOn();
+        if (currentPad == null) return;
+
+        currentPad.SpawnObjectOnPad(eggPrefab);
+        respawnNode = currentPad;
+        HasActedThisTurn = true;
+        if (ShouldEndTurn(HasActedThisTurn)) { EndPlayerTurn(); }
+    }
+
+    private void HopAgain()
+    {
+        // Don't let the player use HopAgain unless it is their second action.
+        if (GetLilyPadFrogOn().NodeType == NodeHazard.Mites || !HasMovedThisTurn)
+        {
+            return;
+        }
+
+        HasActedThisTurn = true;
+        HopAgainUsed();
+
+        // Rehighlight so new nodes will be highlighted
+        SetNeighborHighlights(true);
+        if (ShouldEndTurn(HasActedThisTurn)) { EndPlayerTurn(); }
     }
 }

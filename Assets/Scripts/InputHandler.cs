@@ -32,7 +32,6 @@ public class InputHandler : MonoBehaviour
     public bool InAnimation => _inAnimation;
     public bool IsInputBlocked => _preventInputMidAnimation && _inAnimation;
 
-    [SerializeField] FrogActions[] frogs;
     [SerializeField] GlyphActionPair[] GlyphActionPairs;
     [SerializeField] private GameObject debugButtonsForMouse;
 
