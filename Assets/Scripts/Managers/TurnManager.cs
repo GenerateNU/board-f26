@@ -40,7 +40,7 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private GameOverScreen gameOverScreenPrefab;
 
     private readonly List<PlayerSlot> _players = new List<PlayerSlot>();
-    private readonly Dictionary<int, FrogMove> _frogs = new Dictionary<int, FrogMove>(); // player number -> frog
+    private readonly Dictionary<int, FrogUnit> _frogs = new Dictionary<int, FrogUnit>(); // player number -> frog
     private int _currentPlayerIndex;
     private int _frogsSucceeded;
     private bool _started;
@@ -116,7 +116,7 @@ public class TurnManager : MonoBehaviour
     }
 
     // Instead of a set player count, have it added way dynamically as players join.
-    public void RegisterFrog(FrogMove frog, int playerNumber)
+    public void RegisterFrog(FrogUnit frog, int playerNumber)
     {
         if (playerNumber < 1 || playerNumber > MaxPlayers)
         {
@@ -151,13 +151,13 @@ public class TurnManager : MonoBehaviour
 
         foreach (int playerNumber in toRemove)
         {
-            FrogMove frog = _frogs[playerNumber];
+            FrogUnit frog = _frogs[playerNumber];
             _frogs.Remove(playerNumber); // remove first so it doesn't count toward win/loss
             if (frog != null) frog.gameObject.SetActive(false);
         }
     }
 
-    public void UnregisterFrog(FrogMove frog, int playerNumber, bool frogOutcomePositive)
+    public void UnregisterFrog(FrogUnit frog, int playerNumber, bool frogOutcomePositive)
     {
         if (_frogs.TryGetValue(playerNumber, out var registered) && registered == frog)
         {
@@ -186,16 +186,16 @@ public class TurnManager : MonoBehaviour
             Debug.LogWarning("No GameOver_Canvas prefab assigned on TurnManager.");
     }
 
-    public FrogMove GetCurrentFrog()
+    public FrogUnit GetCurrentFrog()
     {
         if (CurrentPhase != TurnPhase.Player) return null;
         _frogs.TryGetValue(CurrentPlayerNumber, out var frog);
         return frog;
     }
 
-    public List<FrogMove> GetAllFrogs()
+    public List<FrogUnit> GetAllFrogs()
     {
-        List<FrogMove> allFrogs = new List<FrogMove>();
+        List<FrogUnit> allFrogs = new List<FrogUnit>();
         foreach (var kvp in _frogs)
         {
             allFrogs.Add(kvp.Value);
@@ -211,7 +211,7 @@ public class TurnManager : MonoBehaviour
         if (InputHandler.Instance != null && InputHandler.Instance.InAnimation) { return; }
 
         if (_frogs.Count == 0) { return; }
-        GetCurrentFrog()?.EndTurn(); // FrogMove.EndTurn() locks the frog until its next turn
+        GetCurrentFrog()?.EndTurn(); // FrogUnit.EndTurn() locks the frog until its next turn
 
         if (CurrentPhase == TurnPhase.Player)
         {

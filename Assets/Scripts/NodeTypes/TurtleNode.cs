@@ -20,7 +20,7 @@ public class TurtleNode : LilyPadNode
         _primaryPosition = transform.position;
     }
 
-    public override void FrogCroakedOnPad(FrogMove frog)
+    public override void FrogCroakedOnPad(FrogUnit frog)
     {
         base.FrogCroakedOnPad(frog);
 
@@ -68,7 +68,7 @@ public class TurtleNode : LilyPadNode
     {
         if (TurnManager.Instance == null) return false;
 
-        List<FrogMove> frogs = TurnManager.Instance.GetAllFrogs();
+        List<FrogUnit> frogs = TurnManager.Instance.GetAllFrogs();
         for (int i = 0; i < frogs.Count; i++)
         {
             if (frogs[i] != null && frogs[i].GetLilyPadFrogOn() == this)
@@ -87,7 +87,7 @@ public class TurtleNode : LilyPadNode
 
         if (TurnManager.Instance == null) return;
 
-        List<FrogMove> frogs = TurnManager.Instance.GetAllFrogs();
+        List<FrogUnit> frogs = TurnManager.Instance.GetAllFrogs();
         for (int i = 0; i < frogs.Count; i++)
         {
             if (frogs[i] != null && frogs[i].GetLilyPadFrogOn() == this)

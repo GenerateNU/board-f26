@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8457760398135323216}
-  - component: {fileID: 8545398376676824306}
   - component: {fileID: 2815546774505246727}
   m_Layer: 0
   m_Name: Player
@@ -34,20 +33,6 @@ Transform:
   - {fileID: 326269184981236683}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8545398376676824306
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1776111669156554458}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2da36f424be96c4c81c0955250a307e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FrogActions
-  respawnNode: {fileID: 0}
-  eggPrefab: {fileID: 8912935519401735734, guid: 3f996ef0c585d9445a23e7c9b6a77b21, type: 3}
 --- !u!114 &2815546774505246727
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -64,6 +49,8 @@ MonoBehaviour:
   _startingLilyPad: {fileID: 0}
   _hopSpeed: 0.1
   _moveTimeStep: 0.02
+  respawnNode: {fileID: 0}
+  eggPrefab: {fileID: 8912935519401735734, guid: 3f996ef0c585d9445a23e7c9b6a77b21, type: 3}
 --- !u!1 &4354705422455423622
 GameObject:
   m_ObjectHideFlags: 0
