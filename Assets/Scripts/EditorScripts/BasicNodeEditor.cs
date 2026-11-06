@@ -7,29 +7,62 @@ using UnityEditor;
 [CustomEditor(typeof(BasicNode), true)]
 public class BasicNodeEditor : Editor
 {
+    // Recommended Reading: https://docs.unity3d.com/6000.1/Documentation/ScriptReference/SerializedProperty.html
+    SerializedProperty neighborsProp;
+
+    void OnEnable()
+    {
+        // Setup the SerializedProperties.
+        neighborsProp = serializedObject.FindProperty("neighbors");
+    }
+
     public override void OnInspectorGUI()
     {
-        /*
         serializedObject.Update();
-        DrawPropertiesExcluding(serializedObject, "neighbors"); there is literally no documentation on this other than 1 Unity Hub question post 
-        serializedObject.ApplyModifiedProperties();
-        */
-        var node = (BasicNode)target;
+        BasicNode node = (BasicNode)target;
 
+        // Store the previous neighbors
         var previousNeighbors = new List<BasicNode>(node.Neighbors);
 
         bool changed = DrawDefaultInspector();
 
+        // Update other node's neighbor list
         if (changed)
         {
-            foreach (var neighbor in node.Neighbors)
+            // Not too worried about performance issues since this should only be happening in editor on node add 
+            // But if we start to get performance spikes in that specific case we should like just make a public setter for
+            // neighbors even though it's bad practice imo.
+            // Loop through all neighbors to see if previousNeighbors had them
+            for (int i = 0; i < neighborsProp.arraySize; i++)
             {
+                // Get neighbor we are looking at
+                BasicNode neighbor = neighborsProp
+                    .GetArrayElementAtIndex(i)
+                    .objectReferenceValue as BasicNode;
+
+                // If previous neighbors did not have them add node to the neighbor's list of neighbors.
                 if (neighbor != null && !previousNeighbors.Contains(neighbor))
                 {
-                    neighbor.AddNeighbor(node);
+                    // Create a SerializedObject for the neighbor
+                    SerializedObject neighborObject = new SerializedObject(neighbor);
+
+                    neighborObject.Update();
+
+                    // Access its private neighbors field
+                    SerializedProperty neighborNeighbors =
+                        neighborObject.FindProperty("neighbors");
+
+                    // Add the current node to its neighbors list
+                    int index = neighborNeighbors.arraySize;
+                    // Value initially undefined just resizes. 
+                    neighborNeighbors.InsertArrayElementAtIndex(index);
+                    neighborNeighbors.GetArrayElementAtIndex(index).objectReferenceValue = node;
+
+                    neighborObject.ApplyModifiedProperties();
                 }
             }
         }
-        //GUILayout.Label("This is a Label in a Custom Editor");
+
+        serializedObject.ApplyModifiedProperties();
     }
 }

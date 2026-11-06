@@ -57,20 +57,6 @@ public abstract class BasicNode : MonoBehaviour
         worldObj.transform.SetParent(gameObject.transform, true);
     }
 
-    // This is primarily for EditorScripts. 
-    // It is recommended to not use this for game scripts and to respect the private field label.
-    public virtual void AddNeighbor(BasicNode newNeighbor)
-    {
-        if (neighbors.Contains(newNeighbor))
-        {
-            return;
-        }
-        else
-        {
-            neighbors.Add(newNeighbor);
-        }
-    }
-
     void OnDrawGizmos()
     {
         Gizmos.color = Color.black;
