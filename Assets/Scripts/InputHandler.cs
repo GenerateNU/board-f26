@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 using Board.Input;
 using System;
 using System.Collections.Generic;
@@ -27,13 +28,13 @@ public class InputHandler : MonoBehaviour
     [SerializeField] private bool _enableSpaceToAdvance = true;
 
     [Tooltip("ON: Board hardware (finger touches + game pieces). OFF: mouse / regular touchscreen + on-screen buttons.")]
-    [SerializeField] private bool useBoardInput = true;
 
     public bool InAnimation => _inAnimation;
     public bool IsInputBlocked => _preventInputMidAnimation && _inAnimation;
 
     [SerializeField] GlyphActionPair[] GlyphActionPairs;
     [SerializeField] private GameObject debugButtonsForMouse;
+    [SerializeField] private bool debugMode = false;
 
     [Serializable]
     public struct GlyphActionPair
@@ -65,7 +66,7 @@ public class InputHandler : MonoBehaviour
 
     private void Start()
     {
-        if (useBoardInput && debugButtonsForMouse)
+        if (!debugMode && debugButtonsForMouse)
         {
             debugButtonsForMouse.SetActive(false);
         }
@@ -73,21 +74,15 @@ public class InputHandler : MonoBehaviour
 
     private void OnEnable()
     {
-        if (useBoardInput)
-        {
-            DeviceInputManager.FingerDown += OnFingerDown;
-            DeviceInputManager.PieceDown += OnPieceDown;
-        }
-
+        DeviceInputManager.PieceDown += OnPieceDown;
         if (_mouseClickAction == null) return;
-        if (!useBoardInput) _mouseClickAction.performed += OnMouseClick;
+        _mouseClickAction.performed += OnMouseClick;
         _mouseClickAction.Enable();
     }
 
     private void OnDisable()
     {
         // Static events: always unsubscribe, or after Restart they'd still call this destroyed object.
-        DeviceInputManager.FingerDown -= OnFingerDown;
         DeviceInputManager.PieceDown -= OnPieceDown;
 
         if (_mouseClickAction == null) return;
@@ -150,16 +145,10 @@ public class InputHandler : MonoBehaviour
     // Mouse click (or regular touchscreen / pen tap)
     private void OnMouseClick(InputAction.CallbackContext context)
     {
-        if (useBoardInput || Pointer.current == null) { return; }
+        if (Pointer.current == null) { return; }
         HopToLilyPad(Pointer.current.position.ReadValue());
     }
 
-    // Board finger touch
-    private void OnFingerDown(BoardContact contact)
-    {
-        if (!useBoardInput) { return; }
-        HopToLilyPad(contact.screenPosition);
-    }
 
     // Board game piece placed
     void OnPieceDown(BoardContact contact)
