@@ -52,6 +52,21 @@ public class BasicNodeEditor : Editor
                     SerializedProperty neighborNeighbors =
                         neighborObject.FindProperty("neighbors");
 
+                    // Do not add this node again to the list of neighbors 
+                    bool alreadyAdded = false;
+                    for (int j = 0; j < neighborNeighbors.arraySize; j++)
+                    {
+                        if (neighborNeighbors
+                        .GetArrayElementAtIndex(j)
+                        .objectReferenceValue as BasicNode == target)
+                        {
+                            alreadyAdded = true;
+                            break;
+                        }
+                    }
+                    // No changes to neighborObject so no need to applymodifiedproperties
+                    if (alreadyAdded) { break; }
+
                     // Add the current node to its neighbors list
                     int index = neighborNeighbors.arraySize;
                     // Value initially undefined just resizes. 
