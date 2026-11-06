@@ -56,7 +56,7 @@ public class AlligatorNode : BasicNode
         if (alligatorRenderer != null)
         {
             Color targetColor = alligatorAwake ? alligatorAwakeColor : alligatorNormalColor;
-            
+
             // bc it's 3d now
             alligatorRenderer.material.SetColor("_BaseColor", targetColor);
         }
@@ -70,8 +70,8 @@ public class AlligatorNode : BasicNode
         }
 
         // Kill any frogs or eggs on the alligator
-        List<FrogMove> allFrogs = TurnManager.Instance.GetAllFrogs();
-        foreach (FrogMove frog in allFrogs)
+        List<FrogUnit> allFrogs = TurnManager.Instance.GetAllFrogs();
+        foreach (FrogUnit frog in allFrogs)
         {
             if (frog.GetLilyPadFrogOn() == this)
             {

@@ -7,7 +7,7 @@ public class FlyPickup : MonoBehaviour
     [SerializeField] private GameObject flyVisual;
     public bool IsCollected { get; private set; }
 
-    public void Collect(FrogMove frog)
+    public void Collect(FrogUnit frog)
     {
         if (IsCollected || frog == null || frog.GetLilyPadFrogOn() != GetComponent<BasicNode>()) return;
 

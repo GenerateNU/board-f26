@@ -29,14 +29,14 @@ public class FishEnemy : AEnemy
         animationFinished = false;
 
         // Every turn: chase whichever living frog is closest right now.
-        FrogMove target = FindClosestFrog();
+        FrogUnit target = FindClosestFrog();
         if (target == null || target.GetLilyPadFrogOn() == null || currentFishNode == null)
         {
             animationFinished = true; // no frogs left (or no board): nothing to do
             return;
         }
 
-        if(EnemyTurnManager.Instance.currentTurn % 2 == 0)  //turn number is even
+        if (EnemyTurnManager.Instance.currentTurn % 2 == 0)  //turn number is even
         {
             StepTowards(target.GetLilyPadFrogOn());
             StepTowards(target.GetLilyPadFrogOn());
@@ -46,7 +46,7 @@ public class FishEnemy : AEnemy
             StepTowards(target.GetLilyPadFrogOn());
         }
 
-        
+
     }
 
     // Called when a frog uses the Croak action
@@ -99,13 +99,13 @@ public class FishEnemy : AEnemy
         StartCoroutine(GlideToCurrentFishNode());
     }
 
-    private FrogMove FindClosestFrog()
+    private FrogUnit FindClosestFrog()
     {
         if (TurnManager.Instance == null) return null;
 
         float minDist = float.MaxValue;
-        FrogMove closest = null;
-        foreach (FrogMove candidate in TurnManager.Instance.GetAllFrogs())
+        FrogUnit closest = null;
+        foreach (FrogUnit candidate in TurnManager.Instance.GetAllFrogs())
         {
             if (candidate == null) continue; // destroyed
             float dist = Vector3.Distance(candidate.transform.position, transform.position);
@@ -123,7 +123,7 @@ public class FishEnemy : AEnemy
     {
         if (TurnManager.Instance == null) return;
 
-        foreach (FrogMove frogMove in TurnManager.Instance.GetAllFrogs())
+        foreach (FrogUnit frogMove in TurnManager.Instance.GetAllFrogs())
         {
             if (frogMove == null || frogMove.GetLilyPadFrogOn() != currentFishNode) continue;
             frogMove.KillFrog();

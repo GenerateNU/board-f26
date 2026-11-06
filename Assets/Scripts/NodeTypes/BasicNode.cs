@@ -28,7 +28,7 @@ public abstract class BasicNode : MonoBehaviour
         lilypadGlow.SetActive(enable);
     }
 
-    // Called by FrogMove: true at the start of its turn, false when it hops or its turn ends.
+    // Called by FrogUnit: true at the start of its turn, false when it hops or its turn ends.
     public void HighlightNeighbors(bool enable)
     {
         for (int i = 0; i < Neighbors.Count; i++)
@@ -46,7 +46,7 @@ public abstract class BasicNode : MonoBehaviour
 
     public virtual void CroakUsedOnPad() { }
 
-    public virtual void FrogCroakedOnPad(FrogMove frog)
+    public virtual void FrogCroakedOnPad(FrogUnit frog)
     {
         CroakUsedOnPad();
     }

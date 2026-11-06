@@ -5433,7 +5433,7 @@ PrefabInstance:
       objectReference: {fileID: 1733755953}
     - target: {fileID: 5411670380741070961, guid: e617e6c48146e28409fdbaaee72c516c, type: 3}
       propertyPath: useBoardInput
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5411670380741070961, guid: e617e6c48146e28409fdbaaee72c516c, type: 3}
       propertyPath: frogs.Array.size
