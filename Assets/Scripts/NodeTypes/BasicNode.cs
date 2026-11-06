@@ -14,6 +14,8 @@ public abstract class BasicNode : MonoBehaviour
     public virtual int MaxFrogsOnPad { get { return 1; } }
     public virtual int CurrentFrogsOnPad { get; set; }
 
+    [SerializeField] protected bool isFishOnlyNode = false;
+
     protected virtual void Start()
     {
         CurrentFrogsOnPad = 0;
