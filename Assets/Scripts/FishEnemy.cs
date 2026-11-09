@@ -3,20 +3,31 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /*
-Fish AI:
-Current: Fish moves toward the closest player and traverses lilypads to reach them.
-Fish should move 1.5 lilypads each turn this is shown by having them move 1 lilypad 
-in Turn1 then 2 lilypads in Turn2.
-Fish should move 1 lilypad if croak is used.
+Fish AI (Current):
+On its turn:
+ - Fish moves toward the closest player and traverses lilypads to reach them.
+ - Fish should move 1.5 lilypads each turn this is shown by having them move 1 lilypad 
+ - in Turn1 then 2 lilypads in Turn2.
+ - A fish can only eat frogs during its turn and should only eat 1 frog during its turn.
+ - Once a fish kills a frog end its turn. 
+
+On croak:
+ - Fish should move 1 lilypad if croak is used. It should NOT eat whatever is on the lilypad.
+
+To Add (According to Design Doc, Please Reference it not These Notes):
+ - Decoy eggs which the Fish prioritizes eating over frogs.
+ - Fish eating area being a radius.
 */
 public class FishEnemy : AEnemy
 {
     [SerializeField] private BasicNode currentFishNode;
     [SerializeField] private float swimSpeed = 1;
+    [Tooltip("Lilypads the fish moves for the first time it moves.")]
     [SerializeField] private int lilyPadsPerOddTurn = 1;
     [SerializeField] private int lilyPadsPerEvenTurn = 2;
-
-
+    // Keep track of this separately in FishEnemy (not EnemyTurnManager)
+    // This is since first fish turn is not necessarily first EnemyTurn
+    // First fish turn should always be lilyPadsPerOddTurn
     private bool oddTurn = true;
 
     private Vector3 lastPos;
@@ -26,6 +37,7 @@ public class FishEnemy : AEnemy
 
     public override void DoEnemyTurn()
     {
+        int timesDoEnemyTurn = oddTurn ? lilyPadsPerOddTurn : lilyPadsPerEvenTurn;
         animationFinished = false;
 
         // Every turn: chase whichever living frog is closest right now.
@@ -36,30 +48,36 @@ public class FishEnemy : AEnemy
             return;
         }
 
-        if (EnemyTurnManager.Instance.currentTurn % 2 == 0)  //turn number is even
+        for (int i = 0; i < timesDoEnemyTurn; i++)
         {
-            StepTowards(target.GetLilyPadFrogOn());
-            StepTowards(target.GetLilyPadFrogOn());
-        }
-        else
-        {
-            StepTowards(target.GetLilyPadFrogOn());
+            // This means we killed frog, end turn. If we want to keep moving after killing frog
+            // just FindClosestFrog again.
+            if (!target) { break; }
+            StepTowards(target.GetLilyPadFrogOn(), true);
         }
 
-
+        oddTurn = !oddTurn;
     }
 
     // Called when a frog uses the Croak action
+    // Handle separately from DoEnemyTurn as we should not eat frogs here (also we don't want to change oddTurn)
     public override void CroakUsed()
     {
-        DoEnemyTurn();
+        FrogUnit target = FindClosestFrog();
+        if (target == null || target.GetLilyPadFrogOn() == null || currentFishNode == null)
+        {
+            // Something is broken this shouldn't happen but we have it as a fail safe anyway
+            Debug.Log("Fish target is null on croak.");
+            return;
+        }
+        StepTowards(target.GetLilyPadFrogOn(), false);
     }
 
     // Kept for other scripts / testing: take one step toward a specific node.
     public void MoveTowards(BasicNode target)
     {
         animationFinished = false;
-        StepTowards(target);
+        StepTowards(target, true);
     }
 
     [ContextMenu("Move Towards Closest Frog")]
@@ -69,7 +87,7 @@ public class FishEnemy : AEnemy
     }
 
     // Recalculates the path from where the fish is now and moves ONE node along it.
-    private void StepTowards(BasicNode targetNode)
+    private void StepTowards(BasicNode targetNode, bool killFrogs)
     {
         if (targetNode == null)
         {
@@ -80,7 +98,7 @@ public class FishEnemy : AEnemy
         // Already on the frog's pad: just try to eat.
         if (targetNode == currentFishNode)
         {
-            CheckKillFrogs();
+            if (killFrogs) { CheckKillFrogs(); }
             animationFinished = true;
             return;
         }
@@ -95,7 +113,7 @@ public class FishEnemy : AEnemy
 
         lastPos = transform.position;
         currentFishNode = Path[1]; // Path[0] is where the fish is now
-        CheckKillFrogs();
+        if (killFrogs) { CheckKillFrogs(); }
         StartCoroutine(GlideToCurrentFishNode());
     }
 
