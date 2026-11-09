@@ -9,7 +9,6 @@ On its turn:
  - Fish should move 1.5 lilypads each turn this is shown by having them move 1 lilypad 
  - in Turn1 then 2 lilypads in Turn2.
  - A fish can only eat frogs during its turn and should only eat 1 frog during its turn.
- - Once a fish kills a frog end its turn. 
 
 On croak:
  - Fish should move 1 lilypad if croak is used. It should NOT eat whatever is on the lilypad.
@@ -48,12 +47,25 @@ public class FishEnemy : AEnemy
             return;
         }
 
+        bool needNewFrog = false;
         for (int i = 0; i < timesDoEnemyTurn; i++)
         {
-            // This means we killed frog, end turn. If we want to keep moving after killing frog
-            // just FindClosestFrog again.
-            if (!target) { break; }
-            StepTowards(target.GetLilyPadFrogOn(), true);
+            // This means we killed frog. Move to the next frog but do not kill it.
+            // Note: This code atm only works with up to 2 moves for enemy
+            // If we ever need fish to move more than 3 lilypads at once then adjust code
+            // to have separate variable for ifFrogAlreadyKilled so false is always passed in
+            // for kill
+            if (needNewFrog)
+            {
+                target = FindClosestFrog();
+                // No frogs left
+                if (!target) { break; }
+                needNewFrog = StepTowards(target.GetLilyPadFrogOn(), false);
+            }
+            else
+            {
+                needNewFrog = StepTowards(target.GetLilyPadFrogOn(), true);
+            }
         }
 
         oddTurn = !oddTurn;
@@ -87,20 +99,22 @@ public class FishEnemy : AEnemy
     }
 
     // Recalculates the path from where the fish is now and moves ONE node along it.
-    private void StepTowards(BasicNode targetNode, bool killFrogs)
+    // Returns in a frog has been killed.
+    private bool StepTowards(BasicNode targetNode, bool killFrogs)
     {
+        bool frogKilled = false;
         if (targetNode == null)
         {
             animationFinished = true;
-            return;
+            return false;
         }
 
         // Already on the frog's pad: just try to eat.
         if (targetNode == currentFishNode)
         {
-            if (killFrogs) { CheckKillFrogs(); }
+            if (killFrogs) { frogKilled = CheckKillFrogs(); }
             animationFinished = true;
-            return;
+            return frogKilled;
         }
 
         Path = CalculatePath(currentFishNode, targetNode);
@@ -108,13 +122,14 @@ public class FishEnemy : AEnemy
         {
             Debug.Log($"{name}: no path to {targetNode.name}, skipping this turn.");
             animationFinished = true;
-            return;
+            return false;
         }
 
         lastPos = transform.position;
         currentFishNode = Path[1]; // Path[0] is where the fish is now
-        if (killFrogs) { CheckKillFrogs(); }
+        if (killFrogs) { frogKilled = CheckKillFrogs(); }
         StartCoroutine(GlideToCurrentFishNode());
+        return frogKilled;
     }
 
     private FrogUnit FindClosestFrog()
@@ -137,15 +152,20 @@ public class FishEnemy : AEnemy
     }
 
     // Eats (or respawns) every frog on the fish's current node.
-    private void CheckKillFrogs()
+    // Returns if a frog has been killed
+    private bool CheckKillFrogs()
     {
-        if (TurnManager.Instance == null) return;
+        bool frogKilled = false;
+        if (TurnManager.Instance == null) return false;
 
         foreach (FrogUnit frogMove in TurnManager.Instance.GetAllFrogs())
         {
             if (frogMove == null || frogMove.GetLilyPadFrogOn() != currentFishNode) continue;
             frogMove.KillFrog();
+            frogKilled = true;
         }
+
+        return frogKilled;
     }
 
     IEnumerator GlideToCurrentFishNode()
