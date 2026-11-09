@@ -1,14 +1,16 @@
 using UnityEngine;
 
 // This class primarily exists for the ease of the EnemyTurnManager. 
+// See AlligatorNode for AI details, CroakUsedOnPad, and CurrentFrogsOnPad setter.
 public class AlligatorEnemy : AEnemy
 {
     [SerializeField]
     private AlligatorNode[] alligatorNodes;
-    [Tooltip("How many enemy turns (rounds) the alligator stays angry and lethal after being stepped on or croaked at.")]
+    [Tooltip("How many enemy turns (rounds) the alligator stays awake and lethal after being stepped on or croaked at.")]
     [SerializeField, Min(1)]
-    private int angryRounds = 2;
-    private int angryRoundsLeft = 0;
+    private int roundsUntilSleep = 2;
+    private int roundsLeft = 0;
+    private bool makeAlligatorAwakeOnTurn = false;
     private bool alligatorAwake = false;
     [SerializeField]
     private Color alligatorNormalColor;
@@ -25,17 +27,19 @@ public class AlligatorEnemy : AEnemy
         }
     }
 
-    // Stepping on or croaking at the alligator (re)starts its angry countdown.
-    public void MakeAngry()
-    {
-        angryRoundsLeft = angryRounds;
-        MakeAlligatorAwake(true);
-    }
-
     public void MakeAlligatorAwake(bool awake)
     {
+        if (awake)
+        {
+            roundsLeft = roundsUntilSleep;
+        }
         alligatorAwake = awake;
         UpdateMaterial(alligatorAwake);
+    }
+
+    public void MakeAlligatorAwakeOnTurn(bool awake)
+    {
+        makeAlligatorAwakeOnTurn = awake;
     }
 
     public void UpdateMaterial(bool alligatorAwake)
@@ -51,8 +55,14 @@ public class AlligatorEnemy : AEnemy
     {
         animationFinished = false;
 
+        if (makeAlligatorAwakeOnTurn)
+        {
+            MakeAlligatorAwake(makeAlligatorAwakeOnTurn);
+            makeAlligatorAwakeOnTurn = false;
+        }
+
         // TODO: Add art/death animation above if necessary and await on it
-        if (angryRoundsLeft <= 0)
+        if (!alligatorAwake)
         {
             animationFinished = true;
             return;
@@ -63,12 +73,12 @@ public class AlligatorEnemy : AEnemy
             alligatorNodes[i].KillFrogsOnAlligator();
         }
 
-        // Stays angry for angryRounds enemy turns, then cools down
-        angryRoundsLeft--;
-        if (angryRoundsLeft <= 0)
+        roundsLeft--;
+        if (roundsLeft == 0)
         {
             MakeAlligatorAwake(false);
         }
+
         animationFinished = true;
     }
 }
