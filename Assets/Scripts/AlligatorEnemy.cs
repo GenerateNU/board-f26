@@ -55,17 +55,19 @@ public class AlligatorEnemy : AEnemy
     {
         animationFinished = false;
 
-        if (makeAlligatorAwakeOnTurn)
-        {
-            MakeAlligatorAwake(makeAlligatorAwakeOnTurn);
-            makeAlligatorAwakeOnTurn = false;
-        }
-
         // TODO: Add art/death animation above if necessary and await on it
         if (!alligatorAwake)
         {
+            MakeAlligatorAwake(makeAlligatorAwakeOnTurn);
+            makeAlligatorAwakeOnTurn = false;
             animationFinished = true;
             return;
+        }
+        else if (makeAlligatorAwakeOnTurn)
+        {
+            // Reset countdown
+            MakeAlligatorAwake(makeAlligatorAwakeOnTurn);
+            makeAlligatorAwakeOnTurn = false;
         }
 
         for (int i = 0; i < alligatorNodes.Length; i++)
