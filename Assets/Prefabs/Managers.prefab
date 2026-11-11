@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd222db1155604c2b886a8aa87b29f0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TurnManager
-  startingPlayers: 1
+  startingPlayers: 2
   turnText: {fileID: 0}
   addPlayerButton: {fileID: 0}
 --- !u!114 &5411670380741070961
