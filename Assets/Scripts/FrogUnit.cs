@@ -37,12 +37,13 @@ public class FrogUnit : MonoBehaviour
     private bool _frogSucceeded = false;
 
     [Header("Actions")]
-    // sprint 2 skel
-    // needs to be public to check for respawn
-    public BasicNode respawnNode;
-
+    [Tooltip("Egg prefab (with the DecoyEgg script). Laying it lures the fish away from frogs.")]
     [SerializeField]
     private GameObject eggPrefab;
+
+    // This frog's egg that hasn't been eaten yet (one at a time).
+    private DecoyEgg _activeEgg;
+    public bool HasActiveEgg => _activeEgg != null;
 
     public bool HasActedThisTurn { get; set; } = false;
 
@@ -105,6 +106,11 @@ public class FrogUnit : MonoBehaviour
     }
 
     // Turn Logic
+    private bool IsMyTurn()
+    {
+        return TurnManager.Instance != null && TurnManager.Instance.IsPlayersTurn(_assignedPlayer);
+    }
+
     public void StartTurn()
     {
         HasMovedThisTurn = false;
@@ -131,7 +137,7 @@ public class FrogUnit : MonoBehaviour
 
     public void EndPlayerTurn()
     {
-        if (_endTurnPending) return;
+        if (_endTurnPending || !IsMyTurn()) return;
         _endTurnPending = true;
         StartCoroutine(EndTurnWhenReady());
     }
@@ -144,7 +150,8 @@ public class FrogUnit : MonoBehaviour
         }
 
         // Still our turn? (Something else may have advanced it meanwhile.)
-        if (TurnManager.Instance != null)
+        // Without this check, a late end-turn could skip the NEXT player's turn.
+        if (IsMyTurn())
         {
             TurnManager.Instance.AdvanceTurn();
         }
@@ -163,7 +170,7 @@ public class FrogUnit : MonoBehaviour
     public bool IsActionAvailable(ActionType action)
     {
         // Nothing is available outside this frog's turn, or once it has asked to end its turn.
-        if (_endTurnPending) return false;
+        if (!IsMyTurn() || _endTurnPending) return false;
 
         switch (action)
         {
@@ -172,7 +179,7 @@ public class FrogUnit : MonoBehaviour
             case ActionType.HopAgain:
                 return !HasActedThisTurn;
             case ActionType.LayEgg:
-                return !HasActedThisTurn && respawnNode == null;
+                return !HasActedThisTurn && !HasActiveEgg; // one uneaten egg per frog at a time
             case ActionType.EndTurn:
                 return true;
             default:
@@ -324,14 +331,25 @@ public class FrogUnit : MonoBehaviour
         if (ShouldEndTurn(HasActedThisTurn)) { EndPlayerTurn(); }
     }
 
+    // Lays a decoy egg on the frog's current pad. While any eggs exist, the fish chases eggs instead of frogs.
     private void LayEgg()
     {
-        return;
         BasicNode currentPad = GetLilyPadFrogOn();
         if (currentPad == null) return;
+        if (eggPrefab == null)
+        {
+            Debug.LogWarning($"{name}: no Egg Prefab assigned on FrogUnit.");
+            return;
+        }
 
-        currentPad.SpawnObjectOnPad(eggPrefab);
-        respawnNode = currentPad;
+        // Spawn the decoy on this pad and tell it where it is.
+        GameObject eggObject = Instantiate(eggPrefab, currentPad.transform.position, Quaternion.identity);
+        DecoyEgg egg = eggObject.GetComponent<DecoyEgg>();
+        if (egg == null) egg = eggObject.AddComponent<DecoyEgg>(); // safety if the prefab is missing it
+        egg.Init(currentPad, this);
+        _activeEgg = egg;
+
+        Debug.Log($"{name} laid a decoy egg on {currentPad.name}");
         HasActedThisTurn = true;
         if (ShouldEndTurn(HasActedThisTurn)) { EndPlayerTurn(); }
     }
