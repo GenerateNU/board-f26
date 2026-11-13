@@ -20,6 +20,7 @@ public class TurnManager : MonoBehaviour
         }
     }
 
+    public const int MinPlayers = 2;
     public const int MaxPlayers = 3;
 
     public static TurnManager Instance { get; private set; }
@@ -27,7 +28,7 @@ public class TurnManager : MonoBehaviour
     [Header("Players")]
     [Tooltip("Players to use when the level is played directly in the editor. " +
     "When started from the Main Menu, the menu's choice is used instead.")]
-    [SerializeField, Range(0, MaxPlayers)] private int startingPlayers = 1;
+    [SerializeField, Range(MinPlayers, MaxPlayers)] private int startingPlayers = MinPlayers;
 
     [Header("UI")]
     [Tooltip("TextMeshPro text that shows whose turn it is.")]
@@ -42,6 +43,7 @@ public class TurnManager : MonoBehaviour
     private readonly List<PlayerSlot> _players = new List<PlayerSlot>();
     private readonly Dictionary<int, FrogUnit> _frogs = new Dictionary<int, FrogUnit>(); // player number -> frog
     private int _currentPlayerIndex;
+    private int _startingPlayerIndex;
     private int _frogsSucceeded;
     private bool _started;
     private bool _gameOver;
@@ -83,7 +85,7 @@ public class TurnManager : MonoBehaviour
     {
         // Use the Main Menu's choice if there was one, otherwise the Inspector value.
         int playerCount = GameSettings.HasPlayerCount ? GameSettings.PlayerCount : startingPlayers;
-        playerCount = Mathf.Clamp(playerCount, 0, MaxPlayers);
+        playerCount = Mathf.Clamp(playerCount, MinPlayers, MaxPlayers);
         for (int i = 0; i < playerCount; i++) AddPlayer();
 
         // Frogs for players who aren't in this game get removed.
@@ -91,7 +93,8 @@ public class TurnManager : MonoBehaviour
 
         // With no players yet, sit on the enemy turn until someone joins.
         CurrentPhase = _players.Count > 0 ? TurnPhase.Player : TurnPhase.Enemy;
-        _currentPlayerIndex = 0;
+        _startingPlayerIndex = _players.Count > 0 ? Random.Range(0, _players.Count) : 0;
+        _currentPlayerIndex = _startingPlayerIndex;
         _started = true;
 
         UpdateTurnUI();
@@ -215,21 +218,15 @@ public class TurnManager : MonoBehaviour
 
         if (CurrentPhase == TurnPhase.Player)
         {
-            _currentPlayerIndex++;
-            if (_currentPlayerIndex >= _players.Count)
-            {
-                CurrentPhase = TurnPhase.Enemy;
-            }
-
-            AdjustPlayerIndexToAlivePlayer();
+            AdvanceToNextPlayerOrEnemy();
         }
         else // Enemy
         {
             if (_players.Count > 0)
             {
                 CurrentPhase = TurnPhase.Player;
-                _currentPlayerIndex = 0;
-                AdjustPlayerIndexToAlivePlayer();
+                _currentPlayerIndex = _startingPlayerIndex;
+                FindNextAlivePlayer();
             }
             // No players yet: stay on the enemy turn.
         }
@@ -241,17 +238,32 @@ public class TurnManager : MonoBehaviour
         OnTurnChanged?.Invoke();
     }
 
-    private void AdjustPlayerIndexToAlivePlayer()
+    private void AdvanceToNextPlayerOrEnemy()
     {
-        if (GetCurrentFrog() == null)
+        for (int i = 0; i < _players.Count; i++)
         {
-            while (_currentPlayerIndex < _players.Count && GetCurrentFrog() == null)
+            _currentPlayerIndex = (_currentPlayerIndex + 1) % _players.Count;
+            if (_currentPlayerIndex == _startingPlayerIndex)
             {
-                _currentPlayerIndex++;
+                CurrentPhase = TurnPhase.Enemy;
+                return;
             }
 
-            if (_currentPlayerIndex >= _players.Count) CurrentPhase = TurnPhase.Enemy;
+            if (GetCurrentFrog() != null) return;
         }
+
+        CurrentPhase = TurnPhase.Enemy;
+    }
+
+    private void FindNextAlivePlayer()
+    {
+        for (int i = 0; i < _players.Count; i++)
+        {
+            if (GetCurrentFrog() != null) return;
+            _currentPlayerIndex = (_currentPlayerIndex + 1) % _players.Count;
+        }
+
+        CurrentPhase = TurnPhase.Enemy;
     }
 
     private void StartCurrentFrogTurn()

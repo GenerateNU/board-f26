@@ -7,7 +7,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private string levelSceneName = "Level_01";
 
     [Header("Panels")]
-    [Tooltip("Optional: the 1/2/3 player buttons. If empty, PLAY starts with 1 player.")]
+    [Tooltip("Optional: the 2/3 player buttons. If empty, PLAY starts with 2 players.")]
     [SerializeField] private GameObject playerSelectPanel;
     [Tooltip("Optional: placeholder How To Play panel.")]
     [SerializeField] private GameObject howToPlayPanel;
@@ -24,7 +24,7 @@ public class MainMenu : MonoBehaviour
     {
         if (playerSelectPanel == null)
         {
-            SelectPlayers(1); // no panel set up yet: just start
+            SelectPlayers(TurnManager.MinPlayers); // no panel set up yet: just start
             return;
         }
         ShowOnly(playerSelectPanel);
@@ -39,11 +39,11 @@ public class MainMenu : MonoBehaviour
     // Back buttons on any panel
     public void CloseAllPanels() => ShowOnly(null);
 
-    // 1 / 2 / 3 Player
+    // 2 / 3 Player
 
     public void SelectPlayers(int count)
     {
-        GameSettings.PlayerCount = Mathf.Clamp(count, 1, TurnManager.MaxPlayers);
+        GameSettings.PlayerCount = Mathf.Clamp(count, TurnManager.MinPlayers, TurnManager.MaxPlayers);
         Debug.Log($"Starting {levelSceneName} with {GameSettings.PlayerCount} player(s).");
         SceneManager.LoadScene(levelSceneName);
     }
