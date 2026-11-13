@@ -5,16 +5,18 @@ using UnityEngine;
 /*
 Fish AI (Current):
 On its turn:
- - Fish moves toward the closest player and traverses lilypads to reach them.
- - Fish should move 1.5 lilypads each turn this is shown by having them move 1 lilypad 
+ - Fish moves toward its target and traverses lilypads to reach it.
+- If the target is a decoy egg, the fish will eat it. If the target is a frog, the fish will eat it.
+ - Fish should move 1.5 lilypads each turn this is shown by having them move 1 lilypad
  - in Turn1 then 2 lilypads in Turn2.
- - A fish can only eat frogs during its turn and should only eat 1 frog during its turn.
+ - A fish can only eat during its turn and only eats once per turn (an egg OR frogs).
+   An egg on a pad is eaten before any frog on that pad, so frogs there survive.
+   After eating, the fish keeps moving toward its next target but doesn't eat again.
 
 On croak:
  - Fish should move 1 lilypad if croak is used. It should NOT eat whatever is on the lilypad.
 
 To Add (According to Design Doc, Please Reference it not These Notes):
- - Decoy eggs which the Fish prioritizes eating over frogs.
  - Fish eating area being a radius.
 */
 public class FishEnemy : AEnemy
@@ -24,6 +26,8 @@ public class FishEnemy : AEnemy
     [Tooltip("Lilypads the fish moves for the first time it moves.")]
     [SerializeField] private int lilyPadsPerOddTurn = 1;
     [SerializeField] private int lilyPadsPerEvenTurn = 2;
+    [Tooltip("Lilypads the fish moves when a frog croaks (it never eats on a croak).")]
+    [SerializeField] private int lilyPadsWhenCroaked = 1;
     // Keep track of this separately in FishEnemy (not EnemyTurnManager)
     // This is since first fish turn is not necessarily first EnemyTurn
     // First fish turn should always be lilyPadsPerOddTurn
@@ -31,105 +35,110 @@ public class FishEnemy : AEnemy
 
     private Vector3 lastPos;
     private List<BasicNode> Path;
+    private Coroutine _moveRoutine;
 
     public BasicNode CurrentFishNode => currentFishNode;
 
     public override void DoEnemyTurn()
     {
-        int timesDoEnemyTurn = oddTurn ? lilyPadsPerOddTurn : lilyPadsPerEvenTurn;
-        animationFinished = false;
-
-        // Every turn: chase whichever living frog is closest right now.
-        FrogUnit target = FindClosestFrog();
-        if (target == null || target.GetLilyPadFrogOn() == null || currentFishNode == null)
-        {
-            animationFinished = true; // no frogs left (or no board): nothing to do
-            return;
-        }
-
-        bool needNewFrog = false;
-        for (int i = 0; i < timesDoEnemyTurn; i++)
-        {
-            // This means we killed frog. Move to the next frog but do not kill it.
-            // Note: This code atm only works with up to 2 moves for enemy
-            // If we ever need fish to move more than 3 lilypads at once then adjust code
-            // to have separate variable for ifFrogAlreadyKilled so false is always passed in
-            // for kill
-            if (needNewFrog)
-            {
-                target = FindClosestFrog();
-                // No frogs left
-                if (!target) { break; }
-                needNewFrog = StepTowards(target.GetLilyPadFrogOn(), false);
-            }
-            else
-            {
-                needNewFrog = StepTowards(target.GetLilyPadFrogOn(), true);
-            }
-        }
-
+        int steps = oddTurn ? lilyPadsPerOddTurn : lilyPadsPerEvenTurn;
         oddTurn = !oddTurn;
+        StartMoving(steps, true);
     }
 
     // Called when a frog uses the Croak action
-    // Handle separately from DoEnemyTurn as we should not eat frogs here (also we don't want to change oddTurn)
+    // Handle separately from DoEnemyTurn as we should not eat here (also we don't want to change oddTurn)
     public override void CroakUsed()
     {
-        FrogUnit target = FindClosestFrog();
-        if (target == null || target.GetLilyPadFrogOn() == null || currentFishNode == null)
-        {
-            // Something is broken this shouldn't happen but we have it as a fail safe anyway
-            Debug.Log("Fish target is null on croak.");
-            return;
-        }
-        StepTowards(target.GetLilyPadFrogOn(), false);
+        StartMoving(lilyPadsWhenCroaked, false);
     }
 
-    // Kept for other scripts / testing: take one step toward a specific node.
-    public void MoveTowards(BasicNode target)
-    {
-        animationFinished = false;
-        StepTowards(target, true);
-    }
-
-    [ContextMenu("Move Towards Closest Frog")]
+    [ContextMenu("Take Fish Turn")]
     public void MoveTowards()
     {
         DoEnemyTurn();
     }
 
-    // Recalculates the path from where the fish is now and moves ONE node along it.
-    // Returns in a frog has been killed.
-    private bool StepTowards(BasicNode targetNode, bool killFrogs)
+    // Kept for other scripts / testing: take one step toward a specific node (eating allowed).
+    public void MoveTowards(BasicNode target)
     {
-        bool frogKilled = false;
-        if (targetNode == null)
+        StartMoving(1, true, target);
+    }
+
+    private void StartMoving(int steps, bool canEat, BasicNode fixedTarget = null)
+    {
+        animationFinished = false;
+
+        if (currentFishNode == null || steps <= 0)
         {
             animationFinished = true;
-            return false;
+            return;
         }
 
-        // Already on the frog's pad: just try to eat.
-        if (targetNode == currentFishNode)
+        if (_moveRoutine != null) StopCoroutine(_moveRoutine);
+        _moveRoutine = StartCoroutine(MoveSteps(steps, canEat, fixedTarget));
+    }
+
+    // Moves up to `steps` lilypads ONE AFTER ANOTHER (each swim finishes before the next starts).
+    // Picks the target again before every step, so after eating it heads for the next egg/frog.
+    private IEnumerator MoveSteps(int steps, bool canEat, BasicNode fixedTarget)
+    {
+        bool hasEaten = false;
+
+        for (int i = 0; i < steps; i++)
         {
-            if (killFrogs) { frogKilled = CheckKillFrogs(); }
-            animationFinished = true;
-            return frogKilled;
+            BasicNode target = fixedTarget != null ? fixedTarget : FindTargetNode();
+            if (target == null) break; // nothing left to chase
+
+            // Already on the target's pad: try to eat there instead of moving.
+            if (target == currentFishNode)
+            {
+                if (canEat && !hasEaten && EatWhateverIsHere())
+                {
+                    hasEaten = true;
+                    continue; // meal used; next step heads for the next target
+                }
+                break; // can't eat here and nowhere better to go
+            }
+
+            Path = CalculatePath(currentFishNode, target);
+            if (Path == null || Path.Count < 2)
+            {
+                Debug.Log($"{name}: no path to {target.name}, skipping the rest of this move.");
+                break;
+            }
+
+            lastPos = transform.position;
+            currentFishNode = Path[1]; // Path[0] is where the fish is now
+            yield return GlideToCurrentFishNode();
+
+            // Eat on arrival, at most once per turn and never on a croak.
+            if (canEat && !hasEaten && EatWhateverIsHere()) hasEaten = true;
         }
 
-        Path = CalculatePath(currentFishNode, targetNode);
-        if (Path == null || Path.Count < 2)
+        _moveRoutine = null;
+        animationFinished = true;
+    }
+
+    // Decoy eggs first, otherwise the closest frog's pad.
+    private BasicNode FindTargetNode()
+    {
+        BasicNode eggNode = FindDecoyTarget();
+        if (eggNode != null) return eggNode;
+
+        FrogUnit frog = FindClosestFrog();
+        return frog != null ? frog.GetLilyPadFrogOn() : null;
+    }
+
+    // Nearest egg the fish can actually reach (by straight-line distance), or null.
+    private BasicNode FindDecoyTarget()
+    {
+        foreach (DecoyEgg egg in DecoyEgg.GetNearestFirst(transform.position))
         {
-            Debug.Log($"{name}: no path to {targetNode.name}, skipping this turn.");
-            animationFinished = true;
-            return false;
+            if (egg.Node == currentFishNode) return egg.Node;
+            if (CalculatePath(currentFishNode, egg.Node) != null) return egg.Node;
         }
-
-        lastPos = transform.position;
-        currentFishNode = Path[1]; // Path[0] is where the fish is now
-        if (killFrogs) { frogKilled = CheckKillFrogs(); }
-        StartCoroutine(GlideToCurrentFishNode());
-        return frogKilled;
+        return null;
     }
 
     private FrogUnit FindClosestFrog()
@@ -151,17 +160,31 @@ public class FishEnemy : AEnemy
         return closest;
     }
 
-    // Eats (or respawns) every frog on the fish's current node.
+    // One meal: an egg on this pad if there is one (frogs here survive),
+    // otherwise the frogs on this pad. Returns true if anything was eaten.
+    private bool EatWhateverIsHere()
+    {
+        foreach (DecoyEgg egg in DecoyEgg.GetNearestFirst(transform.position))
+        {
+            if (egg.Node != currentFishNode) continue;
+            egg.Eat();
+            return true;
+        }
+
+        return CheckKillFrogs();
+    }
+
+    // Eats every frog on the fish's current node.
     // Returns if a frog has been killed
     private bool CheckKillFrogs()
     {
         bool frogKilled = false;
         if (TurnManager.Instance == null) return false;
 
-        foreach (FrogUnit frogMove in TurnManager.Instance.GetAllFrogs())
+        foreach (FrogUnit frog in TurnManager.Instance.GetAllFrogs())
         {
-            if (frogMove == null || frogMove.GetLilyPadFrogOn() != currentFishNode) continue;
-            frogMove.KillFrog();
+            if (frog == null || frog.GetLilyPadFrogOn() != currentFishNode) continue;
+            frog.KillFrog();
             frogKilled = true;
         }
 
@@ -170,7 +193,6 @@ public class FishEnemy : AEnemy
 
     IEnumerator GlideToCurrentFishNode()
     {
-        animationFinished = false;
         float elapsed = 0;
         Vector3 targetPos = currentFishNode.transform.position;
         float duration = swimSpeed > 0 ? 1f / swimSpeed : 0f;
@@ -183,7 +205,6 @@ public class FishEnemy : AEnemy
         }
 
         transform.position = targetPos;
-        animationFinished = true;
     }
 
     List<BasicNode> CalculatePath(BasicNode start, BasicNode target) // uses dijkstra
