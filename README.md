@@ -1,4 +1,4 @@
-# 🐸 Untitled Frog Project (i'll update this trust)
+# 🐸 Hop or Croak
 
 Welcome to the official repository for (again i'll update this trust)!
 
@@ -35,7 +35,7 @@ epic ascii cat:
 ⣿⣿⣿⣿⠿⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⢻⣿⣿
 ⣿⣿⡿⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢻⣿
 ⣿⡿⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿
-⣿⡇⠀⠀⠀⠀⠀i love frogs!    ⠀⠀⠀⠀⠀⠀⠀⣼⣿
+⣿⡇⠀⠀⠀⠀⠀i love frogs!    ⠀⠀⠀⠀⠀⠀⣼⣿
 ⣿⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣴⣿⣿
 ⣿⣿⣆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿
 ⣿⣿⣿⣷⣄⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣴⣾⣿⣿⣿⣿⣿

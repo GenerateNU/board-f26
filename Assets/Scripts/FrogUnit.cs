@@ -217,6 +217,7 @@ public class FrogUnit : MonoBehaviour
         if (!newLilyPad.IsTraversable) { return; }
 
         _isHopping = true;
+        AudioManager.Instance?.PlayHop(); // PLAYS ONE OF 4 HOPPING SFX
         InputHandler.Instance?.BeginAnimation();
 
         _ = MoveFrog(newLilyPad.transform.position);
@@ -242,6 +243,7 @@ public class FrogUnit : MonoBehaviour
         }
 
         _isHopping = false;
+        AudioManager.Instance?.PlayLand(); //PLAYS ONE OF 3 LANDING SFX
         InputHandler.Instance?.EndAnimation();
         SetNeighborHighlights(false);
 
@@ -293,7 +295,7 @@ public class FrogUnit : MonoBehaviour
         if (currentPad == null) return;
 
         currentPad.FrogCroakedOnPad(this);
-
+        AudioManager.Instance?.PlayCroak(); //CROAK SFX
         foreach (BasicNode node in currentPad.Neighbors)
         {
             if (node == null) continue; // adding some safety checks so nothing explodes during all hands
