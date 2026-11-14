@@ -177,6 +177,11 @@ MonoBehaviour:
   neighbors:
   - {fileID: 0}
   lilypadGlow: {fileID: 204296410110658245}
+  isFishOnlyNode: 0
+  randomizeLook: 1
+  padVisual: {fileID: 0}
+  padRenderer: {fileID: 0}
+  lilyPadMaterials: []
 --- !u!65 &1213334649782431944
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -196,8 +201,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.76495504, y: 0.77, z: 0.6819165}
-  m_Center: {x: 0.035031557, y: -0.025808655, z: -0.0033329725}
+  m_Size: {x: 0.76495504, y: 2.9214177, z: 0.6819165}
+  m_Center: {x: 0.035031557, y: -1.1015179, z: -0.0033329725}
 --- !u!1 &3207975044613371693
 GameObject:
   m_ObjectHideFlags: 0

@@ -17,9 +17,6 @@ public class LilyPadNode : BasicNode
 
     [Tooltip("Drop lily pad materials here. One is picked at random per pad. Empty = keep the current look.")]
     [SerializeField] private Material[] lilyPadMaterials;
-
-    [Tooltip("If the pad uses a SpriteRenderer, drop leaf sprites here instead. Empty = keep the current sprite.")]
-    [SerializeField] private Sprite[] lilyPadSprites;
     public override bool IsTraversable => !IsOccupied && !isFishOnlyNode;
     public override NodeHazard NodeType => NodeHazard.None;
 
@@ -40,26 +37,20 @@ public class LilyPadNode : BasicNode
     private void RandomizeLook()
     {
         if (padRenderer == null) padRenderer = FindPadRenderer();
-        if (padVisual == null) padVisual = padRenderer != null ? padRenderer.transform : transform;
+        // if (padVisual == null) padVisual = padRenderer != null ? padRenderer.transform : transform;
 
         // Lay the pad flat (90 on X) and point the notch in a random direction.
-        padVisual.localEulerAngles = new Vector3(90, 0, Random.Range(0f, 360f));
+        // padVisual.localEulerAngles = new Vector3(90, 0, Random.Range(0f, 360f));
 
         // +-10% size, relative to the current size.
-        float size = Random.Range(0.9f, 1.1f);
-        padVisual.localScale *= size;
+        // float size = Random.Range(0.9f, 1.1f);
+        // padVisual.localScale *= size;
 
         // Pick the art. sharedMaterial avoids creating a new material copy per pad.
         if (padRenderer != null && lilyPadMaterials != null && lilyPadMaterials.Length > 0)
         {
             Material material = lilyPadMaterials[Random.Range(0, lilyPadMaterials.Length)];
             if (material != null) padRenderer.sharedMaterial = material;
-        }
-
-        if (padRenderer is SpriteRenderer spriteRenderer && lilyPadSprites != null && lilyPadSprites.Length > 0)
-        {
-            Sprite sprite = lilyPadSprites[Random.Range(0, lilyPadSprites.Length)];
-            if (sprite != null) spriteRenderer.sprite = sprite;
         }
     }
 
