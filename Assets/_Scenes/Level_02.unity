@@ -3434,6 +3434,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c66500ab00148204ea4975df1a8b3476, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LilyPadNode
+--- !u!114 &1263549728 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3722424290851221768, guid: b9ea6b690fcd7ac458b40c396d43d2ee, type: 3}
+  m_PrefabInstance: {fileID: 1326611150}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a95da768db03d364a92004fe8925d6b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AlligatorEnemy
 --- !u!1001 &1285591931
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3834,18 +3845,26 @@ PrefabInstance:
       objectReference: {fileID: 7029519803717485589, guid: d3a9951abc7a04c7382c235457d0b95e, type: 3}
     - target: {fileID: 6617130360181876341, guid: e617e6c48146e28409fdbaaee72c516c, type: 3}
       propertyPath: enemies.Array.size
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6617130360181876341, guid: e617e6c48146e28409fdbaaee72c516c, type: 3}
       propertyPath: 'enemies.Array.data[0]'
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1697865316}
     - target: {fileID: 6617130360181876341, guid: e617e6c48146e28409fdbaaee72c516c, type: 3}
       propertyPath: 'enemies.Array.data[1]'
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1646322863}
     - target: {fileID: 6617130360181876341, guid: e617e6c48146e28409fdbaaee72c516c, type: 3}
       propertyPath: 'enemies.Array.data[2]'
+      value: 
+      objectReference: {fileID: 1760452996}
+    - target: {fileID: 6617130360181876341, guid: e617e6c48146e28409fdbaaee72c516c, type: 3}
+      propertyPath: 'enemies.Array.data[3]'
+      value: 
+      objectReference: {fileID: 1263549728}
+    - target: {fileID: 6617130360181876341, guid: e617e6c48146e28409fdbaaee72c516c, type: 3}
+      propertyPath: 'enemies.Array.data[4]'
       value: 
       objectReference: {fileID: 1715136580}
     - target: {fileID: 7684887356647816096, guid: e617e6c48146e28409fdbaaee72c516c, type: 3}
@@ -4403,6 +4422,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: FishOnlyNode (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 1099292246011908914, guid: ab034a3929649634cb407db17300a0b1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6157787907189095142, guid: ab034a3929649634cb407db17300a0b1, type: 3}
+      propertyPath: isFishOnlyNode
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6157787907189095142, guid: ab034a3929649634cb407db17300a0b1, type: 3}
       propertyPath: neighbors.Array.size
       value: 4
@@ -4760,6 +4787,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 667774590}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1646322863 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3722424290851221768, guid: b9ea6b690fcd7ac458b40c396d43d2ee, type: 3}
+  m_PrefabInstance: {fileID: 268293560}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a95da768db03d364a92004fe8925d6b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AlligatorEnemy
 --- !u!1001 &1665286046
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4771,6 +4809,14 @@ PrefabInstance:
     - target: {fileID: 1099292246011908914, guid: ab034a3929649634cb407db17300a0b1, type: 3}
       propertyPath: m_Name
       value: FishOnlyNode
+      objectReference: {fileID: 0}
+    - target: {fileID: 1099292246011908914, guid: ab034a3929649634cb407db17300a0b1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6157787907189095142, guid: ab034a3929649634cb407db17300a0b1, type: 3}
+      propertyPath: isFishOnlyNode
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6157787907189095142, guid: ab034a3929649634cb407db17300a0b1, type: 3}
       propertyPath: neighbors.Array.size
@@ -4963,6 +5009,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlyPickup
   flyVisual: {fileID: 0}
+--- !u!114 &1697865316 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3722424290851221768, guid: b9ea6b690fcd7ac458b40c396d43d2ee, type: 3}
+  m_PrefabInstance: {fileID: 1125642921}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a95da768db03d364a92004fe8925d6b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AlligatorEnemy
 --- !u!114 &1715136580 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1241953583717251712, guid: cb64d7ee9f413fd4b84b2348ade1d590, type: 3}
@@ -5371,6 +5428,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: FishOnlyNode
       objectReference: {fileID: 0}
+    - target: {fileID: 1099292246011908914, guid: ab034a3929649634cb407db17300a0b1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6157787907189095142, guid: ab034a3929649634cb407db17300a0b1, type: 3}
+      propertyPath: isFishOnlyNode
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6157787907189095142, guid: ab034a3929649634cb407db17300a0b1, type: 3}
       propertyPath: neighbors.Array.size
       value: 3
@@ -5448,6 +5513,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7188188502833689486, guid: ab034a3929649634cb407db17300a0b1, type: 3}
   m_PrefabInstance: {fileID: 1746071677}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1760452996 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3722424290851221768, guid: b9ea6b690fcd7ac458b40c396d43d2ee, type: 3}
+  m_PrefabInstance: {fileID: 1597500989}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a95da768db03d364a92004fe8925d6b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AlligatorEnemy
 --- !u!1001 &1760575884
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6177,6 +6253,14 @@ PrefabInstance:
     - target: {fileID: 1099292246011908914, guid: ab034a3929649634cb407db17300a0b1, type: 3}
       propertyPath: m_Name
       value: FishOnlyNode
+      objectReference: {fileID: 0}
+    - target: {fileID: 1099292246011908914, guid: ab034a3929649634cb407db17300a0b1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6157787907189095142, guid: ab034a3929649634cb407db17300a0b1, type: 3}
+      propertyPath: isFishOnlyNode
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6157787907189095142, guid: ab034a3929649634cb407db17300a0b1, type: 3}
       propertyPath: neighbors.Array.size
