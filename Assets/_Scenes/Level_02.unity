@@ -1047,7 +1047,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 692940813819130749, guid: abeda574d70dc2845ad01b94b97db97e, type: 3}
       propertyPath: neighbors.Array.size
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 692940813819130749, guid: abeda574d70dc2845ad01b94b97db97e, type: 3}
       propertyPath: 'neighbors.Array.data[0]'
@@ -1065,6 +1065,10 @@ PrefabInstance:
       propertyPath: 'neighbors.Array.data[3]'
       value: 
       objectReference: {fileID: 984728107}
+    - target: {fileID: 692940813819130749, guid: abeda574d70dc2845ad01b94b97db97e, type: 3}
+      propertyPath: 'neighbors.Array.data[4]'
+      value: 
+      objectReference: {fileID: 465273132}
     - target: {fileID: 2934192894951701430, guid: abeda574d70dc2845ad01b94b97db97e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.13
@@ -1247,6 +1251,10 @@ PrefabInstance:
       propertyPath: neighbors.Array.size
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 6157787907189095142, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
+      propertyPath: 'neighbors.Array.data[0]'
+      value: 
+      objectReference: {fileID: 385702227}
     - target: {fileID: 6157787907189095142, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
       propertyPath: 'neighbors.Array.data[1]'
       value: 
