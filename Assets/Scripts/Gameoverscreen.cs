@@ -14,7 +14,10 @@ public class GameOverScreen : MonoBehaviour
     public void Show(bool won)
     {
         if (resultText != null) resultText.text = won ? wonMessage : lostMessage;
-        gameObject.SetActive(true);
+        foreach (Transform child in transform)
+        {
+            child.gameObject.SetActive(true);
+        }
     }
 
     // Hook to the Restart Level button. Reloads the current level from the start

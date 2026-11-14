@@ -186,14 +186,14 @@ public class TurnManager : MonoBehaviour
 
         if(gameOverScreenPrefab != null) 
         {
-            GameOverScreen gameOverScreen = Instantiate(gameOverScreenPrefab, transform);
             if(!won) 
             {
-                gameOverScreen.GoToMainMenu();
+                gameOverScreenPrefab.GoToMainMenu();
             } 
             else
             {
-                gameOverScreen.Show(won);
+                gameOverScreenPrefab.gameObject.SetActive(true);
+                gameOverScreenPrefab.Show(won);
             }
         }
         else
