@@ -50,6 +50,7 @@ MonoBehaviour:
   - {fileID: 6192405601382211039}
   - {fileID: 8807155486671609862}
   - {fileID: 1384268053059397545}
+  roundsUntilSleep: 2
   alligatorNormalColor: {r: 1, g: 1, b: 1, a: 1}
   alligatorAwakeColor: {r: 0.95686275, g: 0.29803923, b: 0.29803923, a: 1}
 --- !u!65 &3829315398856978944
@@ -398,8 +399,28 @@ PrefabInstance:
       propertyPath: m_Name
       value: LilyPad
       objectReference: {fileID: 0}
+    - target: {fileID: 1734088804619006514, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2956685037083698634, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
       propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4408291689559705859, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 4408291689559705859, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4408291689559705859, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.06
+      objectReference: {fileID: 0}
+    - target: {fileID: 5548900006077209264, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6227834577561198941, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
@@ -498,9 +519,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AlligatorNode
   neighbors:
   - {fileID: 8807155486671609862}
-  lilypadGlow: {fileID: 6041567721050788481}
+  lilypadAnimation: {fileID: 2011761028499077826}
+  isFishOnlyNode: 0
   alligatorEnemy: {fileID: 3722424290851221768}
   alligatorRenderer: {fileID: 7809646954572297316}
+--- !u!1 &2011761028499077826 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1734088804619006514, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
+  m_PrefabInstance: {fileID: 286978494869883120}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6933887769896270718 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7188188502833689486, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
@@ -517,6 +544,26 @@ PrefabInstance:
     - target: {fileID: 1099292246011908914, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
       propertyPath: m_Name
       value: LilyPad (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1734088804619006514, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4408291689559705859, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.12
+      objectReference: {fileID: 0}
+    - target: {fileID: 4408291689559705859, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4408291689559705859, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5548900006077209264, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6227834577561198941, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
       propertyPath: m_Color.a
@@ -615,9 +662,15 @@ MonoBehaviour:
   neighbors:
   - {fileID: 6192405601382211039}
   - {fileID: 1384268053059397545}
-  lilypadGlow: {fileID: 6041567721050788481}
+  lilypadAnimation: {fileID: 4278248620715001764}
+  isFishOnlyNode: 0
   alligatorEnemy: {fileID: 3722424290851221768}
   alligatorRenderer: {fileID: 7809646954572297316}
+--- !u!1 &4278248620715001764 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1734088804619006514, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
+  m_PrefabInstance: {fileID: 2544495171715331478}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4651743130959939096 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7188188502833689486, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
@@ -634,6 +687,22 @@ PrefabInstance:
     - target: {fileID: 1099292246011908914, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
       propertyPath: m_Name
       value: LilyPad (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1734088804619006514, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4408291689559705859, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4408291689559705859, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.08
+      objectReference: {fileID: 0}
+    - target: {fileID: 5548900006077209264, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6227834577561198941, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
       propertyPath: m_Color.a
@@ -736,6 +805,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AlligatorNode
   neighbors:
   - {fileID: 8807155486671609862}
-  lilypadGlow: {fileID: 6041567721050788481}
+  lilypadAnimation: {fileID: 6743608163669308363}
+  isFishOnlyNode: 0
   alligatorEnemy: {fileID: 3722424290851221768}
   alligatorRenderer: {fileID: 7809646954572297316}
+--- !u!1 &6743608163669308363 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1734088804619006514, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
+  m_PrefabInstance: {fileID: 5009871344505111033}
+  m_PrefabAsset: {fileID: 0}

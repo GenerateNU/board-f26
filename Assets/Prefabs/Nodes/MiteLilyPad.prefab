@@ -48,7 +48,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MiteNode
   neighbors:
   - {fileID: 0}
-  lilypadGlow: {fileID: 9062049398164829055}
+  lilypadAnimation: {fileID: 7424091618479474568}
   isFishOnlyNode: 0
   randomizeLook: 1
   lilyPadVisualOption:
@@ -56,8 +56,6 @@ MonoBehaviour:
   - {fileID: 6421044846311529311, guid: f5c2a3e43b222574ca1fb4eda7d67413, type: 3}
   - {fileID: 7899911701423019450, guid: b57d3d1608ba2874eb2c5d457fa98e8b, type: 3}
   lilyPadForEditor: {fileID: 6021901099116511895}
-  _lilyPadColor: {r: 1, g: 1, b: 1, a: 1}
-  _miteColor: {r: 0.45882353, g: 0.45882353, b: 0.45882353, a: 1}
   lilyPadMiteVisualOption:
   - {fileID: 1874984096690129939, guid: a911cfeca6dab6f4da770094669d1b45, type: 3}
   - {fileID: 771338060547804096, guid: 8202ce1c52b0c2247a5816318a8b7563, type: 3}
@@ -98,6 +96,10 @@ PrefabInstance:
     - target: {fileID: 1099292246011908914, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1734088804619006514, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5548900006077209264, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -160,8 +162,8 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 3207975044613371693, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
   m_PrefabInstance: {fileID: 9157809715871266234}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &9062049398164829055 stripped
+--- !u!1 &7424091618479474568 stripped
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 204296410110658245, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
+  m_CorrespondingSourceObject: {fileID: 1734088804619006514, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
   m_PrefabInstance: {fileID: 9157809715871266234}
   m_PrefabAsset: {fileID: 0}
