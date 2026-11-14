@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
+using System;
+using System.Linq;
 
 public class TurnManager : MonoBehaviour
 {
@@ -14,10 +16,14 @@ public class TurnManager : MonoBehaviour
         public int Number;   // 1-based: Player 1, Player 2, ...
         public string Name;
 
+        public float Score; //if player dies. score is set to -1
+
         public PlayerSlot(int number)
         {
             Number = number;
             Name = "Player " + number;
+
+            Score = 0;
         }
     }
 
@@ -66,6 +72,9 @@ public class TurnManager : MonoBehaviour
     public event System.Action OnTurnChanged;
     public event System.Action<PlayerSlot> OnPlayerAdded;
 
+    public event System.Action<PlayerSlot> OnGameEnd;
+
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -94,7 +103,7 @@ public class TurnManager : MonoBehaviour
 
         // With no players yet, sit on the enemy turn until someone joins.
         CurrentPhase = _players.Count > 0 ? TurnPhase.Player : TurnPhase.Enemy;
-        _startingPlayerIndex = _players.Count > 0 ? Random.Range(0, _players.Count) : 0;
+        _startingPlayerIndex = _players.Count > 0 ? UnityEngine.Random.Range(0, _players.Count) : 0;
         _currentPlayerIndex = _startingPlayerIndex;
         _started = true;
 
@@ -175,22 +184,32 @@ public class TurnManager : MonoBehaviour
         }
     }
 
+    PlayerSlot DecideWinner()
+    {
+        float maxScore = _players.Max(p => p.Score);
+        PlayerSlot topPlayer = _players.Find(p => p.Score == maxScore);
+
+        return topPlayer;
+    }
+
     // If any frog makes it to the end count it as a win for now
     public void GameOver(bool won)
     {
         if (_gameOver) return;
         _gameOver = true;
         _frogsSucceeded = 0;
+        PlayerSlot winner = DecideWinner();
+        OnGameEnd?.Invoke(winner);
 
         Debug.Log(won ? "Game Over: won" : "Game Over: lost");
 
-        if(gameOverScreenPrefab != null) 
+        if (gameOverScreenPrefab != null)
         {
-            if(!won) 
+            if (!won)
             {
                 SceneManager.LoadScene("MainMenu");
                 return;
-            } 
+            }
             else
             {
                 Instantiate(gameOverScreenPrefab).Show(won);
