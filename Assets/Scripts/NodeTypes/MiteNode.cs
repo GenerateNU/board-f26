@@ -6,18 +6,9 @@ Mites are permanently dispelled by a Frog croaking within 2 nodes of it.
 */
 public class MiteNode : LilyPadNode
 {
-    private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
-
-    [SerializeField]
-    private Color _lilyPadColor;
-    [SerializeField]
-    private Color _miteColor;
     [SerializeField] private GameObject[] lilyPadMiteVisualOption;
     public override bool IsTraversable => !IsOccupied;
     public override NodeHazard NodeType => MitesActive ? NodeHazard.Mites : NodeHazard.None;
-    private MeshRenderer miteRenderer;
-    // Tint per pad without changing the shared LilyPadNormal material
-    private MaterialPropertyBlock colorBlock;
     public bool MitesActive { get; private set; }
 
     protected override void Awake()
@@ -31,11 +22,6 @@ public class MiteNode : LilyPadNode
     protected override void Start()
     {
         MitesActive = true;
-        miteRenderer = this.gameObject.GetComponentInChildren<MeshRenderer>();
-        if (!miteRenderer)
-        {
-            Debug.Log("Mite node is missing a renderer, will not be able to update materials.");
-        }
         base.Start();
     }
 
