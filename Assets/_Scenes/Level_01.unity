@@ -4909,6 +4909,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4278248620715001764, guid: b9ea6b690fcd7ac458b40c396d43d2ee, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5487742580506834167, guid: b9ea6b690fcd7ac458b40c396d43d2ee, type: 3}
       propertyPath: m_Name
       value: Alligator
@@ -4933,6 +4937,10 @@ PrefabInstance:
       propertyPath: 'neighbors.Array.data[4]'
       value: 
       objectReference: {fileID: 729658833}
+    - target: {fileID: 6743608163669308363, guid: b9ea6b690fcd7ac458b40c396d43d2ee, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8543494896884444087, guid: b9ea6b690fcd7ac458b40c396d43d2ee, type: 3}
       propertyPath: neighbors.Array.size
       value: 6
