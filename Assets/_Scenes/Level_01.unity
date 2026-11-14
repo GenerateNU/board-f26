@@ -6393,14 +6393,6 @@ PrefabInstance:
       value: Water
       objectReference: {fileID: 0}
     - target: {fileID: 1160222215747374593, guid: 770808da1bd49844597bdc75586c80b7, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 2.4699836
-      objectReference: {fileID: 0}
-    - target: {fileID: 1160222215747374593, guid: 770808da1bd49844597bdc75586c80b7, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 3.5053167
-      objectReference: {fileID: 0}
-    - target: {fileID: 1160222215747374593, guid: 770808da1bd49844597bdc75586c80b7, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.1291
       objectReference: {fileID: 0}
@@ -6439,22 +6431,6 @@ PrefabInstance:
     - target: {fileID: 1160222215747374593, guid: 770808da1bd49844597bdc75586c80b7, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4192220636711672482, guid: 770808da1bd49844597bdc75586c80b7, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -10.74
-      objectReference: {fileID: 0}
-    - target: {fileID: 4192220636711672482, guid: 770808da1bd49844597bdc75586c80b7, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 2.68
-      objectReference: {fileID: 0}
-    - target: {fileID: 4254308130745523012, guid: 770808da1bd49844597bdc75586c80b7, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 8.81
-      objectReference: {fileID: 0}
-    - target: {fileID: 4254308130745523012, guid: 770808da1bd49844597bdc75586c80b7, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -2.41
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

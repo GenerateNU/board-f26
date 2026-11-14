@@ -53,6 +53,7 @@ Material:
     m_Floats:
     - _AngleOffset: 2
     - _Density: 14
+    - _GlowFadeTime: 0.5
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Speed: 0.1
@@ -60,9 +61,12 @@ Material:
     - _XRMotionVectorsPass: 1
     - _depthScale: 4
     - _distortionSpeed: 0.5
+    - _hitRadius: 0.3
     m_Colors:
     - _BaseColor: {r: 0.3127446, g: 0.54260564, b: 0.6603774, a: 1}
     - _FoamColor: {r: 0.5963617, g: 0.83396226, b: 0.7110917, a: 1}
+    - _GlowColor: {r: 0.6297401, g: 0.90943396, b: 0.8735166, a: 1}
     - _depthColor: {r: 0.26254892, g: 0.43375313, b: 0.4716981, a: 1}
+    - _intersectPosition: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
