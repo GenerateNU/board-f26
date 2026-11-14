@@ -163,6 +163,7 @@ public class FishEnemy : AEnemy
             if (frogMove == null || frogMove.GetLilyPadFrogOn() != currentFishNode) continue;
             frogMove.KillFrog();
             AudioManager.Instance?.PlayFishChomp(); //SFX; needs accompanying animation + newspaper stuff but this is here for now
+            _ = VideoPlayer.Instance?.PlayVideo(VideoPlayer.VideoType.EatenFish);
             frogKilled = true;
         }
 
