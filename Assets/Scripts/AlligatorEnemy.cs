@@ -35,6 +35,8 @@ public class AlligatorEnemy : AEnemy
         }
         alligatorAwake = awake;
         UpdateMaterial(alligatorAwake);
+        if (awake) AudioManager.Instance?.PlayAlligatorAngry(); // woke up
+        else AudioManager.Instance?.PlayAlligatorSleep(); //otherwise asleep
     }
 
     public void MakeAlligatorAwakeOnTurn(bool awake)
