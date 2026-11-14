@@ -177,6 +177,13 @@ MonoBehaviour:
   neighbors:
   - {fileID: 0}
   lilypadGlow: {fileID: 204296410110658245}
+  isFishOnlyNode: 0
+  randomizeLook: 1
+  lilyPadVisualOption:
+  - {fileID: 2513171039760229811, guid: ba6d50e544a3d2646b090cd02c0e2ed7, type: 3}
+  - {fileID: 6421044846311529311, guid: f5c2a3e43b222574ca1fb4eda7d67413, type: 3}
+  - {fileID: 7899911701423019450, guid: b57d3d1608ba2874eb2c5d457fa98e8b, type: 3}
+  lilyPadForEditor: {fileID: 3207975044613371693}
 --- !u!65 &1213334649782431944
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -196,8 +203,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.76495504, y: 0.77, z: 0.6819165}
-  m_Center: {x: 0.035031557, y: -0.025808655, z: -0.0033329725}
+  m_Size: {x: 0.76495504, y: 2.9214177, z: 0.6819165}
+  m_Center: {x: 0.035031557, y: -1.1015179, z: -0.0033329725}
 --- !u!1 &3207975044613371693
 GameObject:
   m_ObjectHideFlags: 0

@@ -49,8 +49,19 @@ MonoBehaviour:
   neighbors:
   - {fileID: 0}
   lilypadGlow: {fileID: 9062049398164829055}
+  isFishOnlyNode: 0
+  randomizeLook: 1
+  lilyPadVisualOption:
+  - {fileID: 2513171039760229811, guid: ba6d50e544a3d2646b090cd02c0e2ed7, type: 3}
+  - {fileID: 6421044846311529311, guid: f5c2a3e43b222574ca1fb4eda7d67413, type: 3}
+  - {fileID: 7899911701423019450, guid: b57d3d1608ba2874eb2c5d457fa98e8b, type: 3}
+  lilyPadForEditor: {fileID: 6021901099116511895}
   _lilyPadColor: {r: 1, g: 1, b: 1, a: 1}
   _miteColor: {r: 0.45882353, g: 0.45882353, b: 0.45882353, a: 1}
+  lilyPadMiteVisualOption:
+  - {fileID: 1874984096690129939, guid: a911cfeca6dab6f4da770094669d1b45, type: 3}
+  - {fileID: 771338060547804096, guid: 8202ce1c52b0c2247a5816318a8b7563, type: 3}
+  - {fileID: 4881042047614895744, guid: dbfe5f814c39264419e97f9c869e0a19, type: 3}
 --- !u!65 &6348424695843552670
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -70,8 +81,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1, y: 8.241932, z: 1}
+  m_Center: {x: 0, y: -3.620966, z: 0}
 --- !u!1001 &9157809715871266234
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -142,6 +153,11 @@ PrefabInstance:
 --- !u!4 &2077989227275109940 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7188188502833689486, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
+  m_PrefabInstance: {fileID: 9157809715871266234}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &6021901099116511895 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3207975044613371693, guid: 668397bd5bcb7784482b17d8e4c5eeda, type: 3}
   m_PrefabInstance: {fileID: 9157809715871266234}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &9062049398164829055 stripped
