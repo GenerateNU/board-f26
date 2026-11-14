@@ -64,8 +64,16 @@ public abstract class BasicNode : MonoBehaviour
         Gizmos.color = Color.black;
         foreach (BasicNode node in Neighbors)
         {
-            // to help with in scene editing not throwing errors at you upon deleting 
-            if (node == null) { return; }
+            // to help with in scene editing not throwing errors at you upon deleting
+            if (node == null) { return; }
+            if (isFishOnlyNode)
+            {
+                Gizmos.color = Color.green;
+            }
+            else
+            {
+                Gizmos.color = Color.black;
+            }
             Gizmos.DrawLine(gameObject.transform.position, node.transform.position);
         }
     }

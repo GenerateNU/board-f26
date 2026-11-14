@@ -177,7 +177,7 @@ MonoBehaviour:
   neighbors:
   - {fileID: 0}
   lilypadGlow: {fileID: 204296410110658245}
-  isFishOnlyNode: 0
+  isFishOnlyNode: 1
 --- !u!65 &1213334649782431944
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -217,7 +217,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1465897295900557766
 Transform:
   m_ObjectHideFlags: 0
@@ -266,7 +266,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 88e71bb9b582ae74393a71033db6f214, type: 2}
+  - {fileID: 2100000, guid: 25e8f4d8c2b09724583bcaec1e8afe74, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
