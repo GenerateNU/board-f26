@@ -12,12 +12,21 @@ public class MiteNode : LilyPadNode
     private Color _lilyPadColor;
     [SerializeField]
     private Color _miteColor;
+    [SerializeField] private GameObject[] lilyPadMiteVisualOption;
     public override bool IsTraversable => !IsOccupied;
     public override NodeHazard NodeType => MitesActive ? NodeHazard.Mites : NodeHazard.None;
     private MeshRenderer miteRenderer;
     // Tint per pad without changing the shared LilyPadNormal material
     private MaterialPropertyBlock colorBlock;
     public bool MitesActive { get; private set; }
+
+    protected override void Awake()
+    {
+        if (randomizeLook)
+        {
+            base.RandomizeLook(lilyPadMiteVisualOption);
+        }
+    }
 
     protected override void Start()
     {
@@ -39,11 +48,13 @@ public class MiteNode : LilyPadNode
 
     private void UpdateMaterial(bool mitesActive)
     {
-        if (!miteRenderer) { return; }
-
-        colorBlock ??= new MaterialPropertyBlock();
-        miteRenderer.GetPropertyBlock(colorBlock);
-        colorBlock.SetColor(BaseColorId, mitesActive ? _miteColor : _lilyPadColor);
-        miteRenderer.SetPropertyBlock(colorBlock);
+        if (mitesActive)
+        {
+            RandomizeLook(lilyPadMiteVisualOption);
+        }
+        else
+        {
+            RandomizeLook(lilyPadVisualOption);
+        }
     }
 }

@@ -179,9 +179,11 @@ MonoBehaviour:
   lilypadGlow: {fileID: 204296410110658245}
   isFishOnlyNode: 0
   randomizeLook: 1
-  padVisual: {fileID: 0}
-  padRenderer: {fileID: 0}
-  lilyPadMaterials: []
+  lilyPadVisualOption:
+  - {fileID: 2513171039760229811, guid: ba6d50e544a3d2646b090cd02c0e2ed7, type: 3}
+  - {fileID: 6421044846311529311, guid: f5c2a3e43b222574ca1fb4eda7d67413, type: 3}
+  - {fileID: 7899911701423019450, guid: b57d3d1608ba2874eb2c5d457fa98e8b, type: 3}
+  lilyPadForEditor: {fileID: 3207975044613371693}
 --- !u!65 &1213334649782431944
 BoxCollider:
   m_ObjectHideFlags: 0
