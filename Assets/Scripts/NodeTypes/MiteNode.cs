@@ -36,7 +36,6 @@ public class MiteNode : LilyPadNode
         {
             Debug.Log("Mite node is missing a renderer, will not be able to update materials.");
         }
-        UpdateMaterial(true);
         base.Start();
     }
 

@@ -30,12 +30,6 @@ public class LilyPadNode : BasicNode
     // Makes each pad look a little different: notch direction, size and leaf art.
     protected void RandomizeLook(GameObject[] visualOptions)
     {
-        if (padTransform == null)
-        {
-            padTransform = GetComponentInChildren<Transform>();
-            if (!padTransform) { Debug.Log("Couldn't get pad transform"); }
-        }
-
         if (visualOptions.Length < 1) { return; }
         int randomLilyPad = Random.Range(0, visualOptions.Length);
         GameObject newObject = Instantiate(visualOptions[randomLilyPad], this.gameObject.transform);
@@ -43,11 +37,17 @@ public class LilyPadNode : BasicNode
         Destroy(lilyPadForEditor);
         lilyPadForEditor = newObject;
 
-        // Lay the pad flat (90 on X) and point the notch in a random direction.
-        //padTransform.localEulerAngles = new Vector3(90, 0, Random.Range(0f, 360f));
+        if (padTransform == null)
+        {
+            padTransform = lilyPadForEditor.gameObject.GetComponent<Transform>();
+            if (!padTransform) { Debug.Log("Couldn't get pad transform"); }
+        }
+
+        // x and z are already set up in the child object, rotate y
+        padTransform.localEulerAngles = new Vector3(0, Random.Range(0f, 360f), 0);
 
         // +-10% size, relative to the current size.
-        //float size = Random.Range(0.9f, 1.1f);
-        //padTransform.localScale *= size;
+        float size = Random.Range(0.9f, 1.1f);
+        padTransform.localScale *= size;
     }
 }
