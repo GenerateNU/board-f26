@@ -2867,7 +2867,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!23 &659143467
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -6384,6 +6384,87 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8457760398135323216, guid: 7b6b2ef8beced86479942b9fb816be9f, type: 3}
   m_PrefabInstance: {fileID: 1721499537}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1733494223
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 808446938384965636, guid: 770808da1bd49844597bdc75586c80b7, type: 3}
+      propertyPath: m_Name
+      value: Water
+      objectReference: {fileID: 0}
+    - target: {fileID: 1160222215747374593, guid: 770808da1bd49844597bdc75586c80b7, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2.4699836
+      objectReference: {fileID: 0}
+    - target: {fileID: 1160222215747374593, guid: 770808da1bd49844597bdc75586c80b7, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 3.5053167
+      objectReference: {fileID: 0}
+    - target: {fileID: 1160222215747374593, guid: 770808da1bd49844597bdc75586c80b7, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.1291
+      objectReference: {fileID: 0}
+    - target: {fileID: 1160222215747374593, guid: 770808da1bd49844597bdc75586c80b7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -3.08
+      objectReference: {fileID: 0}
+    - target: {fileID: 1160222215747374593, guid: 770808da1bd49844597bdc75586c80b7, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 9.4116
+      objectReference: {fileID: 0}
+    - target: {fileID: 1160222215747374593, guid: 770808da1bd49844597bdc75586c80b7, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1160222215747374593, guid: 770808da1bd49844597bdc75586c80b7, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1160222215747374593, guid: 770808da1bd49844597bdc75586c80b7, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1160222215747374593, guid: 770808da1bd49844597bdc75586c80b7, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1160222215747374593, guid: 770808da1bd49844597bdc75586c80b7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1160222215747374593, guid: 770808da1bd49844597bdc75586c80b7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1160222215747374593, guid: 770808da1bd49844597bdc75586c80b7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4192220636711672482, guid: 770808da1bd49844597bdc75586c80b7, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -10.74
+      objectReference: {fileID: 0}
+    - target: {fileID: 4192220636711672482, guid: 770808da1bd49844597bdc75586c80b7, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2.68
+      objectReference: {fileID: 0}
+    - target: {fileID: 4254308130745523012, guid: 770808da1bd49844597bdc75586c80b7, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 8.81
+      objectReference: {fileID: 0}
+    - target: {fileID: 4254308130745523012, guid: 770808da1bd49844597bdc75586c80b7, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -2.41
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 770808da1bd49844597bdc75586c80b7, type: 3}
 --- !u!1 &1733755951
 GameObject:
   m_ObjectHideFlags: 0
@@ -6490,7 +6571,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
   m_RenderShadows: 1
-  m_RequiresDepthTextureOption: 2
+  m_RequiresDepthTextureOption: 1
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
   m_Cameras: []
@@ -7535,7 +7616,7 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2033627828}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 12
   m_Type: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -7987,3 +8068,4 @@ SceneRoots:
   - {fileID: 103056306}
   - {fileID: 659143469}
   - {fileID: 251507178}
+  - {fileID: 1733494223}
