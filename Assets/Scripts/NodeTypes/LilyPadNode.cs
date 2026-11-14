@@ -20,8 +20,7 @@ public class LilyPadNode : BasicNode
 
     [Tooltip("If the pad uses a SpriteRenderer, drop leaf sprites here instead. Empty = keep the current sprite.")]
     [SerializeField] private Sprite[] lilyPadSprites;
-
-    public override bool IsTraversable => !IsOccupied;
+    public override bool IsTraversable => !IsOccupied && !isFishOnlyNode;
     public override NodeHazard NodeType => NodeHazard.None;
 
     private void Awake()

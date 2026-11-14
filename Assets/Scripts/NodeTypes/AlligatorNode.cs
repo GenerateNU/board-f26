@@ -6,16 +6,21 @@ using System.Collections.Generic;
 Alligator AI logic is very closely tied to node logic. 
 
 Alligator Node:
-Frogs can step on the Alligator, this makes the Alligator angry immediately.
+Frogs can step on the Alligator, this will make the Alligator wake up on its turn.
+If the alligator is already awake this will reset the count down before it falls asleep.
 
 Alligator AI:
-The Alligator becomes angry for 2 rounds (angryRounds on AlligatorEnemy):
-- Immediately if a frog steps on it (restarts the countdown if already angry).
-- Immediately if a frog croaks.
+The Alligator Wakes up:
+- On its turn if a frog previously stepped on it.
+- Immediately if a frog croaks within 2 lilypads.
+Once the alligator wakes up it stays awake for at least two turns.
+While the alligator is awake croaking within the alligator's radius or 
+stepping on it resets the countdown before it falls asleep.
+
 On its Turn:
-If the Alligator is not angry it does nothing.
-If the Alligator is angry it eats what's on it, then counts down a round.
-When the countdown reaches 0 it cools down.
+If the Alligator asleep it does nothing.
+If the Alligator is awake it eats what's on it, then counts down a round.
+When the countdown reaches 0 it goes back to sleep.
 */
 public class AlligatorNode : BasicNode
 {
@@ -25,7 +30,7 @@ public class AlligatorNode : BasicNode
     public override int CurrentFrogsOnPad
     {
         get { return base.CurrentFrogsOnPad; }
-        set { base.CurrentFrogsOnPad = value; if (value != 0) { alligatorEnemy.MakeAngry(); } }
+        set { base.CurrentFrogsOnPad = value; if (value != 0) { alligatorEnemy.MakeAlligatorAwakeOnTurn(true); } }
     }
     [SerializeField]
     private AlligatorEnemy alligatorEnemy;
@@ -48,7 +53,7 @@ public class AlligatorNode : BasicNode
 
     public override void CroakUsedOnPad()
     {
-        alligatorEnemy.MakeAngry();
+        alligatorEnemy.MakeAlligatorAwake(true);
     }
 
     public void UpdateMaterial(bool alligatorAwake, Color alligatorAwakeColor, Color alligatorNormalColor)

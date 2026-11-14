@@ -3094,7 +3094,7 @@ PrefabInstance:
     - target: {fileID: 1529155146138660590, guid: 9fab6a429bce38249b663b10e30533d7, type: 3}
       propertyPath: frog
       value: 
-      objectReference: {fileID: 1334462126}
+      objectReference: {fileID: 0}
     - target: {fileID: 1529155146138660590, guid: 9fab6a429bce38249b663b10e30533d7, type: 3}
       propertyPath: handler
       value: 
@@ -3102,7 +3102,7 @@ PrefabInstance:
     - target: {fileID: 3813768889150808577, guid: 9fab6a429bce38249b663b10e30533d7, type: 3}
       propertyPath: frog
       value: 
-      objectReference: {fileID: 1334462126}
+      objectReference: {fileID: 0}
     - target: {fileID: 3813768889150808577, guid: 9fab6a429bce38249b663b10e30533d7, type: 3}
       propertyPath: handler
       value: 
@@ -3110,7 +3110,7 @@ PrefabInstance:
     - target: {fileID: 6033666366516345032, guid: 9fab6a429bce38249b663b10e30533d7, type: 3}
       propertyPath: frog
       value: 
-      objectReference: {fileID: 1334462126}
+      objectReference: {fileID: 0}
     - target: {fileID: 6033666366516345032, guid: 9fab6a429bce38249b663b10e30533d7, type: 3}
       propertyPath: handler
       value: 
@@ -3158,7 +3158,7 @@ PrefabInstance:
     - target: {fileID: 8139832085122240732, guid: 9fab6a429bce38249b663b10e30533d7, type: 3}
       propertyPath: frog
       value: 
-      objectReference: {fileID: 1334462126}
+      objectReference: {fileID: 0}
     - target: {fileID: 8139832085122240732, guid: 9fab6a429bce38249b663b10e30533d7, type: 3}
       propertyPath: handler
       value: 
@@ -5359,17 +5359,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1776111669156554458, guid: 7b6b2ef8beced86479942b9fb816be9f, type: 3}
   m_PrefabInstance: {fileID: 1334462122}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1334462126 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8545398376676824306, guid: 7b6b2ef8beced86479942b9fb816be9f, type: 3}
-  m_PrefabInstance: {fileID: 1334462122}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1334462124}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2da36f424be96c4c81c0955250a307e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FrogActions
 --- !u!114 &1342199499 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6192405601382211039, guid: b9ea6b690fcd7ac458b40c396d43d2ee, type: 3}
@@ -5432,6 +5421,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1733755953}
     - target: {fileID: 5411670380741070961, guid: e617e6c48146e28409fdbaaee72c516c, type: 3}
+      propertyPath: debugMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5411670380741070961, guid: e617e6c48146e28409fdbaaee72c516c, type: 3}
       propertyPath: useBoardInput
       value: 0
       objectReference: {fileID: 0}
@@ -5442,15 +5435,15 @@ PrefabInstance:
     - target: {fileID: 5411670380741070961, guid: e617e6c48146e28409fdbaaee72c516c, type: 3}
       propertyPath: 'frogs.Array.data[0]'
       value: 
-      objectReference: {fileID: 1334462126}
+      objectReference: {fileID: 0}
     - target: {fileID: 5411670380741070961, guid: e617e6c48146e28409fdbaaee72c516c, type: 3}
       propertyPath: 'frogs.Array.data[1]'
       value: 
-      objectReference: {fileID: 1851614905}
+      objectReference: {fileID: 0}
     - target: {fileID: 5411670380741070961, guid: e617e6c48146e28409fdbaaee72c516c, type: 3}
       propertyPath: 'frogs.Array.data[2]'
       value: 
-      objectReference: {fileID: 2041846005}
+      objectReference: {fileID: 0}
     - target: {fileID: 5411670380741070961, guid: e617e6c48146e28409fdbaaee72c516c, type: 3}
       propertyPath: debugButtonsForMouse
       value: 
@@ -7077,17 +7070,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8457760398135323216, guid: 7b6b2ef8beced86479942b9fb816be9f, type: 3}
   m_PrefabInstance: {fileID: 1851614902}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1851614905 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8545398376676824306, guid: 7b6b2ef8beced86479942b9fb816be9f, type: 3}
-  m_PrefabInstance: {fileID: 1851614902}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2da36f424be96c4c81c0955250a307e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FrogActions
 --- !u!1001 &1891748478
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7611,17 +7593,6 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
---- !u!114 &2041846005 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8545398376676824306, guid: 7b6b2ef8beced86479942b9fb816be9f, type: 3}
-  m_PrefabInstance: {fileID: 1721499537}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2da36f424be96c4c81c0955250a307e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FrogActions
 --- !u!114 &2055842449 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1384268053059397545, guid: b9ea6b690fcd7ac458b40c396d43d2ee, type: 3}
