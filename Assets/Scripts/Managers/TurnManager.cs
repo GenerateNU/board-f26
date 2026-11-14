@@ -184,13 +184,18 @@ public class TurnManager : MonoBehaviour
 
         Debug.Log(won ? "Game Over: won" : "Game Over: lost");
 
-        if(!won)
+        if(gameOverScreenPrefab != null) 
         {
-            SceneManager.LoadScene("MainMenu");
-            return;
+            if(!won) 
+            {
+                SceneManager.LoadScene("MainMenu");
+                return;
+            } 
+            else
+            {
+                Instantiate(gameOverScreenPrefab).Show(won);
+            }
         }
-        else if (gameOverScreenPrefab != null)
-            Instantiate(gameOverScreenPrefab).Show(won);
         else
             Debug.LogWarning("No GameOver_Canvas prefab assigned on TurnManager.");
     }
