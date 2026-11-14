@@ -81,6 +81,7 @@ public class AlligatorNode : BasicNode
             if (frog.GetLilyPadFrogOn() == this)
             {
                 frog.KillFrog();
+                _ = VideoPlayer.Instance?.PlayVideo(VideoPlayer.VideoType.EatenAlligator);
             }
         }
     }
