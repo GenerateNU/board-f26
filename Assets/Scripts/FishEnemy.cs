@@ -175,6 +175,7 @@ public class FishEnemy : AEnemy
         animationFinished = false;
         float elapsed = 0;
         Vector3 targetPos = currentFishNode.transform.position;
+        targetPos.y = transform.position.y;
         float duration = swimSpeed > 0 ? 1f / swimSpeed : 0f;
 
         while (Vector3.Distance(transform.position, targetPos) > 0.1f && elapsed < duration)
