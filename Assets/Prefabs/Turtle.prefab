@@ -311,6 +311,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TurtleNode
   neighbors: []
   lilypadGlow: {fileID: 4409225582756928684}
+  isFishOnlyNode: 0
   secondarySpot: {fileID: 1591423217400533240}
   primaryNeighbors:
   - {fileID: 0}
@@ -337,7 +338,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1591423217400533240
 Transform:
   m_ObjectHideFlags: 0
