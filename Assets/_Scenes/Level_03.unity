@@ -11681,6 +11681,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 207860892}
     m_Modifications:
+    - target: {fileID: 1591423217400533240, guid: e1960d196e05dcb4eb3e461cba1455cb, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -2.19
+      objectReference: {fileID: 0}
+    - target: {fileID: 1591423217400533240, guid: e1960d196e05dcb4eb3e461cba1455cb, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1591423217400533240, guid: e1960d196e05dcb4eb3e461cba1455cb, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.02
+      objectReference: {fileID: 0}
     - target: {fileID: 2993639892377099263, guid: e1960d196e05dcb4eb3e461cba1455cb, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.82637
@@ -11724,6 +11736,10 @@ PrefabInstance:
     - target: {fileID: 4830008500480045123, guid: e1960d196e05dcb4eb3e461cba1455cb, type: 3}
       propertyPath: m_Name
       value: Turtle (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5768426767592503917, guid: e1960d196e05dcb4eb3e461cba1455cb, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6573892062682274875, guid: e1960d196e05dcb4eb3e461cba1455cb, type: 3}
       propertyPath: neighbors.Array.size
