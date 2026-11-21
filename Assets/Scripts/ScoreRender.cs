@@ -8,6 +8,11 @@ public class ScoreRender : MonoBehaviour
 
     public int scoreValue;
 
+    public void initiateScore(int score)
+    {
+        UpdateScoreText(score);
+    }
+
     void Awake()
     {
 

@@ -4,11 +4,11 @@ public class CrownUI : MonoBehaviour
 {
     [SerializeField] ScoreRender[] playerIcons;
 
-    Transform currentParent;
+    Transform currentParent = null;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        gameObject.SetActive(false);
     }
 
     // Update is called once per frame
@@ -18,7 +18,7 @@ public class CrownUI : MonoBehaviour
     }
 
     [ContextMenu("go to leading")]
-    void GoToLeadingPlayer()
+    public void GoToLeadingPlayer()
     {
         int max = 0;
         foreach (ScoreRender icon in playerIcons)
@@ -30,6 +30,6 @@ public class CrownUI : MonoBehaviour
             }
         }
 
-        transform.SetParent(currentParent, false);
+        if (currentParent) transform.SetParent(currentParent, false);
     }
 }

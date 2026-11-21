@@ -6520,6 +6520,14 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 2815546774505246727, guid: 7b6b2ef8beced86479942b9fb816be9f, type: 3}
+      propertyPath: crown
+      value: 
+      objectReference: {fileID: 634897697}
+    - target: {fileID: 2815546774505246727, guid: 7b6b2ef8beced86479942b9fb816be9f, type: 3}
+      propertyPath: iconUI
+      value: 
+      objectReference: {fileID: 473273462}
+    - target: {fileID: 2815546774505246727, guid: 7b6b2ef8beced86479942b9fb816be9f, type: 3}
       propertyPath: _startingLilyPad
       value: 
       objectReference: {fileID: 190934706}
@@ -7546,6 +7554,14 @@ PrefabInstance:
       value: Player (2)
       objectReference: {fileID: 0}
     - target: {fileID: 2815546774505246727, guid: 7b6b2ef8beced86479942b9fb816be9f, type: 3}
+      propertyPath: crown
+      value: 
+      objectReference: {fileID: 634897697}
+    - target: {fileID: 2815546774505246727, guid: 7b6b2ef8beced86479942b9fb816be9f, type: 3}
+      propertyPath: iconUI
+      value: 
+      objectReference: {fileID: 50498974}
+    - target: {fileID: 2815546774505246727, guid: 7b6b2ef8beced86479942b9fb816be9f, type: 3}
       propertyPath: _assignedPlayer
       value: 3
       objectReference: {fileID: 0}
@@ -8335,6 +8351,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 2815546774505246727, guid: 7b6b2ef8beced86479942b9fb816be9f, type: 3}
+      propertyPath: crown
+      value: 
+      objectReference: {fileID: 634897697}
+    - target: {fileID: 2815546774505246727, guid: 7b6b2ef8beced86479942b9fb816be9f, type: 3}
+      propertyPath: iconUI
+      value: 
+      objectReference: {fileID: 396434258}
     - target: {fileID: 2815546774505246727, guid: 7b6b2ef8beced86479942b9fb816be9f, type: 3}
       propertyPath: _assignedPlayer
       value: 2
