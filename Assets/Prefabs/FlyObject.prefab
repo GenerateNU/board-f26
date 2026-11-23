@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8857870854631643439}
+  - component: {fileID: 4928445154849227564}
   m_Layer: 0
   m_Name: FlyObject
   m_TagString: Untagged
@@ -30,63 +31,21 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5249018038934198726}
-  - {fileID: 9017811164667988796}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &3046069824134417262
-PrefabInstance:
+--- !u!114 &4928445154849227564
+MonoBehaviour:
   m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 8857870854631643439}
-    m_Modifications:
-    - target: {fileID: 3702093508790497283, guid: e5167f6732aac1c4c939238b6f0ffa70, type: 3}
-      propertyPath: m_Name
-      value: FlyPickup
-      objectReference: {fileID: 0}
-    - target: {fileID: 6296141285686755410, guid: e5167f6732aac1c4c939238b6f0ffa70, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6296141285686755410, guid: e5167f6732aac1c4c939238b6f0ffa70, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6296141285686755410, guid: e5167f6732aac1c4c939238b6f0ffa70, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6296141285686755410, guid: e5167f6732aac1c4c939238b6f0ffa70, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6296141285686755410, guid: e5167f6732aac1c4c939238b6f0ffa70, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6296141285686755410, guid: e5167f6732aac1c4c939238b6f0ffa70, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 90
-      objectReference: {fileID: 0}
-    - target: {fileID: 6296141285686755410, guid: e5167f6732aac1c4c939238b6f0ffa70, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6296141285686755410, guid: e5167f6732aac1c4c939238b6f0ffa70, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 90
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: e5167f6732aac1c4c939238b6f0ffa70, type: 3}
---- !u!4 &9017811164667988796 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6296141285686755410, guid: e5167f6732aac1c4c939238b6f0ffa70, type: 3}
-  m_PrefabInstance: {fileID: 3046069824134417262}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3656779586251424410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 882fa8d352498b5439c0f994d29d1b5c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FlyPickup
+  flyVisual: {fileID: 4869396924261335932}
 --- !u!1001 &4060394690865239561
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -144,6 +103,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fce2ef1169bf59a4385ce9a594f8048a, type: 3}
+--- !u!1 &4869396924261335932 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8920216620494591349, guid: fce2ef1169bf59a4385ce9a594f8048a, type: 3}
+  m_PrefabInstance: {fileID: 4060394690865239561}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5249018038934198726 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8106806355906383823, guid: fce2ef1169bf59a4385ce9a594f8048a, type: 3}
