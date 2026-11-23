@@ -517,7 +517,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0.5, y: 0.5, z: 0.5, w: 0.5}
   m_LocalPosition: {x: -0.86, y: 3.6, z: 8.41}
-  m_LocalScale: {x: 769.23, y: 730.8824, z: 777.19196}
+  m_LocalScale: {x: 1108.08, y: 1052.84, z: 1119.5492}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -3499,7 +3499,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6010355539558292672, guid: cb64d7ee9f413fd4b84b2348ade1d590, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -2.55
       objectReference: {fileID: 0}
     - target: {fileID: 6010355539558292672, guid: cb64d7ee9f413fd4b84b2348ade1d590, type: 3}
       propertyPath: m_LocalPosition.z
@@ -6917,8 +6917,8 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 0
-  orthographic size: 5
+  orthographic: 1
+  orthographic size: 7.02
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
