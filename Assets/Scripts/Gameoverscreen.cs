@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+using System.Collections;
 public class GameOverScreen : MonoBehaviour
 {
     [SerializeField] private TMP_Text resultText;
@@ -25,6 +26,17 @@ public class GameOverScreen : MonoBehaviour
 
     public void GoToMainMenu()
     {
+        StartCoroutine(WaitForAnimations());
+    }
+
+    private IEnumerator WaitForAnimations()
+    {
+        yield return new WaitForEndOfFrame();
+        while ((InputHandler.Instance != null && InputHandler.Instance.InAnimation)
+            || (VideoPlayer.Instance != null && VideoPlayer.Instance.isVideoOpen))
+        {
+            yield return null;
+        }
         SceneManager.LoadScene(mainMenuSceneName);
     }
 }

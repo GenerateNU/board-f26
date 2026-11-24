@@ -185,6 +185,8 @@ public class FishEnemy : AEnemy
         {
             if (frog == null || frog.GetLilyPadFrogOn() != currentFishNode) continue;
             frog.KillFrog();
+            AudioManager.Instance?.PlayFishChomp(); //SFX; needs accompanying animation + newspaper stuff but this is here for now
+            _ = VideoPlayer.Instance?.PlayVideo(VideoPlayer.VideoType.EatenFish);
             frogKilled = true;
         }
 
@@ -195,6 +197,7 @@ public class FishEnemy : AEnemy
     {
         float elapsed = 0;
         Vector3 targetPos = currentFishNode.transform.position;
+        targetPos.y = transform.position.y;
         float duration = swimSpeed > 0 ? 1f / swimSpeed : 0f;
 
         while (Vector3.Distance(transform.position, targetPos) > 0.1f && elapsed < duration)

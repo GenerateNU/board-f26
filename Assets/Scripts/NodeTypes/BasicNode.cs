@@ -7,7 +7,7 @@ public abstract class BasicNode : MonoBehaviour
     [SerializeField] private List<BasicNode> neighbors = new();
     public virtual IReadOnlyList<BasicNode> Neighbors => neighbors;
     [Tooltip("Should be consistent across most objects of this prefab.")]
-    [SerializeField] private GameObject lilypadGlow;
+    [SerializeField] private GameObject lilypadAnimation;
     public bool IsOccupied { get { return MaxFrogsOnPad == CurrentFrogsOnPad; } }
     public abstract bool IsTraversable { get; }
     public abstract NodeHazard NodeType { get; }
@@ -25,7 +25,7 @@ public abstract class BasicNode : MonoBehaviour
     // Can make overrides for this if we want different vfx for different node types
     public void Highlight(bool enable)
     {
-        lilypadGlow.SetActive(enable);
+        lilypadAnimation.SetActive(enable);
     }
 
     // Called by FrogUnit: true at the start of its turn, false when it hops or its turn ends.
@@ -64,8 +64,16 @@ public abstract class BasicNode : MonoBehaviour
         Gizmos.color = Color.black;
         foreach (BasicNode node in Neighbors)
         {
-            // to help with in scene editing not throwing errors at you upon deleting 
-            if (node == null) { return; }
+            // to help with in scene editing not throwing errors at you upon deleting
+            if (node == null) { return; }
+            if (isFishOnlyNode)
+            {
+                Gizmos.color = Color.green;
+            }
+            else
+            {
+                Gizmos.color = Color.black;
+            }
             Gizmos.DrawLine(gameObject.transform.position, node.transform.position);
         }
     }

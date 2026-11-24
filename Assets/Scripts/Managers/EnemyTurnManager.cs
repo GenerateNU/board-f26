@@ -96,6 +96,10 @@ public class EnemyTurnManager : MonoBehaviour
                 await Awaitable.WaitForSecondsAsync(0.1f);
             }
         }
+        while (VideoPlayer.Instance != null && VideoPlayer.Instance.isVideoOpen)
+        {
+            await Awaitable.WaitForSecondsAsync(0.1f);
+        }
 
         InputHandler.Instance?.EndAnimation();
         TurnManager.Instance.AdvanceTurn();

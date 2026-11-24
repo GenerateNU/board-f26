@@ -28,7 +28,9 @@ public class FrogUnit : MonoBehaviour
     private BasicNode _startingLilyPad;
     [Tooltip("Smaller numbers are faster speeds. 0.5 would make it 2x faster 2 would make it 1/2 slower.")]
     [SerializeField]
-    private float _hopSpeed;
+    private float _hopDurationSeconds;
+    [SerializeField]
+    private float _hopHeight = 0.5f;
     [Tooltip("Lower numbers allow for movement to be smoother but may be more performance intensive.")]
     [SerializeField]
     private float _moveTimeStep;
@@ -224,6 +226,7 @@ public class FrogUnit : MonoBehaviour
         if (!newLilyPad.IsTraversable) { return; }
 
         _isHopping = true;
+        AudioManager.Instance?.PlayHop(); // PLAYS ONE OF 4 HOPPING SFX
         InputHandler.Instance?.BeginAnimation();
 
         _ = MoveFrog(newLilyPad.transform.position);
@@ -238,17 +241,23 @@ public class FrogUnit : MonoBehaviour
     private async Task MoveFrog(Vector3 newPosition)
     {
         Vector3 originalPosition = transform.position;
-        float currentTime = 0f;
+        float elapsed = 0f;
 
-        while (transform.position != newPosition)
+        while (elapsed < _hopDurationSeconds)
         {
-            transform.position = Vector3.Lerp(originalPosition, newPosition, currentTime / _hopSpeed);
-            await Awaitable.WaitForSecondsAsync(_moveTimeStep);
+            float step = Mathf.Min(_moveTimeStep, _hopDurationSeconds - elapsed);
+            elapsed += step;
+            float progress = elapsed / _hopDurationSeconds;
+            float hopOffset = Mathf.Sin(progress * Mathf.PI) * _hopHeight;
+            transform.position = Vector3.Lerp(originalPosition, newPosition, progress) + Vector3.up * hopOffset;
+
+            if (elapsed < _hopDurationSeconds) await Awaitable.WaitForSecondsAsync(step);
             if (this == null) return; // frog was destroyed mid-hop
-            currentTime += _moveTimeStep;
         }
 
+        transform.position = newPosition;
         _isHopping = false;
+        AudioManager.Instance?.PlayLand(); //PLAYS ONE OF 3 LANDING SFX
         InputHandler.Instance?.EndAnimation();
         SetNeighborHighlights(false);
 
@@ -300,7 +309,7 @@ public class FrogUnit : MonoBehaviour
         if (currentPad == null) return;
 
         currentPad.FrogCroakedOnPad(this);
-
+        AudioManager.Instance?.PlayCroak(); //CROAK SFX
         foreach (BasicNode node in currentPad.Neighbors)
         {
             if (node == null) continue; // adding some safety checks so nothing explodes during all hands
