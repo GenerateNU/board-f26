@@ -3482,24 +3482,8 @@ PrefabInstance:
       value: FishParent
       objectReference: {fileID: 0}
     - target: {fileID: 6010355539558292672, guid: cb64d7ee9f413fd4b84b2348ade1d590, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.22
-      objectReference: {fileID: 0}
-    - target: {fileID: 6010355539558292672, guid: cb64d7ee9f413fd4b84b2348ade1d590, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.22
-      objectReference: {fileID: 0}
-    - target: {fileID: 6010355539558292672, guid: cb64d7ee9f413fd4b84b2348ade1d590, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.22
-      objectReference: {fileID: 0}
-    - target: {fileID: 6010355539558292672, guid: cb64d7ee9f413fd4b84b2348ade1d590, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.486
-      objectReference: {fileID: 0}
-    - target: {fileID: 6010355539558292672, guid: cb64d7ee9f413fd4b84b2348ade1d590, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -2.55
       objectReference: {fileID: 0}
     - target: {fileID: 6010355539558292672, guid: cb64d7ee9f413fd4b84b2348ade1d590, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3532,10 +3516,6 @@ PrefabInstance:
     - target: {fileID: 6010355539558292672, guid: cb64d7ee9f413fd4b84b2348ade1d590, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6010355539558292672, guid: cb64d7ee9f413fd4b84b2348ade1d590, type: 3}
-      propertyPath: m_ConstrainProportionsScale
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
