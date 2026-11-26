@@ -1,7 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
+using Unity.AppUI.MVVM;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public enum ActionType
@@ -52,6 +55,10 @@ public class FrogUnit : MonoBehaviour
 
     public int AssignedPlayer => _assignedPlayer;
 
+
+    [SerializeField] ScoreRender iconUI;
+    [SerializeField] CrownUI crown;
+
     void Awake()
     {
         _currentLilyPad = _startingLilyPad;
@@ -64,6 +71,8 @@ public class FrogUnit : MonoBehaviour
             TurnManager.Instance.RegisterFrog(this, _assignedPlayer);
         else
             Debug.LogWarning($"{name}: no TurnManager in the scene, so this frog can't take turns.");
+
+        iconUI.initiateScore(Score);
     }
 
     public void KillFrog()
@@ -104,6 +113,8 @@ public class FrogUnit : MonoBehaviour
     public void AddScore(int points)
     {
         Score += points;
+        iconUI.UpdateScoreText(Score);
+        crown.GoToLeadingPlayer();
     }
 
     // Turn Logic
